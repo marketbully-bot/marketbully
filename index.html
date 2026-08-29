@@ -4,15 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#04060B">
-<meta name="description" content="Trading made easy. Richard &quot;Pops&quot; Hall Jr., The Market Bully. Entrepreneur, day trader, educator and speaker. Free signals chat, live sessions and the Market Bully Strategy.">
-<meta name="robots" content="index, follow">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="The Market Bully">
-<meta property="og:title" content="The Market Bully | Trading made easy">
-<meta property="og:description" content="Simplified, not sugar coated. Richard &quot;Pops&quot; Hall Jr. Free signals chat, live sessions and the Market Bully Strategy.">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="The Market Bully | Trading made easy">
-<meta name="twitter:description" content="Simplified, not sugar coated. Richard &quot;Pops&quot; Hall Jr.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2304060B'/%3E%3Cpath d='M6 22.4 L4.7 10.6 L10.6 15 L16 6.9 L21.4 15 L27.3 10.6 L26 22.4 Z' fill='%23E4EAF4'/%3E%3Cpath d='M6.9 25 H25.1' stroke='%23E4EAF4' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='18.2' r='1.7' fill='%232E6BFF'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2304060B'/%3E%3Cpath d='M6 22.4 L4.7 10.6 L10.6 15 L16 6.9 L21.4 15 L27.3 10.6 L26 22.4 Z' fill='%23E4EAF4'/%3E%3Cpath d='M6.9 25 H25.1' stroke='%23E4EAF4' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='18.2' r='1.7' fill='%232E6BFF'/%3E%3C/svg%3E">
 <style>
@@ -21,6 +12,27 @@
   img{max-width:100%}
   [hidden]{display:none!important}
 </style>
+
+<meta name="description" content="Live sessions, real mentorship and a free signals chat with Richard &quot;Pops&quot; Hall Jr. Start with five quick questions.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://themarketbully.com/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Market Bully">
+<meta property="og:url" content="https://themarketbully.com/">
+<meta property="og:title" content="The Market Bully">
+<meta property="og:description" content="Live sessions, real mentorship and a free signals chat with Richard &quot;Pops&quot; Hall Jr. Start with five quick questions.">
+<meta property="og:image" content="https://themarketbully.com/og.jpg">
+<meta property="og:image:secure_url" content="https://themarketbully.com/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Market Bully. Trading made easy. Richard Pops Hall Jr.">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Market Bully">
+<meta name="twitter:description" content="Live sessions, real mentorship and a free signals chat with Richard &quot;Pops&quot; Hall Jr. Start with five quick questions.">
+<meta name="twitter:image" content="https://themarketbully.com/og.jpg">
 </head>
 <body>
 <title>The Market Bully</title>
@@ -42,7 +54,7 @@
   --edge:inset 0 1px 0 rgba(255,255,255,.08);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{margin:0;background:var(--void);color:var(--silver-2);font-family:var(--ui);font-size:16.5px;line-height:1.66;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 img{max-width:100%}
 a{color:var(--blue-hi);text-decoration:none}
@@ -327,6 +339,50 @@ details .body p:last-child{margin-bottom:0}
 .codebox{display:flex;gap:11px;flex-wrap:wrap}
 .codebox input{flex:1;min-width:190px;background:rgba(255,255,255,.04);border:1px solid var(--line-hi);color:var(--silver);padding:15px;font-family:var(--mono);font-size:14px;letter-spacing:.2em;text-transform:uppercase;border-radius:12px}
 
+
+/* ============ phone hardening ============ */
+@media(max-width:860px){
+  .toast{display:none!important}
+  .wrap,.band-in,.top-in,.foot-in{
+    padding-left:max(22px, env(safe-area-inset-left));
+    padding-right:max(22px, env(safe-area-inset-right));
+  }
+  .foot-in{padding-bottom:calc(44px + env(safe-area-inset-bottom))}
+  nav.pages{-webkit-overflow-scrolling:touch;scrollbar-width:none;mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  nav.pages::-webkit-scrollbar{display:none}
+  nav.pages button{padding:10px 13px;font-size:13.5px}
+
+  /* every tap target reaches 46px */
+  .btn{min-height:50px;padding:15px 24px}
+  .btn.sm{min-height:46px;padding:12px 18px;font-size:13.5px}
+  .opt{min-height:62px}
+  summary{min-height:46px;align-items:center;padding:4px 0}
+  details{padding:12px 0}
+  details .body{padding-left:30px;font-size:15.5px}
+  .inline-link{display:inline-block;padding:9px 0;min-height:40px}
+  .foot-grid button,.foot-grid a{padding:10px 0;min-height:42px;display:flex;align-items:center}
+  .session{padding:18px 4px}
+  .chip,.tagpill,.roles span,.trustrow span{padding:8px 14px}
+
+  /* breathing room */
+  .lede{font-size:18.5px;line-height:1.58}
+  h2{font-size:clamp(26px,7vw,34px)}
+  .card{padding:24px 22px}
+  .plan{padding:26px 22px}
+  .cine{min-height:340px}
+  .cine .cine-in{padding:44px 22px}
+  .herogrid .portraitframe{max-height:440px}
+  .certframe{padding:10px}
+  .field input,.field select,.field textarea{font-size:16px}
+}
+@media(max-width:430px){
+  .statbar div{padding-right:14px}
+  .statbar b{font-size:21px}
+  .creds{border-radius:14px}
+  .cred{padding:22px 20px}
+  .price{font-size:42px}
+}
+
 /* ============ funnel screens ============ */
 .quizwrap{max-width:760px;margin:0 auto;padding:0 24px;text-align:center}
 .qrail{display:flex;gap:6px;margin:0 auto 34px;max-width:420px}
@@ -554,7 +610,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
         <p class="lede rv">Simplified, not sugar&nbsp;coated. I&rsquo;m Richard Hall Jr., known as The Market Bully. Entrepreneur, professional day trader, educator, strategist, speaker and family man, and I take the part that looks complicated and make it make sense.</p>
         <div class="row rv" style="margin-top:32px">
           <button class="btn lg" data-go="start">Start your application</button>
-          <a class="btn ghost lg" href="https://www.1house.tv/" target="_blank" rel="noopener">Watch a session free</a>
+          <a class="btn ghost lg" href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">Watch a session free</a>
         </div>
         <div class="statbar rv">
           <div><b>Free</b><span>Signals chat</span></div>
@@ -683,7 +739,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
           <h3 style="font-size:19px">Here is what I give you instead</h3>
           <p style="margin-bottom:14px">Watch me trade it live, for free, before you give me anything at all. Every call I make comes with the level and the reason attached, so you can follow the logic yourself instead of taking my word for it.</p>
           <p>If the thinking does not hold up when you watch it, you will see that for yourself, and you should walk. That is a better test than any percentage on a sales page.</p>
-          <div class="row" style="margin-top:22px"><a class="btn ghost sm" href="https://www.1house.tv/" target="_blank" rel="noopener">Go watch and judge it</a></div>
+          <div class="row" style="margin-top:22px"><a class="btn ghost sm" href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">Go watch and judge it</a></div>
         </div>
       </div>
     </div>
@@ -721,7 +777,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
           <h2>Watch me trade it in real time</h2>
           <p class="dim">Entry, thesis and exit, streamed on 1House.TV. You can watch before you open an account, before you fill in a form, before you give me anything at all. That is on purpose. Judge the teaching first.</p>
           <div class="row" style="margin-top:26px">
-            <a class="btn" href="https://www.1house.tv/" target="_blank" rel="noopener">Watch on 1House.TV</a>
+            <a class="btn" href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">Watch on 1House.TV</a>
           </div>
         </div>
         <div class="glass screen rv">
@@ -899,7 +955,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
             <li><b>Built the Market Bully Strategy and the Olympus Scanner</b>, both my own.</li>
             <li><b>Los Angeles</b>, and the community work is still here.</li>
           </ul>
-          <div class="row" style="margin-top:28px"><a class="btn ghost" href="https://www.1house.tv/" target="_blank" rel="noopener">Watch a session</a></div>
+          <div class="row" style="margin-top:28px"><a class="btn ghost" href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">Watch a session</a></div>
         </div>
       </div>
     </div>
@@ -1104,11 +1160,11 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
                 <label class="field"><span>Name</span><input name="name" type="text" autocomplete="name" required></label>
                 <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
                 <label class="field"><span>Phone</span><input name="phone" type="tel" autocomplete="tel"></label>
-                <label class="field"><span>Telegram handle</span><input name="telegram" type="text" placeholder="@yourhandle"></label>
                 <label class="field"><span>Best time to call</span><select name="besttime"><option>Morning</option><option>Midday</option><option>Afternoon</option><option>Evening</option></select></label>
                 <label class="field"><span>Your timezone</span><input name="tz" type="text" id="tzField" placeholder="Pacific, GMT+1"></label>
               </div>
-              <label class="consent"><input type="checkbox" name="consent" required><span>I agree to be contacted by email, phone, SMS and Telegram about the signals chat, and I have read the risk disclosure and the paid link disclosure on the legal page.</span></label>
+              <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+              <label class="consent"><input type="checkbox" name="consent" required><span>I agree to be contacted by email, phone and SMS about the signals chat, and I have read the risk disclosure and the paid link disclosure on the legal page.</span></label>
               <button class="btn lg wide" type="submit" id="submitBtn">Send my application</button>
               <div class="qnav"><button class="qback" type="button" data-back>Back</button></div>
               <p class="small dim" id="leadNote" style="margin-top:16px"></p>
@@ -1124,12 +1180,12 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
                 <p class="lbl">Open to you now</p>
                 <h3>The free room</h3>
                 <p>Walk straight into the free sessions on 1House.TV today. No account, no approval, nothing to pay. Start with the Fibonacci Settings session.</p>
-                <div class="row" style="margin-top:22px"><a class="btn ghost" href="https://www.1house.tv/" target="_blank" rel="noopener">Watch now</a></div>
+                <div class="row" style="margin-top:22px"><a class="btn ghost" href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">Watch now</a></div>
               </div>
               <div class="glass splitcard earn">
                 <p class="lbl">You have to earn this one</p>
                 <h3>The signals chat</h3>
-                <p>Check your email and Telegram. You will be walked through opening your trading account, you send the confirmation back, and if I approve you, you get a private invite made for you alone. It works once.</p>
+                <p>Check your email. You will be walked through opening your trading account, you send the confirmation back, and if I approve you, you get a private invite made for you alone. It works once.</p>
                 <div class="row" style="margin-top:22px"><button class="btn ghost" data-go="faq">What happens next</button></div>
               </div>
             </div>
@@ -1214,7 +1270,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
           <p class="eyebrow" style="margin:22px 0 8px">Email</p>
           <p>Business address goes here.</p>
           <p class="eyebrow" style="margin:22px 0 8px">Watch first</p>
-          <p><a href="https://www.1house.tv/" target="_blank" rel="noopener">1House.TV</a> has the full catalog. No account needed to see what I teach.</p>
+          <p><a href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">1House.TV</a> has the full catalog. No account needed to see what I teach.</p>
         </div>
       </div>
     </div>
@@ -1303,7 +1359,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
       </div>
       <div><h3>Site</h3><button data-go="home">Home</button><button data-go="about">About</button><button data-go="community">Community</button><button data-go="faq">FAQ</button></div>
       <div><h3>Start</h3><button data-go="start">Application</button><button data-go="contact">Request a call</button><button data-go="legal">Risk &amp; disclosure</button></div>
-      <div><h3>Watch</h3><a href="https://www.1house.tv/" target="_blank" rel="noopener">1House.TV</a><a href="https://subscribe.1house.tv/MARKETBULLY" target="_blank" rel="noopener">1House plans</a></div>
+      <div><h3>Watch</h3><a href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">1House.TV</a><a href="https://subscribe.1house.tv/MARKETBULLY" target="_blank" rel="noopener">1House plans</a></div>
     </div>
     <div class="risk-strip">
       <b>RISK WARNING.</b> Trading leveraged instruments carries a substantial risk of loss and is not suitable for everyone. You can lose all of the money you deposit. Past performance does not indicate future results. Nothing on this site is financial advice and Richard Hall Jr. is not a registered investment adviser. <b>PAID LINKS.</b> I am paid a volume based rebate by LIVVFX on accounts opened through my referral link, and referral commissions by 1House Global, meaning I earn more when members trade more, win or lose.
@@ -1329,7 +1385,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
      once the backend is deployed. Until then the application
      collects and tags answers but does not transmit them.
      ========================================================= */
-  var ENDPOINT = "";
+  var ENDPOINT = "/api/lead";
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(err){}
@@ -1472,6 +1528,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
     }catch(err){}
   }
   function readUrl(){
+    if(window.__MB_PAGE && PAGES.indexOf(window.__MB_PAGE)!==-1) return window.__MB_PAGE;
     var seg=(location.pathname||'').replace(/\/+$/,'').split('/').pop().toLowerCase();
     if(PAGES.indexOf(seg)!==-1) return seg;
     var h=(location.hash||'').replace(/^#\/?/,'').toLowerCase();
@@ -1724,8 +1781,19 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
       if(ENDPOINT){
         var btn=document.getElementById('submitBtn');
         btn.disabled=true; btn.textContent='Sending...';
-        fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
-          .then(finish).catch(finish);
+        var done=false;
+        var settle=function(){ if(done) return; done=true; finish(); };
+        setTimeout(settle, 6000);
+        fetch(ENDPOINT,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        }).then(function(r){ return r.json().catch(function(){return {};}); })
+          .then(function(out){
+            if(out && out.delivered===false) console.warn('Lead saved but not delivered:',out.reason);
+            settle();
+          })
+          .catch(function(e){ console.error('Submit failed:',e); settle(); });
       } else {
         note.style.color=''; note.textContent='';
         console.log('Application captured (no endpoint configured yet):',payload);
