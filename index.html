@@ -327,67 +327,69 @@ details .body p:last-child{margin-bottom:0}
 .codebox{display:flex;gap:11px;flex-wrap:wrap}
 .codebox input{flex:1;min-width:190px;background:rgba(255,255,255,.04);border:1px solid var(--line-hi);color:var(--silver);padding:15px;font-family:var(--mono);font-size:14px;letter-spacing:.2em;text-transform:uppercase;border-radius:12px}
 
-/* ============ quiz ============ */
-.quizwrap{max-width:840px;margin:0 auto;padding:0 24px}
-.qrail{display:flex;gap:7px;margin-bottom:34px}
-.qrail i{flex:1;height:3px;border-radius:3px;background:var(--line);overflow:hidden;position:relative}
-.qrail i.done{background:linear-gradient(90deg,var(--blue),var(--blue-hi))}
-.qrail i.now{background:var(--line)}
-.qrail i.now::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--blue),var(--blue-hi));animation:fill .5s var(--ease) forwards}
-@keyframes fill{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
-.qstep{display:none}
-.qstep.on{display:block;animation:qin .55s var(--ease)}
-@keyframes qin{from{opacity:0;transform:translateY(22px) scale(.99)}to{opacity:1;transform:none}}
-.qcount{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--blue-hi);margin-bottom:18px}
-.qtitle{font-family:var(--display);font-weight:700;font-size:clamp(27px,4.1vw,44px);line-height:1.1;letter-spacing:-.04em;color:var(--silver);margin:0 0 12px;text-wrap:balance}
-.qhint{color:var(--silver-dim);font-size:15.5px;margin:0 0 30px;max-width:52ch}
-.opts{display:grid;gap:11px;margin-bottom:8px}
-@media(min-width:700px){.opts.two{grid-template-columns:1fr 1fr}}
+/* ============ funnel screens ============ */
+.quizwrap{max-width:760px;margin:0 auto;padding:0 24px;text-align:center}
+.qrail{display:flex;gap:6px;margin:0 auto 34px;max-width:420px}
+.qstep,.qwelcome,.qresponse{display:none}
+.qstep.on,.qwelcome.on,.qresponse.on{display:block;animation:screenIn .5s var(--ease)}
+@keyframes screenIn{from{opacity:0;transform:translateY(20px) scale(.985)}to{opacity:1;transform:none}}
+
+.qmark{width:74px;height:74px;margin:0 auto 26px;border-radius:22px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#4079FF,#1B4ED8);box-shadow:0 26px 60px -24px var(--blue-glow),var(--edge)}
+.qmark svg{width:36px;height:36px}
+.qwelcome h2{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,48px);line-height:1.06;letter-spacing:-.042em;margin:0 0 16px}
+.qwelcome h2 em{font-style:normal;display:block}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){.qwelcome h2 em{background:var(--sheen);-webkit-background-clip:text;background-clip:text;color:transparent}}
+.qwelcome p.intro{font-size:17px;color:var(--silver-2);max-width:40ch;margin:0 auto 30px}
+.qwelcome .mini{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--silver-dim);margin-top:16px}
+.qwelcome .legalmini{font-size:12.5px;color:var(--silver-dim);max-width:52ch;margin:34px auto 0;line-height:1.6}
+.btn.wide{width:100%;max-width:420px;justify-content:center}
+
+.qcount{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--blue-hi);margin-bottom:16px}
+.qtitle{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.9vw,40px);line-height:1.12;letter-spacing:-.038em;color:var(--silver);margin:0 auto 12px;max-width:20ch;text-wrap:balance}
+.qhint{color:var(--silver-dim);font-size:15.5px;margin:0 auto 30px;max-width:46ch}
+.opts{display:grid;gap:11px;max-width:520px;margin:0 auto;text-align:left}
 .opt{position:relative;display:flex;align-items:center;gap:15px;width:100%;text-align:left;cursor:pointer;
-  border:1px solid var(--line);border-radius:15px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:15px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.013));
   padding:19px 22px;color:var(--silver);font-family:var(--ui);font-size:16px;font-weight:600;letter-spacing:-.012em;
-  transition:.3s var(--ease);box-shadow:var(--edge)}
-.opt:hover{border-color:var(--line-hi);transform:translateY(-2px);background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02))}
+  transition:.3s var(--ease);box-shadow:var(--edge);-webkit-tap-highlight-color:transparent}
+.opt:hover{border-color:rgba(110,157,255,.5);transform:translateY(-2px);background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.022))}
 .opt .k{display:flex;align-items:center;justify-content:center;width:30px;height:30px;flex:none;border-radius:9px;border:1px solid var(--line-hi);
   font-family:var(--mono);font-size:11.5px;color:var(--blue-hi);background:rgba(46,107,255,.1)}
 .opt small{display:block;font-weight:500;font-size:13.5px;color:var(--silver-dim);margin-top:3px;letter-spacing:0}
-.opt.sel{border-color:var(--blue);background:linear-gradient(180deg,rgba(46,107,255,.2),rgba(46,107,255,.05));box-shadow:0 18px 44px -22px var(--blue-glow),var(--edge)}
+.opt.sel{border-color:var(--blue);background:linear-gradient(180deg,rgba(46,107,255,.22),rgba(46,107,255,.05));box-shadow:0 18px 44px -22px var(--blue-glow),var(--edge)}
 .opt.sel .k{background:var(--blue);color:#fff;border-color:var(--blue)}
-.qnav{display:flex;gap:12px;align-items:center;margin-top:28px}
-.qback{background:none;border:none;color:var(--silver-dim);font-family:var(--ui);font-size:14px;cursor:pointer;padding:8px 4px}
+.qnav{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:26px}
+.qback{background:none;border:none;color:var(--silver-dim);font-family:var(--ui);font-size:14px;cursor:pointer;padding:8px 6px}
 .qback:hover{color:var(--silver)}
-.qgrid2{display:grid;gap:0 20px}
-@media(min-width:680px){.qgrid2{grid-template-columns:1fr 1fr}}
-.qdone{text-align:left}
-.splitcards{display:grid;gap:16px;margin-top:28px}
-@media(min-width:780px){.splitcards{grid-template-columns:1fr 1fr}}
-.splitcard{padding:32px 28px;border-radius:18px;position:relative;overflow:hidden}
-.splitcard .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px}
-.splitcard.now{border:1px solid rgba(95,211,155,.4);background:linear-gradient(180deg,rgba(95,211,155,.1),rgba(255,255,255,.014))}
-.splitcard.now .lbl{color:var(--ok)}
-.splitcard.earn{border:1px solid rgba(110,157,255,.4);background:linear-gradient(180deg,rgba(46,107,255,.12),rgba(255,255,255,.014))}
-.splitcard.earn .lbl{color:var(--blue-hi)}
-.splitcard h3{font-size:21px;margin-bottom:12px}
-.splitcard p{font-size:15px;color:var(--silver-dim)}
-.tagpills{display:flex;gap:7px;flex-wrap:wrap;margin-top:22px}
-.tagpill{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;border:1px solid var(--line-hi);border-radius:100px;padding:5px 12px;color:var(--silver-dim)}
 
-/* ============ quiz reply ============ */
-.qreply{display:none;margin-top:20px}
-.qreply.on{display:flex;gap:13px;align-items:flex-start;animation:bubbleIn .45s var(--ease)}
-@keyframes bubbleIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.qav{flex:none;width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-  font-family:var(--display);font-weight:700;font-size:14px;color:#fff;
-  background:linear-gradient(160deg,#4079FF,#1E52E0);box-shadow:0 10px 26px -12px var(--blue-glow),var(--edge)}
-.qbub{position:relative;border:1px solid var(--line-hi);border-radius:4px 16px 16px 16px;
-  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));
-  padding:15px 20px;max-width:46ch;box-shadow:var(--edge)}
-.qbub p{margin:0;font-size:15.5px;color:var(--silver);line-height:1.55}
-.qbub .who{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--blue-hi);margin-bottom:7px}
-.dots{display:inline-flex;gap:5px;padding:4px 0}
-.dots i{width:6px;height:6px;border-radius:50%;background:var(--silver-dim);animation:bounce 1.1s infinite}
-.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
-@keyframes bounce{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+/* response screen */
+.qresponse{padding:18px 0 6px}
+.qresponse .qmark{background:linear-gradient(160deg,#5FD39B,#2E9B6B);box-shadow:0 26px 60px -24px rgba(95,211,155,.5),var(--edge)}
+.qresponse h2{font-family:var(--display);font-weight:700;font-size:clamp(27px,4.1vw,42px);line-height:1.1;letter-spacing:-.04em;color:var(--silver);margin:0 auto 14px;max-width:18ch;text-wrap:balance}
+.qresponse p{font-size:16.5px;color:var(--silver-2);max-width:44ch;margin:0 auto 30px;line-height:1.6}
+.autobar{height:3px;width:180px;margin:0 auto 26px;border-radius:3px;background:var(--line);overflow:hidden}
+.autobar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--blue),var(--blue-hi));transform-origin:left;transform:scaleX(0)}
+.autobar.run i{animation:auto 2400ms linear forwards}
+@keyframes auto{to{transform:scaleX(1)}}
+
+.qgrid2{display:grid;gap:0 18px;text-align:left;max-width:560px;margin:0 auto}
+@media(min-width:680px){.qgrid2{grid-template-columns:1fr 1fr}}
+.consent{max-width:560px;margin:0 auto 24px;text-align:left}
+.splitcards{max-width:760px;margin:28px auto 0;text-align:left}
+.tagpills{justify-content:center}
+.resumebar{max-width:560px;margin:0 auto 26px}
+@media(max-width:620px){
+  .quizwrap{padding:0 18px}
+  .qtitle{font-size:clamp(24px,7vw,31px)}
+  .qhint{font-size:15px;margin-bottom:24px}
+  .opt{padding:17px;font-size:15.5px;border-radius:14px;gap:12px}
+  .opt .k{width:27px;height:27px;font-size:11px}
+  .opt small{font-size:12.8px}
+  .qmark{width:64px;height:64px;border-radius:19px;margin-bottom:22px}
+  .qmark svg{width:31px;height:31px}
+  .funnelmeta{display:none}
+}
 
 /* ============ about facts ============ */
 .factrow{display:grid;gap:34px;align-items:center}
@@ -966,137 +968,141 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
 </main>
 <!-- ==================== START / QUIZ ==================== -->
 <main class="page" id="start">
-  <section class="wrap hero" style="padding-bottom:20px">
-    <div class="inner" style="text-align:left;max-width:840px;margin:0 auto">
-      <p class="eyebrow"><span class="dot"></span> Application &middot; About two minutes</p>
-      <h1 style="font-size:clamp(38px,5.2vw,62px)"><span class="ln"><span>Let's see if</span></span><span class="ln"><span>this is a fit.</span></span></h1>
-      <p class="lede rv" style="max-width:52ch">Five questions, then your details. No card, nothing to pay, and I read every one of these myself.</p>
-    </div>
-  </section>
-
   <section class="band" style="border:none">
-    <div class="band-in" style="padding-top:26px">
+    <div class="band-in" style="padding-top:54px">
       <div class="quizwrap">
-        <div class="resumebar" id="resumebar">
-          <p>You started this already. Want to pick up where you left off?</p>
-          <button class="btn sm" id="resumeYes">Continue</button>
-          <button class="qback" type="button" id="resumeNo">Start over</button>
-        </div>
-        <div class="qrail" id="qrail" aria-hidden="true"></div>
 
-        <div class="qstep on" data-step="0">
-          <p class="qcount">Question 1 of 5</p>
-          <h2 class="qtitle">Why do you want to learn this?</h2>
-          <p class="qhint">Start here, because everything else depends on the answer. There is no wrong one.</p>
-          <div class="opts" data-q="motive">
-            <button class="opt" data-v="side-income"><span class="k">A</span><span>Build something on the side<small>Extra money coming in without quitting anything</small></span></button>
-            <button class="opt" data-v="replace-income"><span class="k">B</span><span>Eventually walk away from my job<small>The long game, and you are in no rush</small></span></button>
-            <button class="opt" data-v="tired-guessing"><span class="k">C</span><span>I already trade and I am tired of guessing<small>You can follow a call. You cannot explain one</small></span></button>
-            <button class="opt" data-v="saw-someone"><span class="k">D</span><span>Somebody I know does it and I want in<small>You have seen it work up close</small></span></button>
+        <div class="qwelcome on" id="qwelcome">
+          <div class="qmark"><svg viewBox="0 0 24 24" fill="none"><path d="M13.4 2.5 4.8 13.6h5.6l-.8 7.9 8.6-11.1h-5.6z" fill="#fff"/></svg></div>
+          <h2>Welcome to<em>The Market Bully</em></h2>
+          <p class="intro">Glad you made it. Answer five quick questions and I will tell you exactly where to start.</p>
+          <button class="btn lg wide" id="qgo">Start here &rarr;</button>
+          <p class="mini">Takes about two minutes</p>
+          <div class="resumebar" id="resumebar">
+            <p>You started this already. Pick up where you left off?</p>
+            <button class="btn sm" id="resumeYes">Continue</button>
+            <button class="qback" type="button" id="resumeNo">Start over</button>
           </div>
-          <div class="qreply"><span class="qav">P</span><div class="qbub"><span class="who">Pops</span><p></p></div></div>
-          <p class="kbdhint">Tip: press A, B, C or D</p>
+          <p class="legalmini">The Market Bully is educational only. Not financial advice. Trading involves a risk of loss. <button class="inline-link" data-go="legal">See the full disclosure</button></p>
         </div>
 
-        <div class="qstep" data-step="1">
-          <p class="qcount">Question 2 of 5</p>
-          <h2 class="qtitle">Where are you at right now?</h2>
-          <p class="qhint">Beginners and burned traders learn completely differently, so this changes what I send you first.</p>
-          <div class="opts" data-q="experience">
-            <button class="opt" data-v="never"><span class="k">A</span><span>I have never placed a trade<small>Clean slate</small></span></button>
-            <button class="opt" data-v="dabbled"><span class="k">B</span><span>I have dabbled, mostly losing<small>Most honest answer people give me</small></span></button>
-            <button class="opt" data-v="1-3y"><span class="k">C</span><span>A year or two in, still inconsistent<small>Some good weeks, some bad ones</small></span></button>
-            <button class="opt" data-v="experienced"><span class="k">D</span><span>Experienced, I just want a system<small>You know the mechanics already</small></span></button>
-          </div>
-          <div class="qreply"><span class="qav">P</span><div class="qbub"><span class="who">Pops</span><p></p></div></div>
-          <div class="qnav"><button class="qback" type="button" data-back>Back</button></div>
-        </div>
+        <div class="qrail" id="qrail" aria-hidden="true" style="display:none"></div>
 
-        <div class="qstep" data-step="2">
-          <p class="qcount">Question 3 of 5</p>
-          <h2 class="qtitle">What is the thing that keeps going wrong?</h2>
-          <p class="qhint">Be blunt. This is the one that tells me whether I can actually help you.</p>
-          <div class="opts" data-q="pain">
-            <button class="opt" data-v="entries"><span class="k">A</span><span>I cannot explain why I enter where I enter<small>Copying calls without the reasoning</small></span></button>
-            <button class="opt" data-v="giving-back"><span class="k">B</span><span>I keep giving the profits back<small>Green all week, red on Friday</small></span></button>
-            <button class="opt" data-v="discipline"><span class="k">C</span><span>I cannot stay disciplined<small>The plan is fine until the candle moves</small></span></button>
-            <button class="opt" data-v="not-started"><span class="k">D</span><span>Nothing is wrong yet, I have not started<small>Nothing broken because nothing is built</small></span></button>
-          </div>
-          <div class="qreply"><span class="qav">P</span><div class="qbub"><span class="who">Pops</span><p></p></div></div>
-          <div class="qnav"><button class="qback" type="button" data-back>Back</button></div>
-        </div>
-
-        <div class="qstep" data-step="3">
-          <p class="qcount">Question 4 of 5</p>
-          <h2 class="qtitle">How much time can you honestly give it?</h2>
-          <p class="qhint">Realistic, not aspirational. I would rather know now than find out in three weeks.</p>
-          <div class="opts two" data-q="time">
-            <button class="opt" data-v="under-1h"><span class="k">A</span><span>Under an hour a day</span></button>
-            <button class="opt" data-v="1-2h"><span class="k">B</span><span>One to two hours</span></button>
-            <button class="opt" data-v="3h-plus"><span class="k">C</span><span>Three or more</span></button>
-            <button class="opt" data-v="weekends"><span class="k">D</span><span>Weekends only</span></button>
-          </div>
-          <div class="qreply"><span class="qav">P</span><div class="qbub"><span class="who">Pops</span><p></p></div></div>
-          <div class="qnav"><button class="qback" type="button" data-back>Back</button></div>
-        </div>
-
-        <div class="qstep" data-step="4">
-          <p class="qcount">Question 5 of 5</p>
-          <h2 class="qtitle">When you are ready to start, what are you working with?</h2>
-          <p class="qhint">Last one. No judgement either way, and it does not decide whether I reply to you.</p>
-          <div class="opts" data-q="capital">
-            <button class="opt" data-v="100-200"><span class="k">A</span><span>One to two hundred<small>Enough to start small and learn on real size</small></span></button>
-            <button class="opt" data-v="200-plus"><span class="k">B</span><span>More than two hundred<small>Room to actually work</small></span></button>
-            <button class="opt" data-v="soon"><span class="k">C</span><span>Not yet, but it is coming<small>Education can start before the account does</small></span></button>
-            <button class="opt" data-v="none"><span class="k">D</span><span>Nothing right now<small>Straight answer, and the free sessions are still yours</small></span></button>
-          </div>
-          <div class="qreply"><span class="qav">P</span><div class="qbub"><span class="who">Pops</span><p></p></div></div>
-          <div class="qnav"><button class="qback" type="button" data-back>Back</button></div>
-        </div>
-
-        <div class="qstep" data-step="5">
-          <p class="qcount">Last step</p>
-          <h2 class="qtitle">Where do I reach you?</h2>
-          <p class="qhint">This comes straight to me. I answer applications myself, usually the same day.</p>
-          <form id="leadForm" novalidate>
-            <div class="qgrid2">
-              <label class="field"><span>Name</span><input name="name" type="text" autocomplete="name" required></label>
-              <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
-              <label class="field"><span>Phone</span><input name="phone" type="tel" autocomplete="tel"></label>
-              <label class="field"><span>Telegram handle</span><input name="telegram" type="text" placeholder="@yourhandle"></label>
-              <label class="field"><span>Best time to call</span><select name="besttime"><option>Morning</option><option>Midday</option><option>Afternoon</option><option>Evening</option></select></label>
-              <label class="field"><span>Your timezone</span><input name="tz" type="text" id="tzField" placeholder="Pacific, GMT+1, and so on"></label>
+          <div class="qstep" data-step="0">
+            <p class="qcount">Question 1 of 5</p>
+            <h2 class="qtitle">What makes you want to get into day trading?</h2>
+            <p class="qhint">Start here, because everything else depends on the answer. There is no wrong one.</p>
+            <div class="opts" data-q="motive">
+              <button class="opt" data-v="side-income"><span class="k">A</span><span>Build something on the side<small>Extra money coming in without quitting anything</small></span></button>
+              <button class="opt" data-v="replace-income"><span class="k">B</span><span>Eventually walk away from my job<small>The long game, and you are in no rush</small></span></button>
+              <button class="opt" data-v="tired-guessing"><span class="k">C</span><span>I already trade and I am tired of guessing<small>You can follow a call. You cannot explain one</small></span></button>
+              <button class="opt" data-v="saw-someone"><span class="k">D</span><span>Somebody I know does it and I want in<small>You have seen it work up close</small></span></button>
             </div>
-            <label class="consent"><input type="checkbox" name="consent" required><span>I agree to be contacted by email, phone, SMS and Telegram about the signals chat, and I have read the risk disclosure and the paid link disclosure on the legal page.</span></label>
-            <div class="qnav" style="margin-top:4px">
-              <button class="btn lg" type="submit" id="submitBtn">Send my application</button>
-              <button class="qback" type="button" data-back>Back</button>
+            <div class="qnav"></div>
+          </div>
+
+          <div class="qstep" data-step="1">
+            <p class="qcount">Question 2 of 5</p>
+            <h2 class="qtitle">Where are you at with trading right now?</h2>
+            <p class="qhint">Beginners and burned traders learn completely differently, so this changes what I send you first.</p>
+            <div class="opts" data-q="experience">
+              <button class="opt" data-v="never"><span class="k">A</span><span>I have never placed a trade<small>Clean slate</small></span></button>
+              <button class="opt" data-v="dabbled"><span class="k">B</span><span>I have dabbled, mostly losing<small>The most honest answer people give me</small></span></button>
+              <button class="opt" data-v="1-3y"><span class="k">C</span><span>A year or two in, still inconsistent<small>Some good weeks, some bad ones</small></span></button>
+              <button class="opt" data-v="experienced"><span class="k">D</span><span>Experienced, I just want a system<small>You know the mechanics already</small></span></button>
             </div>
-            <p class="small dim" id="leadNote" style="margin-top:18px"></p>
-          </form>
+            <div class="qnav"><button class="qback" type="button" data-back>Back</button></div>
+          </div>
+
+          <div class="qstep" data-step="2">
+            <p class="qcount">Question 3 of 5</p>
+            <h2 class="qtitle">What is the thing that keeps going wrong?</h2>
+            <p class="qhint">Be blunt. This is the one that tells me whether I can actually help you.</p>
+            <div class="opts" data-q="pain">
+              <button class="opt" data-v="entries"><span class="k">A</span><span>I cannot explain why I enter where I enter<small>Copying calls without the reasoning</small></span></button>
+              <button class="opt" data-v="giving-back"><span class="k">B</span><span>I keep giving the profits back<small>Green all week, red on Friday</small></span></button>
+              <button class="opt" data-v="discipline"><span class="k">C</span><span>I cannot stay disciplined<small>The plan is fine until the candle moves</small></span></button>
+              <button class="opt" data-v="not-started"><span class="k">D</span><span>Nothing is wrong yet, I have not started<small>Nothing broken because nothing is built</small></span></button>
+            </div>
+            <div class="qnav"><button class="qback" type="button" data-back>Back</button></div>
+          </div>
+
+          <div class="qstep" data-step="3">
+            <p class="qcount">Question 4 of 5</p>
+            <h2 class="qtitle">How much time can you honestly give it each day?</h2>
+            <p class="qhint">Realistic, not aspirational. I would rather know now than find out in three weeks.</p>
+            <div class="opts" data-q="time">
+              <button class="opt" data-v="under-1h"><span class="k">A</span><span>Under an hour a day</span></button>
+              <button class="opt" data-v="1-2h"><span class="k">B</span><span>One to two hours</span></button>
+              <button class="opt" data-v="3h-plus"><span class="k">C</span><span>Three or more</span></button>
+              <button class="opt" data-v="weekends"><span class="k">D</span><span>Weekends only</span></button>
+            </div>
+            <div class="qnav"><button class="qback" type="button" data-back>Back</button></div>
+          </div>
+
+          <div class="qstep" data-step="4">
+            <p class="qcount">Question 5 of 5</p>
+            <h2 class="qtitle">Do you have an extra one to two hundred dollars to invest in yourself?</h2>
+            <p class="qhint">Last one. No judgement either way, and it does not decide whether I reply to you.</p>
+            <div class="opts" data-q="capital">
+              <button class="opt" data-v="100-200"><span class="k">A</span><span>Yes, one to two hundred<small>Enough to start small and learn on real size</small></span></button>
+              <button class="opt" data-v="200-plus"><span class="k">B</span><span>Yes, more than that<small>Room to actually work</small></span></button>
+              <button class="opt" data-v="soon"><span class="k">C</span><span>Not yet, but it is coming<small>Education can start before the account does</small></span></button>
+              <button class="opt" data-v="none"><span class="k">D</span><span>No, nothing right now<small>Straight answer, and the free sessions are still yours</small></span></button>
+            </div>
+            <div class="qnav"><button class="qback" type="button" data-back>Back</button></div>
+          </div>
+
+          <div class="qstep" data-step="5">
+            <p class="qcount">Last step</p>
+            <h2 class="qtitle">Where do I reach you?</h2>
+            <p class="qhint">This comes straight to me. I answer applications myself, usually the same day.</p>
+            <form id="leadForm" novalidate>
+              <div class="qgrid2">
+                <label class="field"><span>Name</span><input name="name" type="text" autocomplete="name" required></label>
+                <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+                <label class="field"><span>Phone</span><input name="phone" type="tel" autocomplete="tel"></label>
+                <label class="field"><span>Telegram handle</span><input name="telegram" type="text" placeholder="@yourhandle"></label>
+                <label class="field"><span>Best time to call</span><select name="besttime"><option>Morning</option><option>Midday</option><option>Afternoon</option><option>Evening</option></select></label>
+                <label class="field"><span>Your timezone</span><input name="tz" type="text" id="tzField" placeholder="Pacific, GMT+1"></label>
+              </div>
+              <label class="consent"><input type="checkbox" name="consent" required><span>I agree to be contacted by email, phone, SMS and Telegram about the signals chat, and I have read the risk disclosure and the paid link disclosure on the legal page.</span></label>
+              <button class="btn lg wide" type="submit" id="submitBtn">Send my application</button>
+              <div class="qnav"><button class="qback" type="button" data-back>Back</button></div>
+              <p class="small dim" id="leadNote" style="margin-top:16px"></p>
+            </form>
+          </div>
+
+          <div class="qstep qdone" data-step="6">
+            <div class="qmark"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 12.6l5 5L19.5 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <h2 class="qtitle">You are in the queue.</h2>
+            <p class="qhint">I read every one of these personally. Here is what happens next, and there are two different doors.</p>
+            <div class="splitcards">
+              <div class="glass splitcard now">
+                <p class="lbl">Open to you now</p>
+                <h3>The free room</h3>
+                <p>Walk straight into the free sessions on 1House.TV today. No account, no approval, nothing to pay. Start with the Fibonacci Settings session.</p>
+                <div class="row" style="margin-top:22px"><a class="btn ghost" href="https://www.1house.tv/" target="_blank" rel="noopener">Watch now</a></div>
+              </div>
+              <div class="glass splitcard earn">
+                <p class="lbl">You have to earn this one</p>
+                <h3>The signals chat</h3>
+                <p>Check your email and Telegram. You will be walked through opening your trading account, you send the confirmation back, and if I approve you, you get a private invite made for you alone. It works once.</p>
+                <div class="row" style="margin-top:22px"><button class="btn ghost" data-go="faq">What happens next</button></div>
+              </div>
+            </div>
+            <p class="eyebrow" style="margin:34px 0 0;justify-content:center">Tagged on your record</p>
+            <div class="tagpills" id="tagPills"></div>
+          </div>
+
+        <div class="qresponse" id="qresponse">
+          <div class="qmark"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 12.6l5 5L19.5 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h2 id="qrHead"></h2>
+          <p id="qrBody"></p>
+          <div class="autobar" id="autobar"><i></i></div>
+          <button class="btn wide" id="qrNext">Next question &rarr;</button>
         </div>
 
-        <div class="qstep qdone" data-step="6">
-          <p class="qcount"><span class="dot" style="display:inline-block;vertical-align:middle;margin-right:8px"></span> Application received</p>
-          <h2 class="qtitle">You are in the queue.</h2>
-          <p class="qhint">I read every one of these personally. Here is exactly what happens next, and there are two different doors.</p>
-          <div class="splitcards">
-            <div class="glass splitcard now">
-              <p class="lbl">Open to you now</p>
-              <h3>The free room</h3>
-              <p>You can walk straight into the free sessions on 1House.TV today. Years of published teaching, no account, no approval, nothing to pay. Start with the Fibonacci Settings session.</p>
-              <div class="row" style="margin-top:22px"><a class="btn ghost" href="https://www.1house.tv/" target="_blank" rel="noopener">Watch now</a></div>
-            </div>
-            <div class="glass splitcard earn">
-              <p class="lbl">You have to earn this one</p>
-              <h3>The signals chat</h3>
-              <p>Check your email and Telegram. You will be walked through opening your trading account, you send the confirmation back, and if I approve you, you get a private invite made for you alone. It works once.</p>
-              <div class="row" style="margin-top:22px"><button class="btn ghost" data-go="faq">What happens next</button></div>
-            </div>
-          </div>
-          <p class="eyebrow" style="margin:34px 0 0">Tagged on your record</p>
-          <div class="tagpills" id="tagPills"></div>
-        </div>
       </div>
     </div>
   </section>
@@ -1438,36 +1444,36 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
   (function(){var initial=readUrl(); if(initial!=='home') go(initial);})();
 
   /* ========================= APPLICATION ========================= */
-  var REPLIES={
+  var R={
     motive:{
-      'side-income':"Smart. Side income first, pressure off. That is how most of the ones who last actually start.",
-      'replace-income':"Respect. That is the long game and it is the right one. Let us see if the rest lines up.",
-      'tired-guessing':"I hear that one the most. Guessing is exhausting, and it is exactly the part I fix.",
-      'saw-someone':"Good. Watching somebody do it up close beats reading about it for a year."
+      'side-income':["Smart place to start.","Side income first, pressure off. That is how most of the people who last actually begin."],
+      'replace-income':["Respect that.","It is the long game and it is the right one. Let us see if the rest lines up."],
+      'tired-guessing':["I hear that one the most.","Guessing is exhausting, and it is exactly the part I fix."],
+      'saw-someone':["That helps more than you think.","Watching somebody do it up close beats reading about it for a year."]
     },
     experience:{
-      'never':"Perfect, honestly. No bad habits to unlearn. Beginners are the easiest people to teach.",
-      'dabbled':"You and most of the room. Nothing to be embarrassed about, and it is fixable.",
-      '1-3y':"Inconsistent usually means the strategy is fine and the rules are not. That we can work with.",
-      'experienced':"Then you already know what is missing. That makes this quick."
+      'never':["Honestly, perfect.","No bad habits to unlearn. Beginners are the easiest people to teach."],
+      'dabbled':["You and most of the room.","Nothing to be embarrassed about, and it is fixable."],
+      '1-3y':["Then it is your rules, not your strategy.","Inconsistent usually means the plan is fine and the discipline is not. That we can work with."],
+      'experienced':["Then this will be quick.","You already know what is missing. We just go and get it."]
     },
     pain:{
-      'entries':"That is the one. If you cannot explain the entry, you are copying, not trading.",
-      'giving-back':"Green all week, red on Friday. That is a rules problem, not a strategy problem.",
-      'discipline':"Everybody's plan works until the candle moves. That is the real work.",
-      'not-started':"Nothing broken because nothing is built. Clean slate. Let us build it right."
+      'entries':["That is the one.","If you cannot explain the entry, you are copying, not trading."],
+      'giving-back':["Green all week, red on Friday.","That is a rules problem, not a strategy problem, and it is fixable."],
+      'discipline':["Everybody's plan works until the candle moves.","That is the real work, and it is most of what I teach."],
+      'not-started':["Clean slate.","Nothing is broken because nothing is built. Let us build it right the first time."]
     },
     time:{
-      'under-1h':"Tight, but workable if you are consistent with the hour you have.",
-      '1-2h':"That is the sweet spot for most people. Enough to learn without burning out.",
-      '3h-plus':"That is real commitment. You will move faster than most.",
-      'weekends':"Markets do not wait for Saturday, so we would need to talk about that. Keep going."
+      'under-1h':["That can work.","Tight, but workable if you are consistent with the hour you have."],
+      '1-2h':["That is the sweet spot.","Enough to learn properly without burning yourself out."],
+      '3h-plus':["You will move fast.","That is real commitment and it shows up quickly."],
+      'weekends':["We would need to talk about that.","Markets do not wait for Saturday. Keep going and we will work it out."]
     },
     capital:{
-      '100-200':"That is a real start. Small size, real lessons, and that is how it should be.",
-      '200-plus':"Good. That gives you room to actually work without forcing anything.",
-      'soon':"Fine by me. Start the education now, the account can catch up.",
-      'none':"Straight answer and I respect it. The free sessions are still yours, go use them."
+      '100-200':["That is a real start.","Small size, real lessons. That is exactly how it should begin."],
+      '200-plus':["Good.","That gives you room to work without forcing anything."],
+      'soon':["Fine by me.","Start the education now. The account can catch up."],
+      'none':["Straight answer, and I respect it.","The free sessions are still yours. Go and use them."]
     }
   };
 
@@ -1489,90 +1495,116 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
     return out;
   })();
 
-  function save(){
-    if(submitted) return;
-    try{ localStorage.setItem(STORE, JSON.stringify({a:answers,s:step,t:Date.now()})); }catch(err){}
-  }
+  function save(){ if(submitted) return;
+    try{ localStorage.setItem(STORE, JSON.stringify({a:answers,s:step,t:Date.now()})); }catch(err){} }
   function load(){
-    try{
-      var raw=localStorage.getItem(STORE); if(!raw) return null;
+    try{ var raw=localStorage.getItem(STORE); if(!raw) return null;
       var d=JSON.parse(raw);
-      if(!d||!d.a||Date.now()-(d.t||0) > 1000*60*60*24*14) return null;
-      if(!Object.keys(d.a).length) return null;
-      return d;
+      if(!d||!d.a||Date.now()-(d.t||0)>1000*60*60*24*14) return null;
+      if(!Object.keys(d.a).length) return null; return d;
     }catch(err){ return null; }
   }
   function clearSaved(){ try{ localStorage.removeItem(STORE); }catch(err){} }
-  var steps=Array.prototype.slice.call(document.querySelectorAll('.qstep'));
+
+  var steps=Array.prototype.slice.call(document.querySelectorAll('#start .qstep'));
   var rail=document.getElementById('qrail');
+  var welcome=document.getElementById('qwelcome');
+  var resp=document.getElementById('qresponse');
+  var rHead=document.getElementById('qrHead');
+  var rBody=document.getElementById('qrBody');
+  var autobar=document.getElementById('autobar');
+  var rNext=document.getElementById('qrNext');
+  var started=false, pending=null, timer=null;
 
   function paintRail(){
-    if(!rail)return;
+    if(!rail) return;
     var out='';
-    for(var i=0;i<TOTAL;i++){
-      out+='<i class="'+(i<step?'done':(i===step?'now':''))+'"></i>';
-    }
+    for(var i=0;i<TOTAL;i++) out+='<i class="'+(i<step?'done':(i===step?'now':''))+'"></i>';
     rail.innerHTML=out;
+  }
+  function scrollTop(){
+    var y=document.getElementById('start');
+    if(y) window.scrollTo({top:Math.max(0,y.offsetTop-10),behavior:reduce?'auto':'smooth'});
+  }
+  function hideAll(){
+    steps.forEach(function(s){s.classList.remove('on');});
+    if(resp) resp.classList.remove('on');
+    if(welcome) welcome.classList.remove('on');
   }
   function showStep(n){
     step=Math.max(0,Math.min(n,steps.length-1));
-    steps.forEach(function(s,i){s.classList.toggle('on',i===step);});
-    document.querySelectorAll('.qreply').forEach(function(r){r.classList.remove('on');});
-    paintRail();
-    save();
-    var y=document.getElementById('start');
-    if(y) window.scrollTo({top:Math.max(0,y.offsetTop+120),behavior:reduce?'auto':'smooth'});
+    hideAll();
+    steps[step].classList.add('on');
+    if(rail) rail.style.display='flex';
+    paintRail(); save(); scrollTop();
   }
-  paintRail();
+  function showResponse(q,v,nextIndex){
+    var pair=(R[q]&&R[q][v])||["Got it.","Next question."];
+    rHead.textContent=pair[0];
+    rBody.textContent=pair[1];
+    rNext.textContent = nextIndex>=5 ? 'Last step →' : 'Next question →';
+    hideAll();
+    resp.classList.add('on');
+    scrollTop();
+    autobar.classList.remove('run'); void autobar.offsetWidth;
+    if(!reduce) autobar.classList.add('run');
+    pending=nextIndex;
+    clearTimeout(timer);
+    timer=setTimeout(go2next, reduce?600:2500);
+  }
+  function go2next(){
+    clearTimeout(timer);
+    if(pending===null) return;
+    var n=pending; pending=null;
+    showStep(n);
+  }
+  if(rNext) rNext.addEventListener('click',go2next);
 
-  var busy=false;
-  document.querySelectorAll('.opts').forEach(function(group){
+  function begin(){
+    started=true;
+    if(welcome) welcome.classList.remove('on');
+    showStep(0);
+  }
+  var goBtn=document.getElementById('qgo');
+  if(goBtn) goBtn.addEventListener('click',begin);
+
+  document.querySelectorAll('#start .opts').forEach(function(group){
     group.addEventListener('click',function(e){
-      var b=e.target.closest('.opt');if(!b||busy)return;
-      busy=true;
+      var b=e.target.closest('.opt'); if(!b||pending!==null) return;
       group.querySelectorAll('.opt').forEach(function(o){o.classList.remove('sel');});
       b.classList.add('sel');
       var q=group.dataset.q, v=b.dataset.v;
-      answers[q]=v;
-      save();
+      answers[q]=v; save();
       try{ if(navigator.vibrate) navigator.vibrate(12); }catch(err){}
-
-      var host=group.parentNode.querySelector('.qreply');
-      var line=(REPLIES[q]&&REPLIES[q][v])||'Got it.';
-      if(!host||reduce){
-        setTimeout(function(){busy=false;showStep(step+1);},reduce?200:400);
-        return;
-      }
-      var body=host.querySelector('p');
-      body.innerHTML='<span class="dots"><i></i><i></i><i></i></span>';
-      host.classList.add('on');
-      setTimeout(function(){ body.textContent=line; },520);
-      setTimeout(function(){
-        host.classList.remove('on');
-        busy=false;
-        showStep(step+1);
-      },2500);
+      var idx=steps.indexOf(group.closest('.qstep'));
+      setTimeout(function(){ showResponse(q,v,idx+1); }, 260);
     });
   });
+
   document.querySelectorAll('[data-back]').forEach(function(b){
-    b.addEventListener('click',function(){showStep(step-1);});
+    b.addEventListener('click',function(){ clearTimeout(timer); pending=null; showStep(step-1); });
   });
 
   document.addEventListener('keydown',function(e){
     if(!document.getElementById('start').classList.contains('on')) return;
     var tag=(e.target.tagName||'').toLowerCase();
     if(tag==='input'||tag==='textarea'||tag==='select') return;
+    if(resp && resp.classList.contains('on')){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go2next(); }
+      return;
+    }
+    if(welcome && welcome.classList.contains('on')){
+      if(e.key==='Enter'){ e.preventDefault(); begin(); }
+      return;
+    }
     var map={a:0,b:1,c:2,d:3,'1':0,'2':1,'3':2,'4':3};
     var k=e.key.toLowerCase();
     if(k in map){
-      var opts=document.querySelectorAll('.qstep.on .opt');
-      if(opts[map[k]]){ e.preventDefault(); opts[map[k]].click(); }
-    } else if(k==='backspace' && step>0 && step<6){
-      e.preventDefault(); showStep(step-1);
-    }
+      var o=document.querySelectorAll('#start .qstep.on .opt');
+      if(o[map[k]]){ e.preventDefault(); o[map[k]].click(); }
+    } else if(k==='backspace' && step>0 && step<6){ e.preventDefault(); showStep(step-1); }
   });
 
-  // resume an unfinished application
   (function(){
     var saved=load(); if(!saved) return;
     var bar=document.getElementById('resumebar'); if(!bar) return;
@@ -1580,7 +1612,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
     document.getElementById('resumeYes').addEventListener('click',function(){
       answers=saved.a||{};
       Object.keys(answers).forEach(function(q){
-        var b=document.querySelector('.opts[data-q="'+q+'"] .opt[data-v="'+answers[q]+'"]');
+        var b=document.querySelector('#start .opts[data-q="'+q+'"] .opt[data-v="'+answers[q]+'"]');
         if(b) b.classList.add('sel');
       });
       bar.classList.remove('on');
@@ -1588,22 +1620,21 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
     });
     document.getElementById('resumeNo').addEventListener('click',function(){
       clearSaved(); answers={}; bar.classList.remove('on');
-      document.querySelectorAll('.opt.sel').forEach(function(o){o.classList.remove('sel');});
-      showStep(0);
+      document.querySelectorAll('#start .opt.sel').forEach(function(o){o.classList.remove('sel');});
+      begin();
     });
   })();
 
-  // prefill timezone
   try{
     var tzf=document.getElementById('tzField');
-    if(tzf && Intl && Intl.DateTimeFormat) tzf.value=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+    if(tzf && window.Intl && Intl.DateTimeFormat) tzf.value=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
   }catch(err){}
 
   function tagsFrom(a){
     var map={
       capital:{'100-200':'Capital 100-200','200-plus':'Capital 200+','soon':'Capital soon','none':'No capital'},
-      motive:{'side-income':'Side income','replace-income':'Replace income','get-better':'Wants to improve','curious':'Curious'},
-      experience:{'never':'Never traded','under-1y':'Under 1 year','1-3y':'1-3 years','3y-plus':'3+ years'},
+      motive:{'side-income':'Side income','replace-income':'Replace income','tired-guessing':'Tired of guessing','saw-someone':'Referred by someone'},
+      experience:{'never':'Never traded','dabbled':'Dabbled, losing','1-3y':'1-3 years','experienced':'Experienced'},
       time:{'under-1h':'Under 1h/day','1-2h':'1-2h/day','3h-plus':'3h+/day','weekends':'Weekends only'},
       pain:{'entries':'Entry reasoning','giving-back':'Gives profits back','discipline':'Discipline','not-started':'Not started'}
     };
@@ -1620,36 +1651,36 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
       var fd=new FormData(leadForm);
       if(!fd.get('name')||!fd.get('email')||!leadForm.querySelector('[name=consent]').checked){
         note.textContent='Name, email and the consent box are needed before this can go through.';
-        note.style.color='var(--risk)';return;
+        note.style.color='var(--risk)'; return;
       }
       var payload={};
       fd.forEach(function(v,k){payload[k]=v;});
       Object.keys(answers).forEach(function(k){payload[k]=answers[k];});
+      Object.keys(SOURCE).forEach(function(k){payload[k]=SOURCE[k];});
       payload.tags=tagsFrom(answers).join(', ');
       payload.source='themarketbully-site';
-      Object.keys(SOURCE).forEach(function(k){ payload[k]=SOURCE[k]; });
       payload.submittedAt=new Date().toISOString();
 
       var pills=document.getElementById('tagPills');
       if(pills) pills.innerHTML=tagsFrom(answers).map(function(t){return '<span class="tagpill">'+t+'</span>';}).join('');
 
       function finish(){
-        submitted=true;
-        clearSaved();
+        submitted=true; clearSaved();
         var first=String(fd.get('name')||'').trim().split(/\s+/)[0];
-        var head=document.querySelector('.qstep[data-step="6"] .qtitle');
+        var head=document.querySelector('#start .qstep[data-step="6"] .qtitle');
         if(head&&first) head.textContent='You are in the queue, '+first+'.';
-        showStep(6);
+        hideAll();
+        steps[6].classList.add('on');
+        if(rail){ step=6; paintRail(); }
+        scrollTop();
       }
-
       if(ENDPOINT){
         var btn=document.getElementById('submitBtn');
-        btn.disabled=true;btn.textContent='Sending...';
+        btn.disabled=true; btn.textContent='Sending...';
         fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
           .then(finish).catch(finish);
       } else {
-        note.style.color='';
-        note.textContent='';
+        note.style.color=''; note.textContent='';
         console.log('Application captured (no endpoint configured yet):',payload);
         finish();
       }
