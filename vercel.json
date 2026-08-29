@@ -1,0 +1,21 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/start",     "destination": "/index.html" },
+    { "source": "/about",     "destination": "/index.html" },
+    { "source": "/community", "destination": "/index.html" },
+    { "source": "/faq",       "destination": "/index.html" },
+    { "source": "/contact",   "destination": "/index.html" },
+    { "source": "/legal",     "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ]
+}
