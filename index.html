@@ -371,9 +371,9 @@ details .body p:last-child{margin-bottom:0}
 .qresponse .qmark{background:linear-gradient(160deg,#5FD39B,#2E9B6B);box-shadow:0 26px 60px -24px rgba(95,211,155,.5),var(--edge)}
 .qresponse h2{font-family:var(--display);font-weight:700;font-size:clamp(27px,4.1vw,42px);line-height:1.1;letter-spacing:-.04em;color:var(--silver);margin:0 auto 14px;max-width:18ch;text-wrap:balance}
 .qresponse p{font-size:16.5px;color:var(--silver-2);max-width:44ch;margin:0 auto 30px;line-height:1.6}
-.autobar{height:3px;width:180px;margin:0 auto 26px;border-radius:3px;background:var(--line);overflow:hidden}
+.autobar{height:3px;width:200px;margin:0 auto 26px;border-radius:3px;background:var(--line);overflow:hidden}
 .autobar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--blue),var(--blue-hi));transform-origin:left;transform:scaleX(0)}
-.autobar.run i{animation:auto 2400ms linear forwards}
+.autobar.run i{animation:auto var(--dur,4500ms) linear forwards}
 @keyframes auto{to{transform:scaleX(1)}}
 
 .qgrid2{display:grid;gap:0 18px;text-align:left;max-width:560px;margin:0 auto}
@@ -1560,6 +1560,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
   var autobar=document.getElementById('autobar');
   var rNext=document.getElementById('qrNext');
   var started=false, pending=null, timer=null;
+  var HOLD=4500;   // how long a response screen holds before moving on
 
   function paintRail(){
     if(!rail) return;
@@ -1590,11 +1591,13 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
     hideAll();
     resp.classList.add('on');
     scrollTop();
-    autobar.classList.remove('run'); void autobar.offsetWidth;
+    autobar.classList.remove('run');
+    autobar.style.setProperty('--dur', HOLD+'ms');
+    void autobar.offsetWidth;
     if(!reduce) autobar.classList.add('run');
     pending=nextIndex;
     clearTimeout(timer);
-    timer=setTimeout(go2next, reduce?600:2500);
+    timer=setTimeout(go2next, reduce?800:HOLD);
   }
   function go2next(){
     clearTimeout(timer);
