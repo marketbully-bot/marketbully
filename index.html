@@ -156,7 +156,7 @@ p{margin:0 0 18px}
 }
 
 /* ============ hero ============ */
-.hero{padding:62px 0 48px;position:relative}
+.hero{padding-top:62px;padding-bottom:48px;position:relative}
 .hero canvas.bgline{position:absolute;inset:auto 0 0 0;width:100%;height:300px;opacity:.14;pointer-events:none;z-index:0}
 .hero .inner{position:relative;z-index:2}
 .herogrid{display:grid;gap:40px;align-items:center}
@@ -402,6 +402,37 @@ ul.facts li::before{content:"";position:absolute;left:0;top:9px;width:15px;heigh
   border:1px solid rgba(110,157,255,.55);background:rgba(46,107,255,.16)}
 ul.facts li::after{content:"";position:absolute;left:4px;top:13px;width:7px;height:4px;border-left:1.8px solid #9EBBFF;border-bottom:1.8px solid #9EBBFF;transform:rotate(-45deg)}
 
+/* ============ funnel mode (/start) ============ */
+body.funnel nav.pages{display:none}
+body.funnel .navcta{display:none}
+body.funnel header.top .top-in{justify-content:space-between}
+.funnelmeta{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--silver-dim);border:1px solid var(--line);border-radius:100px;padding:6px 14px;background:var(--panel)}
+body:not(.funnel) .funnelmeta{display:none}
+
+/* quiz on a phone */
+@media(max-width:620px){
+  .funnelmeta{display:none}
+  .quizwrap{padding:0 18px}
+  .qtitle{font-size:clamp(25px,7.4vw,32px);letter-spacing:-.032em}
+  .qhint{font-size:15px;margin-bottom:22px}
+  .opt{padding:17px 17px;font-size:15.5px;border-radius:14px;gap:13px}
+  .opt .k{width:27px;height:27px;font-size:11px}
+  .opt small{font-size:12.8px;margin-top:2px}
+  .opts{gap:10px}
+  .qrail{margin-bottom:26px}
+  .qbub{max-width:none}
+  .qbub p{font-size:14.5px}
+  .splitcard{padding:26px 22px}
+}
+.opt{-webkit-tap-highlight-color:transparent}
+.kbdhint{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver-dim);margin-top:18px}
+@media(hover:none){.kbdhint{display:none}}
+.resumebar{display:none;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line-hi);border-radius:14px;
+  background:var(--panel);padding:14px 18px;margin-bottom:26px}
+.resumebar.on{display:flex}
+.resumebar p{margin:0;font-size:14.5px;color:var(--silver-2)}
+
 /* ============ legal ============ */
 .legal h2{font-size:22px;margin-top:40px}
 .legal p,.legal li{font-size:15.5px;color:var(--silver-dim);max-width:var(--read)}
@@ -460,6 +491,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
       </svg>
       <span><b>The Market Bully</b><em>All Pips Matter</em></span>
     </button>
+    <span class="funnelmeta"><span class="dot"></span> 5 questions &middot; about 2 minutes</span>
     <nav class="pages" id="nav">
       <button data-go="home" aria-current="page">Home</button>
       <button data-go="about">About</button>
@@ -774,7 +806,6 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
           <div><b>CA-37</b><span>Congressional recognition</span></div>
         </div>
       </div>
-      </div>
     </div>
   </section>
 
@@ -946,6 +977,11 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
   <section class="band" style="border:none">
     <div class="band-in" style="padding-top:26px">
       <div class="quizwrap">
+        <div class="resumebar" id="resumebar">
+          <p>You started this already. Want to pick up where you left off?</p>
+          <button class="btn sm" id="resumeYes">Continue</button>
+          <button class="qback" type="button" id="resumeNo">Start over</button>
+        </div>
         <div class="qrail" id="qrail" aria-hidden="true"></div>
 
         <div class="qstep on" data-step="0">
@@ -959,6 +995,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
             <button class="opt" data-v="saw-someone"><span class="k">D</span><span>Somebody I know does it and I want in<small>You have seen it work up close</small></span></button>
           </div>
           <div class="qreply"><span class="qav">P</span><div class="qbub"><span class="who">Pops</span><p></p></div></div>
+          <p class="kbdhint">Tip: press A, B, C or D</p>
         </div>
 
         <div class="qstep" data-step="1">
@@ -1369,6 +1406,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
     document.querySelectorAll('#nav button').forEach(function(b){
       if(b.dataset.go===id)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
     });
+    document.body.classList.toggle('funnel', id==='start');
     var tz=document.getElementById('toast');
     if(tz){ if(id==='start') tz.classList.remove('in'); else if(toastShown) tz.classList.add('in'); }
     window.scrollTo(0,0);
@@ -1434,6 +1472,37 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
   };
 
   var answers={}, step=0, TOTAL=6;
+  var STORE='mb_app_v1', submitted=false;
+
+  var SOURCE=(function(){
+    var out={};
+    try{
+      var q=new URLSearchParams(location.search);
+      ['utm_source','utm_medium','utm_campaign','utm_content','src','ref'].forEach(function(k){
+        var v=q.get(k); if(v) out[k]=v.slice(0,120);
+      });
+      if(!out.src && document.referrer){
+        var h=document.referrer.split('/')[2]||'';
+        if(h && h.indexOf(location.hostname)===-1) out.referrer=h;
+      }
+    }catch(err){}
+    return out;
+  })();
+
+  function save(){
+    if(submitted) return;
+    try{ localStorage.setItem(STORE, JSON.stringify({a:answers,s:step,t:Date.now()})); }catch(err){}
+  }
+  function load(){
+    try{
+      var raw=localStorage.getItem(STORE); if(!raw) return null;
+      var d=JSON.parse(raw);
+      if(!d||!d.a||Date.now()-(d.t||0) > 1000*60*60*24*14) return null;
+      if(!Object.keys(d.a).length) return null;
+      return d;
+    }catch(err){ return null; }
+  }
+  function clearSaved(){ try{ localStorage.removeItem(STORE); }catch(err){} }
   var steps=Array.prototype.slice.call(document.querySelectorAll('.qstep'));
   var rail=document.getElementById('qrail');
 
@@ -1450,6 +1519,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
     steps.forEach(function(s,i){s.classList.toggle('on',i===step);});
     document.querySelectorAll('.qreply').forEach(function(r){r.classList.remove('on');});
     paintRail();
+    save();
     var y=document.getElementById('start');
     if(y) window.scrollTo({top:Math.max(0,y.offsetTop+120),behavior:reduce?'auto':'smooth'});
   }
@@ -1464,6 +1534,8 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
       b.classList.add('sel');
       var q=group.dataset.q, v=b.dataset.v;
       answers[q]=v;
+      save();
+      try{ if(navigator.vibrate) navigator.vibrate(12); }catch(err){}
 
       var host=group.parentNode.querySelector('.qreply');
       var line=(REPLIES[q]&&REPLIES[q][v])||'Got it.';
@@ -1485,6 +1557,41 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
   document.querySelectorAll('[data-back]').forEach(function(b){
     b.addEventListener('click',function(){showStep(step-1);});
   });
+
+  document.addEventListener('keydown',function(e){
+    if(!document.getElementById('start').classList.contains('on')) return;
+    var tag=(e.target.tagName||'').toLowerCase();
+    if(tag==='input'||tag==='textarea'||tag==='select') return;
+    var map={a:0,b:1,c:2,d:3,'1':0,'2':1,'3':2,'4':3};
+    var k=e.key.toLowerCase();
+    if(k in map){
+      var opts=document.querySelectorAll('.qstep.on .opt');
+      if(opts[map[k]]){ e.preventDefault(); opts[map[k]].click(); }
+    } else if(k==='backspace' && step>0 && step<6){
+      e.preventDefault(); showStep(step-1);
+    }
+  });
+
+  // resume an unfinished application
+  (function(){
+    var saved=load(); if(!saved) return;
+    var bar=document.getElementById('resumebar'); if(!bar) return;
+    bar.classList.add('on');
+    document.getElementById('resumeYes').addEventListener('click',function(){
+      answers=saved.a||{};
+      Object.keys(answers).forEach(function(q){
+        var b=document.querySelector('.opts[data-q="'+q+'"] .opt[data-v="'+answers[q]+'"]');
+        if(b) b.classList.add('sel');
+      });
+      bar.classList.remove('on');
+      showStep(Math.min(saved.s||0,5));
+    });
+    document.getElementById('resumeNo').addEventListener('click',function(){
+      clearSaved(); answers={}; bar.classList.remove('on');
+      document.querySelectorAll('.opt.sel').forEach(function(o){o.classList.remove('sel');});
+      showStep(0);
+    });
+  })();
 
   // prefill timezone
   try{
@@ -1520,12 +1627,20 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
       Object.keys(answers).forEach(function(k){payload[k]=answers[k];});
       payload.tags=tagsFrom(answers).join(', ');
       payload.source='themarketbully-site';
+      Object.keys(SOURCE).forEach(function(k){ payload[k]=SOURCE[k]; });
       payload.submittedAt=new Date().toISOString();
 
       var pills=document.getElementById('tagPills');
       if(pills) pills.innerHTML=tagsFrom(answers).map(function(t){return '<span class="tagpill">'+t+'</span>';}).join('');
 
-      function finish(){ showStep(6); }
+      function finish(){
+        submitted=true;
+        clearSaved();
+        var first=String(fd.get('name')||'').trim().split(/\s+/)[0];
+        var head=document.querySelector('.qstep[data-step="6"] .qtitle');
+        if(head&&first) head.textContent='You are in the queue, '+first+'.';
+        showStep(6);
+      }
 
       if(ENDPOINT){
         var btn=document.getElementById('submitBtn');
