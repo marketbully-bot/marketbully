@@ -229,6 +229,27 @@ export default async function handler(req, res) {
     const from = m.from || {};
     const text = (m.text || '').trim();
 
+    // Paste a file id back and I will test it on the spot.
+    if (String(from.id) === ADMIN && /^(BAAC|CgAC|DQAC|BQAC)[A-Za-z0-9_-]{20,}$/.test(text)) {
+      const t = await tg('sendVideo', {
+        chat_id: from.id,
+        video: text,
+        supports_streaming: true,
+        caption: '\u2705 <b>That id works.</b> Safe to put in Vercel.',
+        parse_mode: 'HTML'
+      });
+      if (!(t && t.ok)) {
+        await tg('sendMessage', {
+          chat_id: from.id,
+          parse_mode: 'HTML',
+          text: '\u274c <b>That id is no good.</b>  <i>(' + text.length + ' characters)</i>\n\n' +
+                'Telegram said:\n<code>' + esc((t && t.description) || 'no reason given') + '</code>\n\n' +
+                'Send the clip again and tap the grey box to copy it.'
+        });
+      }
+      return res.status(200).end();
+    }
+
     if (/^\/start/i.test(text)) {
       // The welcome clip. If Telegram refuses it for any reason we carry on
       // without it, and the text below puts its own heading back.
@@ -289,14 +310,16 @@ export default async function handler(req, res) {
     if (clip && String(from.id) === ADMIN) {
       const kind = m.video ? 'video' : m.animation ? 'animation'
                  : m.video_note ? 'video note' : 'document';
+      const fid = String(clip.file_id || '');
       await tg('sendMessage', {
         chat_id: from.id,
         parse_mode: 'HTML',
         text:
-          '\ud83c\udfac <b>Got your welcome clip.</b>  <i>(' + kind + ')</i>\n\nIts file id is:\n\n' +
-          '<code>' + esc(clip.file_id) + '</code>\n\n' +
-          'Tap that to copy it, then add it in Vercel as <b>WELCOME_VIDEO</b> and redeploy. ' +
-          'After that every applicant gets it the moment they send /start.'
+          '\ud83c\udfac <b>Got your welcome clip.</b>  <i>(' + kind + ')</i>\n\n' +
+          '<b>' + fid.length + ' characters.</b> Send me back the same number or it got cut.\n\n' +
+          '<code>' + esc(fid) + '</code>\n\n' +
+          '\ud83d\udc46 <b>Tap the grey box once.</b> That copies the whole thing. ' +
+          'Do not drag over it by hand, that is what clipped it last time.'
       });
       return res.status(200).end();
     }
