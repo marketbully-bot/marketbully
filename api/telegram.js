@@ -10,7 +10,7 @@
 // One time setup, once the variables are saved and deployed, open in a browser:
 //   https://themarketbully.com/api/telegram?setup=YOUR_WEBHOOK_SECRET
 
-const API = (m) => `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/${m}`;
+const API = (m) => `https://api.telegram.org/bot${String(process.env.TELEGRAM_BOT_TOKEN || '').trim()}/${m}`;
 
 async function tg(method, payload) {
   const r = await fetch(API(method), {
@@ -30,7 +30,7 @@ function esc(v) {
 // admin of the signals chat itself. That way a mismatched chat id can
 // never lock Richard out of his own door.
 async function canApprove(userId, admin, room) {
-  if (admin && String(userId) === String(admin)) return true;
+  if (admin && String(userId).trim() === String(admin).trim()) return true;
   if (!room) return false;
   try {
     const r = await tg('getChatMember', { chat_id: room, user_id: userId });
@@ -48,11 +48,13 @@ function who(u) {
 }
 
 export default async function handler(req, res) {
-  const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-  const ADMIN = String(process.env.TELEGRAM_CHAT_ID || '');
-  const ROOM = process.env.SIGNALS_CHAT_ID;
-  const LINK = process.env.BROKER_LINK || '';
-  const SECRET = process.env.TELEGRAM_WEBHOOK_SECRET || '';
+  // .trim() everywhere: a stray space pasted into a dashboard is invisible
+  // and would otherwise silently break every comparison below.
+  const TOKEN = String(process.env.TELEGRAM_BOT_TOKEN || '').trim();
+  const ADMIN = String(process.env.TELEGRAM_CHAT_ID || '').trim();
+  const ROOM = String(process.env.SIGNALS_CHAT_ID || '').trim();
+  const LINK = String(process.env.BROKER_LINK || '').trim();
+  const SECRET = String(process.env.TELEGRAM_WEBHOOK_SECRET || '').trim();
 
   // ---- one time webhook registration, no token ever in the URL ----
   if (req.method === 'GET') {
