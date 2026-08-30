@@ -567,6 +567,58 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
   .band-in{padding:56px 22px}
   .cine{min-height:380px}
 }
+
+/* ============ onboarding ============ */
+.ob{max-width:720px;margin:0 auto;padding:0 22px}
+.ob-rail{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.06);z-index:60}
+.ob-rail i{display:block;height:100%;width:33.33%;background:linear-gradient(90deg,#1E52E0,#6E9DFF);
+  box-shadow:0 0 18px var(--blue-glow);transition:width .6s var(--ease)}
+.ob-step{display:none}
+.ob-step.on{display:block;animation:pageIn .55s var(--ease)}
+.ob-count{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--silver-dim);margin:0 0 14px}
+.ob h2{font-family:var(--display);font-weight:800;letter-spacing:-.03em;line-height:1.06;
+  font-size:clamp(30px,6.4vw,44px);margin:0 0 14px}
+.ob .lede{color:var(--silver-2);font-size:16.5px;line-height:1.6;margin:0 0 26px;max-width:56ch}
+.ob-list{display:grid;gap:10px;margin:0 0 24px}
+.ob-item{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:14px;
+  border:1px solid var(--line);background:rgba(255,255,255,.028);box-shadow:var(--edge)}
+.ob-item .n{flex:0 0 26px;height:26px;border-radius:8px;display:grid;place-items:center;
+  font-family:var(--mono);font-size:12px;color:var(--silver-2);background:rgba(255,255,255,.06);border:1px solid var(--line)}
+.ob-item.hot{border-color:rgba(110,157,255,.45);background:rgba(46,107,255,.09)}
+.ob-item.hot .n{background:linear-gradient(180deg,#4079FF,#1E52E0);color:#fff;border-color:transparent}
+.ob-item.warn{border-color:rgba(224,128,110,.4);background:rgba(224,128,110,.07)}
+.ob-item.warn .n{background:rgba(224,128,110,.22);color:#F2B5A7;border-color:transparent}
+.ob-item b{display:block;font-size:15px;font-weight:700;color:var(--silver);margin:0 0 3px;letter-spacing:-.01em}
+.ob-item span.t{display:block;font-size:13.5px;line-height:1.5;color:var(--silver-dim)}
+.ob-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:30px 0 18px;
+  padding:6px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.025)}
+.ob-tabs button{font-family:var(--ui);font-weight:700;font-size:13.5px;padding:12px 6px;border-radius:10px;
+  border:1px solid transparent;background:none;color:var(--silver-dim);cursor:pointer;transition:all .3s var(--ease)}
+.ob-tabs button[aria-selected="true"]{background:linear-gradient(180deg,#4079FF,#1E52E0);color:#fff;
+  box-shadow:0 10px 26px -12px var(--blue-glow)}
+.ob-pane{display:none}
+.ob-pane.on{display:block;animation:pageIn .4s var(--ease)}
+.ob-nav{display:flex;gap:10px;margin:30px 0 10px}
+.ob-nav .btn{flex:1}
+.ob-fine{font-size:12.5px;line-height:1.6;color:var(--silver-dim);text-align:center;margin:22px 0 0}
+.ob-fine a{color:var(--silver-dim);text-decoration:underline;text-underline-offset:3px}
+.ob-done{width:64px;height:64px;margin:0 auto 22px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(180deg,#4079FF,#1E52E0);box-shadow:0 0 46px var(--blue-glow)}
+.ob-done svg{width:30px;height:30px}
+.ob-links{display:grid;gap:10px;margin:24px 0 0}
+.ob-link{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 20px;border-radius:14px;
+  border:1px solid var(--line);background:rgba(255,255,255,.028);color:var(--silver);text-decoration:none;
+  transition:transform .35s var(--ease),border-color .35s var(--ease)}
+.ob-link:hover{transform:translateY(-3px);border-color:var(--line-hi);color:var(--silver)}
+.ob-link b{display:block;font-size:15px;font-weight:700;letter-spacing:-.01em}
+.ob-link span{display:block;font-size:13px;color:var(--silver-dim);margin-top:2px}
+.ob-link i{font-style:normal;color:var(--blue-hi);font-size:18px}
+body.onboarding .ob-center{text-align:center}
+@media(max-width:520px){
+  .ob{padding:0 18px}
+  .ob-tabs{grid-template-columns:1fr;gap:6px}
+  .ob-nav{flex-direction:column}
+}
 </style>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="mesh" aria-hidden="true"></div>
@@ -1189,6 +1241,10 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
                 <div class="row" style="margin-top:22px"><a class="btn ghost" href="https://t.me/thevaultkey_bot" target="_blank" rel="noopener">Go to the door &rarr;</a></div>
               </div>
             </div>
+            <div style="margin:30px auto 0;max-width:520px">
+              <button class="btn lg wide" data-go="onboard" style="width:100%">I am in the chats. Set me up &rarr;</button>
+              <p class="small dim" style="margin:12px 0 0;text-align:center">Step by step: open your account, get in the rooms, place your first trade.</p>
+            </div>
             <p class="eyebrow" style="margin:34px 0 0;justify-content:center">Tagged on your record</p>
             <div class="tagpills" id="tagPills"></div>
           </div>
@@ -1343,6 +1399,109 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
   </section>
 </main>
 
+<main class="page" id="onboard">
+  <div class="ob-rail" aria-hidden="true"><i id="obRail"></i></div>
+  <section class="wrap" style="padding-top:74px;padding-bottom:70px">
+    <div class="ob">
+
+      <!-- ---------- step 1 ---------- -->
+      <div class="ob-step on" data-ob="1">
+        <p class="ob-count">Step 1 of 3</p>
+        <h2>Open your trading account</h2>
+        <p class="lede">This is the account your money sits in and where your trades are placed. You open it through my link. That is the only thing I ask, and it is what keeps the room free for you.</p>
+
+        <div class="ob-list">
+          <div class="ob-item hot"><span class="n">1</span><div><b>Tap the blue button below</b><span class="t">It opens the LIVVFX sign up page in a new tab.</span></div></div>
+          <div class="ob-item"><span class="n">2</span><div><b>Fill in the form and hit Sign Up</b><span class="t">Email, name, password, country, phone number. Takes about two minutes.</span></div></div>
+          <div class="ob-item"><span class="n">3</span><div><b>Click the link in the email they send you</b><span class="t">Check your spam folder if it is not there. Once you click it your account is live.</span></div></div>
+        </div>
+
+        <a class="btn lg wide" id="obBroker" href="https://t.me/thevaultkey_bot" target="_blank" rel="noopener nofollow sponsored" style="width:100%">Open my trading account &rarr;</a>
+
+        <div class="ob-tabs" role="tablist">
+          <button role="tab" aria-selected="true" data-tab="demo">Practice first</button>
+          <button role="tab" aria-selected="false" data-tab="deposit">Put money in</button>
+          <button role="tab" aria-selected="false" data-tab="withdraw">Take money out</button>
+        </div>
+
+        <div class="ob-pane on" data-pane="demo">
+          <div class="ob-list">
+            <div class="ob-item"><span class="n">1</span><div><b>Download TradeLocker</b><span class="t">App Store or Google Play. That is the app you actually place trades in.</span></div></div>
+            <div class="ob-item"><span class="n">2</span><div><b>Log in</b><span class="t">Same email and password you just made. When it asks for the server, choose LIVVFX.</span></div></div>
+            <div class="ob-item"><span class="n">3</span><div><b>Create a demo account</b><span class="t">Leverage 1:500, size 10,000. It is fake money. Practise here until the steps feel boring.</span></div></div>
+          </div>
+        </div>
+
+        <div class="ob-pane" data-pane="deposit">
+          <div class="ob-list">
+            <div class="ob-item"><span class="n">1</span><div><b>Log in at members.livvfxtrading.com</b><span class="t">Same email and password.</span></div></div>
+            <div class="ob-item"><span class="n">2</span><div><b>Menu, then My Fund, then Deposit</b><span class="t">Card or crypto, whichever suits you.</span></div></div>
+            <div class="ob-item"><span class="n">3</span><div><b>Enter your amount, submit, pay</b><span class="t">If you chose crypto, pick the network first, then send to the address it shows you.</span></div></div>
+            <div class="ob-item warn"><span class="n">4</span><div><b>My Wallet, then Wallet To Trading Account</b><span class="t">Do not skip this one. Money sitting in your wallet cannot be traded until you move it across.</span></div></div>
+            <div class="ob-item"><span class="n">5</span><div><b>Open TradeLocker</b><span class="t">Your balance is sitting there. You are ready.</span></div></div>
+          </div>
+        </div>
+
+        <div class="ob-pane" data-pane="withdraw">
+          <div class="ob-list">
+            <div class="ob-item"><span class="n">1</span><div><b>My Wallet, then Trading Account To Wallet</b><span class="t">Enter the amount and submit.</span></div></div>
+            <div class="ob-item"><span class="n">2</span><div><b>My Fund, then Withdraw</b><span class="t">Choose your crypto network.</span></div></div>
+            <div class="ob-item warn"><span class="n">3</span><div><b>Paste your wallet address and the amount</b><span class="t">Read the address twice before you submit. Crypto sent to a wrong address is gone.</span></div></div>
+            <div class="ob-item"><span class="n">4</span><div><b>Enter your 2FA code and submit</b><span class="t">Timing is up to the broker, not up to me.</span></div></div>
+          </div>
+        </div>
+
+        <div class="ob-nav"><button class="btn lg" data-obnext="2">I have my account &rarr;</button></div>
+        <p class="ob-fine">I earn a commission from the broker on trading volume from accounts opened through my link. <button class="inline-link" data-go="legal">How I get paid, in full</button></p>
+      </div>
+
+      <!-- ---------- step 2 ---------- -->
+      <div class="ob-step" data-ob="2">
+        <p class="ob-count">Step 2 of 3</p>
+        <h2>Get in the chats</h2>
+        <p class="lede">Two rooms. One is open to anybody who wants it. The other one you have to earn, and this is how you earn it.</p>
+
+        <div class="ob-list">
+          <div class="ob-item hot"><span class="n">1</span><div><b>Join The Market Bully channel</b><span class="t">Free, nothing to pay, no account needed. Updates, results and exclusive calls.</span></div></div>
+          <div class="ob-item"><span class="n">2</span><div><b>Open the door to THE VAULT and press Start</b><span class="t">It is a Telegram chat with me. Press Start and it tells you what to do.</span></div></div>
+          <div class="ob-item"><span class="n">3</span><div><b>Send a screenshot of your account page</b><span class="t">Just a picture of your LIVVFX dashboard. That is how I know you signed up. No passwords, no card details, nothing with a balance on it.</span></div></div>
+          <div class="ob-item"><span class="n">4</span><div><b>Wait for me</b><span class="t">I read every single one myself. Once you are approved you get a private invite that works once and only for you.</span></div></div>
+        </div>
+
+        <a class="btn lg wide" href="https://t.me/thevaultkey_bot" target="_blank" rel="noopener" style="width:100%">Go to the door &rarr;</a>
+        <div style="height:10px"></div>
+        <a class="btn lg ghost wide" href="https://t.me/+ukr-PkZbU1lmMmIx" target="_blank" rel="noopener" style="width:100%">Join the free channel &rarr;</a>
+
+        <div class="ob-nav">
+          <button class="btn lg ghost" data-obback="1">&larr; Back</button>
+          <button class="btn lg" data-obnext="3">Done &rarr;</button>
+        </div>
+      </div>
+
+      <!-- ---------- step 3 ---------- -->
+      <div class="ob-step ob-center" data-ob="3">
+        <p class="ob-count">Step 3 of 3</p>
+        <div class="ob-done"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 12.6l5 5L19.5 7" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h2>You are set up.</h2>
+        <p class="lede" style="margin-left:auto;margin-right:auto">Now come and use it. Take the calls when they drop, sit in the live sessions, and ask questions. That is the whole point of the room.</p>
+
+        <div class="ob-links">
+          <a class="ob-link" href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener"><span><b>Watch me trade live</b><span>Free sessions on 1House.TV</span></span><i>&rarr;</i></a>
+          <a class="ob-link" href="https://t.me/+ukr-PkZbU1lmMmIx" target="_blank" rel="noopener"><span><b>The Market Bully channel</b><span>Open to anyone, nothing to pay</span></span><i>&rarr;</i></a>
+          <a class="ob-link" href="https://t.me/thevaultkey_bot" target="_blank" rel="noopener"><span><b>THE VAULT</b><span>The door, if you have not been through it yet</span></span><i>&rarr;</i></a>
+        </div>
+
+        <div class="ob-nav">
+          <button class="btn lg ghost" data-obback="2">&larr; Back</button>
+          <button class="btn lg" data-go="home">Back to home</button>
+        </div>
+        <p class="ob-fine">Educational only. Nothing here is financial advice. Trading carries real risk and you can lose money. <button class="inline-link" data-go="legal">Read the full risk disclosure</button></p>
+      </div>
+
+    </div>
+  </section>
+</main>
+
 <footer>
   <div class="foot-in">
     <div class="foot-grid">
@@ -1391,7 +1550,7 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(err){}
-  var PAGES = ['home','about','community','faq','start','contact','legal'];
+  var PAGES = ['home','about','community','faq','start','onboard','contact','legal'];
 
   /* ---------- ticker ---------- */
   var titles=[["Olympus Master Class, Day 1","1:45:03"],["MB Strategy: Fibonacci Settings","2:21:28"],["Strong Optimal Entries","2:07:19"],["Olympus Volume Metric Order Blocks","2:08:04"],["Market Bully 4 Hour Sauce","2:23:56"],["MB Strategy: Reversal Entries Simplified","2:13:49"],["Olympus Sauce, Gold Melts","2:57:07"],["Olympus Master Class, Day 2","1:11:44"],["Olympus Master Class, Day 3","2:02:47"]];
@@ -1515,6 +1674,8 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
       if(b.dataset.go===id)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
     });
     document.body.classList.toggle('funnel', id==='start');
+    document.body.classList.toggle('onboarding', id==='onboard');
+    if(id==='onboard' && window.__obReset) window.__obReset();
     var tz=document.getElementById('toast');
     if(tz){ if(id==='start') tz.classList.remove('in'); else if(toastShown) tz.classList.add('in'); }
     window.scrollTo(0,0);
@@ -1546,6 +1707,30 @@ footer{border-top:1px solid var(--line);background:linear-gradient(180deg,transp
   window.addEventListener('popstate',function(){go(readUrl());});
   window.addEventListener('hashchange',function(){go(readUrl());});
   (function(){var initial=readUrl(); if(initial!=='home') go(initial);})();
+
+
+  /* ---------- onboarding ---------- */
+  (function(){
+    var root=document.getElementById('onboard'); if(!root) return;
+    var rail=document.getElementById('obRail');
+    function show(n){
+      root.querySelectorAll('[data-ob]').forEach(function(s){ s.classList.toggle('on', s.dataset.ob===String(n)); });
+      if(rail) rail.style.width=(n/3*100)+'%';
+      window.scrollTo(0,0);
+      setTimeout(function(){ window.scrollTo(0,0); },40);
+    }
+    root.addEventListener('click',function(e){
+      var nx=e.target.closest('[data-obnext]'), bk=e.target.closest('[data-obback]');
+      if(nx){ show(nx.dataset.obnext); return; }
+      if(bk){ show(bk.dataset.obback); return; }
+      var tb=e.target.closest('[data-tab]');
+      if(tb){
+        root.querySelectorAll('[data-tab]').forEach(function(b){ b.setAttribute('aria-selected', b===tb?'true':'false'); });
+        root.querySelectorAll('[data-pane]').forEach(function(pn){ pn.classList.toggle('on', pn.dataset.pane===tb.dataset.tab); });
+      }
+    });
+    window.__obReset=function(){ show(1); };
+  })();
 
   /* ========================= APPLICATION ========================= */
   var R={
