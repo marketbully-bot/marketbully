@@ -55,6 +55,7 @@ export default async function handler(req, res) {
   const ROOM = String(process.env.SIGNALS_CHAT_ID || '').trim();
   const LINK = String(process.env.BROKER_LINK || '').trim();
   const SECRET = String(process.env.TELEGRAM_WEBHOOK_SECRET || '').trim();
+  const FREE = String(process.env.FREE_CHANNEL_LINK || 'https://t.me/+ukr-PkZbU1lmMmIx').trim();
 
   // ---- one time webhook registration, no token ever in the URL ----
   if (req.method === 'GET') {
@@ -95,10 +96,10 @@ export default async function handler(req, res) {
           chat_id: from.id,
           parse_mode: 'HTML',
           text:
-            '<b>Step 2.</b> Send me a screenshot of your account confirmation.\n\n' +
-            'The confirmation screen or the welcome email is fine. ' +
-            '<b>Do not send passwords, card details or anything with a balance on it.</b>\n\n' +
-            'I read every one of these myself, usually the same day.'
+            '\ud83d\udcf8 <b>Step 2. Send me the screenshot.</b>\n\n' +
+            'The confirmation screen or your welcome email, either works.\n\n' +
+            '\ud83d\udeab No passwords. No card details. Nothing with a balance on it.\n\n' +
+            'Drop it right here \ud83d\udc47'
         });
         return res.status(200).end();
       }
@@ -126,9 +127,9 @@ export default async function handler(req, res) {
           await tg('sendMessage', {
             chat_id: target,
             text:
-              'Thanks for applying. I am not able to let you into The Vault Key right now.\n\n' +
-              'The free sessions are still open to you and there is a lot in there. ' +
-              'https://www.1house.tv/educators/richard-hall'
+              'Appreciate you applying. I cannot let you into THE VAULT right now.\n\n' +
+              'The free channel is still wide open though, and there is real value in there \ud83d\udc47\n\n' +
+              FREE
           });
           await tg('sendMessage', { chat_id: from.id, text: 'Declined. They have been told.' });
           return res.status(200).end();
@@ -160,10 +161,11 @@ export default async function handler(req, res) {
           chat_id: target,
           parse_mode: 'HTML',
           text:
-            "<b>You're in.</b> 🤝\n\n" +
-            'Here is your invite to The Vault Key. It works <b>once</b>, for you only, and it expires in 24 hours. ' +
-            'Passing it on will not work, so use it now.\n\n' +
-            inv.result.invite_link
+            "🔓 <b>YOU'RE IN.</b>\n\n" +
+            'Here is your invite to THE VAULT 👇\n\n' +
+            inv.result.invite_link +
+            '\n\n⚡ It works <b>once</b>, it has your name on it, and it dies in 24 hours. ' +
+            'Forwarding it does nothing, so use it now.\n\nWelcome to the room. 🤝'
         });
         await tg('sendMessage', { chat_id: from.id, text: 'Approved. Single use invite sent.' });
         return res.status(200).end();
@@ -232,21 +234,23 @@ export default async function handler(req, res) {
         parse_mode: 'HTML',
         disable_web_page_preview: true,
         text:
-          `<b>Welcome to The Vault Key.</b>\n\n` +
-          `The room is free. What it costs you is opening a trading account through my link, ` +
-          `because that is how the room gets paid for. I tell you that now rather than after you are in.\n\n` +
-          `<b>Three steps and you are done.</b>\n\n` +
-          `<b>STEP 1 — Open your account</b>\n` +
-          `${LINK || '(link coming shortly)'}\n\n` +
-          `<b>STEP 2 — Send me a screenshot</b>\n` +
-          `Once you are logged in, screenshot the confirmation and send it right here in this chat. ` +
-          `No passwords, no card details, nothing with a balance on it.\n\n` +
-          `<b>STEP 3 — I approve you</b>\n` +
-          `I read every one of these myself. Approved and you get a private invite that works once, for you alone.\n\n` +
-          `Before you fund anything, read the risk notes: https://themarketbully.com/legal\n\n` +
-          `Tap below once step 1 is done.`,
+          `\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\n` +
+          `This is the room. Live calls, my levels, my reasoning, while it is happening.\n\n` +
+          `Getting in costs you nothing. You just open your trading account through my link. `+
+          `That is what keeps the room free for everybody in it. \ud83d\udcaf\n\n` +
+          `<b>Three steps. Let's go.</b>\n\n` +
+          `1\ufe0f\u20e3 <b>Open your account</b>\n` +
+          `\ud83d\udc49 ${LINK || '(link coming shortly)'}\n\n` +
+          `2\ufe0f\u20e3 <b>Screenshot it</b>\n` +
+          `Once you are logged in, send the confirmation right here in this chat.\n\n` +
+          `3\ufe0f\u20e3 <b>I let you in</b>\n` +
+          `I check every single one myself. Approved and you get a private invite. `+
+          `One use, your name on it, nobody else's. \ud83d\udd12\n\n` +
+          `\u26a0\ufe0f Trading carries real risk. Read this before you fund anything:\n` +
+          `https://themarketbully.com/legal\n\n` +
+          `Tap below once step 1 is done \ud83d\udc47`,
         reply_markup: {
-          inline_keyboard: [[{ text: 'I opened my account', callback_data: 'opened' }]]
+          inline_keyboard: [[{ text: '\u2705 I opened my account', callback_data: 'opened' }]]
         }
       });
       return res.status(200).end();
@@ -256,7 +260,7 @@ export default async function handler(req, res) {
     if (m.photo || m.document) {
       await tg('sendMessage', {
         chat_id: from.id,
-        text: 'Got it. I will look at this myself and come back to you, usually the same day.'
+        text: '\ud83d\udd25 Got it. I am looking at this myself, usually same day.\n\nSit tight, I will come straight back to you.'
       });
 
       await tg('forwardMessage', {
@@ -289,11 +293,11 @@ export default async function handler(req, res) {
       parse_mode: 'HTML',
       disable_web_page_preview: true,
       text:
-        '<b>To get into The Vault Key:</b>\n\n' +
-        `<b>1.</b> Open your account here:\n${LINK || '(link coming shortly)'}\n\n` +
-        '<b>2.</b> Send me a screenshot of the confirmation\n\n' +
-        '<b>3.</b> I review it and send you a private invite\n\n' +
-        'Send /start to see this again.'
+        `\ud83d\udd11 <b>How you get into THE VAULT</b>\n\n` +
+        `1\ufe0f\u20e3 Open your account\n\ud83d\udc49 ${LINK || '(link coming shortly)'}\n\n` +
+        `2\ufe0f\u20e3 Send me the screenshot\n\n` +
+        `3\ufe0f\u20e3 I approve you and send your invite\n\n` +
+        `Send /start to see it again.`
     });
     return res.status(200).end();
 
