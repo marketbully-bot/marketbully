@@ -230,22 +230,36 @@ export default async function handler(req, res) {
     const text = (m.text || '').trim();
 
     if (/^\/start/i.test(text)) {
+      // The welcome clip. If Telegram refuses it for any reason we carry on
+      // without it, and the text below puts its own heading back.
+      let videoSent = false;
       if (VIDEO) {
-        // works for a file id, or a public https link to an mp4
-        await tg('sendVideo', {
-          chat_id: from.id,
-          video: VIDEO,
-          supports_streaming: true,
-          caption: '\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\nWatch this, then read below \ud83d\udc47',
-          parse_mode: 'HTML'
-        });
+        try {
+          const vr = await tg('sendVideo', {
+            chat_id: from.id,
+            video: VIDEO,
+            supports_streaming: true,
+            caption: '\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\nWatch this, then read below \ud83d\udc47',
+            parse_mode: 'HTML'
+          });
+          videoSent = !!(vr && vr.ok);
+          if (!videoSent && ADMIN) {
+            await tg('sendMessage', {
+              chat_id: ADMIN,
+              parse_mode: 'HTML',
+              text: '\u26a0\ufe0f <b>The welcome video did not send.</b>\n\nTelegram said:\n<code>' +
+                    esc((vr && vr.description) || 'no reason given') + '</code>\n\n' +
+                    'The applicant still got everything else. Send that line to Claude.'
+            });
+          }
+        } catch (e) { videoSent = false; }
       }
       await tg('sendMessage', {
         chat_id: from.id,
         parse_mode: 'HTML',
         disable_web_page_preview: true,
         text:
-          (VIDEO ? '' : `\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\n`) +
+          (videoSent ? '' : `\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\n`) +
           `This is the room. Live calls, my levels, my reasoning, while it is happening.\n\n` +
           `Getting in costs you nothing. You just open your trading account through my link. `+
           `That is what keeps the room free for everybody in it. \ud83d\udcaf\n\n` +
