@@ -104,53 +104,26 @@ async function toViato(d) {
     notes: noteFor(d)
   });
 
-  // Viato does not document which header carries the key, so try each shape
-  // at once. Only the correct one can succeed, the rest come back 401.
-  const attempts = [
-    ['Authorization: Bearer', { Authorization: 'Bearer ' + key }, ''],
-    ['Authorization: raw', { Authorization: key }, ''],
-    ['Authorization: ApiKey', { Authorization: 'ApiKey ' + key }, ''],
-    ['Authorization: Token', { Authorization: 'Token ' + key }, ''],
-    ['x-api-key', { 'x-api-key': key }, ''],
-    ['X-API-KEY', { 'X-API-KEY': key }, ''],
-    ['api-key', { 'api-key': key }, ''],
-    ['apikey', { apikey: key }, ''],
-    ['x-viato-api-key', { 'x-viato-api-key': key }, ''],
-    ['viato-api-key', { 'viato-api-key': key }, ''],
-    ['x-api-token', { 'x-api-token': key }, ''],
-    ['query api_key', {}, '?api_key=' + encodeURIComponent(key)],
-    ['query apiKey', {}, '?apiKey=' + encodeURIComponent(key)],
-    ['query key', {}, '?key=' + encodeURIComponent(key)]
-  ];
-
-  const results = await Promise.all(attempts.map(async ([label, hdrs, qs]) => {
-    try {
-      const r = await fetch(VIATO_URL + qs, {
-        method: 'POST',
-        headers: Object.assign({ 'Content-Type': 'application/json' }, hdrs),
-        body
-      });
-      const text = await r.text();
-      return { label, status: r.status, text: text.slice(0, 160) };
-    } catch (err) {
-      return { label, status: 0, text: String(err).slice(0, 80) };
-    }
-  }));
-
-  const win = results.find((x) => x.status >= 200 && x.status < 300);
-  if (win) {
-    console.log('Viato accepted the key on:', win.label);
-    return { ok: true, detail: 'header=' + win.label };
+  // Confirmed by live test on 29 Aug 2026: Viato's public API wants the key as
+  // a bearer token, and it has to be an Organization key. A Personal key is
+  // rejected with "Invalid or missing API key".
+  try {
+    const r = await fetch(VIATO_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + key
+      },
+      body
+    });
+    const text = await r.text();
+    if (r.status >= 200 && r.status < 300) return { ok: true };
+    console.error('Viato rejected the contact:', r.status, text.slice(0, 300));
+    return { ok: false, reason: 'http-' + r.status, detail: text.slice(0, 200) };
+  } catch (err) {
+    console.error('Viato call failed:', err);
+    return { ok: false, reason: 'network' };
   }
-
-  const notAuth = results.filter((x) => x.status !== 401);
-  console.error('Viato rejected every shape:', JSON.stringify(results));
-  return {
-    ok: false,
-    reason: 'auth-shape-unknown',
-    detail: (notAuth.length ? notAuth : results.slice(0, 2))
-      .map((x) => x.label + '=' + x.status + ' ' + x.text).join(' ~ ').slice(0, 500)
-  };
 }
 
 export default async function handler(req, res) {
