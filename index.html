@@ -269,7 +269,9 @@ p{margin:0 0 18px}
 
 /* ============ plans ============ */
 .plans{display:grid;gap:16px}
-@media(min-width:960px){.plans{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:700px){.plans{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1180px){.plans{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1180px){.plan{padding:30px 22px}.plan .price{font-size:38px}}
 .plan{padding:32px 28px;display:flex;flex-direction:column}
 .plan.feature{border-color:rgba(46,107,255,.5);background:linear-gradient(180deg,rgba(46,107,255,.13),rgba(255,255,255,.014));box-shadow:0 36px 90px -50px var(--blue-glow),var(--edge)}
 .plan.feature::after{content:"";position:absolute;inset:-1px;border-radius:19px;padding:1px;pointer-events:none;
@@ -854,14 +856,17 @@ body.onboarding .ob-center{text-align:center}
           <div class="kicker">Start here</div>
           <h3>The Vault</h3>
           <div class="price">$0<small> /month</small></div>
-          <p class="sub">No card. No subscription.</p>
+          <p class="sub">No card. No subscription. Not a trial.</p>
           <ul>
-            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Live trade breakdowns, levels and reasoning</li>
-            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Step by step account setup walkthrough</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Full onboarding</b>, start to finish, walked through step by step</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>The Market Bully channel</b>, free and open to anyone</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>The community chat</b>, bring your questions</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>THE VAULT</b> signals room once you are approved</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>My live calls, my levels and my reasoning, as it happens</li>
             <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>The MB Strategy taught in modules</li>
             <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Olympus Scanner walkthroughs</li>
-            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>The Market Bully channel, open to anyone</li>
-            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Application reviewed by me personally</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Free live sessions with me on 1House.TV</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Your application read by me personally</li>
           </ul>
           <button class="btn" data-go="start">Start free, get onboarded &rarr;</button>
           <p class="fine">No card needed. Requires a trading account opened through my link.</p>
@@ -882,6 +887,22 @@ body.onboarding .ob-center{text-align:center}
           <p class="fine">Free to watch. Hosted on 1House.TV.</p>
         </div>
         <div class="glass plan rv">
+          <div class="kicker partner">1House Global</div>
+          <h3>Digital Stream</h3>
+          <div class="price">$99<small><sup>.99</sup> /month</small></div>
+          <p class="sub">All access. Cancel any time.</p>
+          <ul>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Every session I teach on 1House</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Every other educator on the platform</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Stocks, crypto, real estate, business and AI</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>On demand replay library</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>1House mobile app and live alerts</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>3 day money back guarantee</li>
+          </ul>
+          <a class="btn ghost" href="https://subscribe.1house.tv/MARKETBULLY" target="_blank" rel="noopener nofollow sponsored">Get Digital Stream &rarr;</a>
+          <p class="fine">Paid link. On the checkout page pick <b>Digital Stream All-Access</b> from the plan menu. $99.99 a month. Pricing set by 1House Global.</p>
+        </div>
+        <div class="glass plan rv">
           <div class="kicker">Full package</div>
           <h3>The full package</h3>
           <div class="price">$199<small><sup>.99</sup> then $165/mo</small></div>
@@ -898,7 +919,7 @@ body.onboarding .ob-center{text-align:center}
             <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>3 day money back guarantee</li>
           </ul>
           <a class="btn ghost" href="https://subscribe.1house.tv/MARKETBULLY" target="_blank" rel="noopener nofollow sponsored">Enrol through me &rarr;</a>
-          <p class="fine">Paid link. $199.99 today, then $165.00 every 30 days until you cancel. Pricing and terms set by 1House Global.</p>
+          <p class="fine">Paid link. This is the plan the checkout page opens on. $199.99 today, then $165.00 every 30 days until you cancel. Pricing and terms set by 1House Global.</p>
         </div>
       </div>
       <p class="small dim rv" style="margin-top:20px;max-width:74ch">Not ready to apply? The <a href="https://t.me/+ukr-PkZbU1lmMmIx" target="_blank" rel="noopener">Market Bully channel</a> is open to anyone, nothing to pay. Updates, results and exclusive calls.<br><br>Some links on this page are paid links. <button class="inline-link" data-go="legal">How I get paid, in full</button>.</p>
