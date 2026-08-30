@@ -65,7 +65,7 @@ export default async function handler(req, res) {
     const out = await tg('setWebhook', {
       url,
       secret_token: SECRET,
-      allowed_updates: ['message', 'callback_query'],
+      allowed_updates: ['message', 'callback_query', 'channel_post', 'my_chat_member'],
       drop_pending_updates: true
     });
     return res.status(200).json({ registeredTo: url, telegram: out });
@@ -167,6 +167,39 @@ export default async function handler(req, res) {
         });
         await tg('sendMessage', { chat_id: from.id, text: 'Approved. Single use invite sent.' });
         return res.status(200).end();
+      }
+      return res.status(200).end();
+    }
+
+    // ========= the bot was added to, or promoted in, a chat =========
+    if (u.my_chat_member) {
+      const c = u.my_chat_member.chat || {};
+      const st = (u.my_chat_member.new_chat_member || {}).status;
+      if (c.type !== 'private' && (st === 'administrator' || st === 'member')) {
+        await tg('sendMessage', {
+          chat_id: ADMIN,
+          parse_mode: 'HTML',
+          text:
+            `I was just added to <b>${esc(c.title || 'a chat')}</b> as <b>${esc(st)}</b>.\n\n` +
+            `Its ID is:\n<code>${esc(c.id)}</code>\n\n` +
+            `Put that into <b>SIGNALS_CHAT_ID</b> in Vercel, then redeploy.` +
+            (st === 'administrator' ? '' : '\n\n⚠️ I need to be an <b>admin</b> with <b>Invite Users via Link</b> to make invites.')
+        });
+      }
+      return res.status(200).end();
+    }
+
+    // ========= channel posts (a channel is not a group) =========
+    if (u.channel_post) {
+      const c = u.channel_post.chat || {};
+      const t = (u.channel_post.text || '').trim();
+      if (/^\/id/i.test(t)) {
+        await tg('sendMessage', {
+          chat_id: ADMIN,
+          parse_mode: 'HTML',
+          text: `That channel is:\n\n<code>${esc(c.id)}</code>\n\nName: ${esc(c.title || '')}\n\n` +
+                `Put it into <b>SIGNALS_CHAT_ID</b> in Vercel, then redeploy.`
+        });
       }
       return res.status(200).end();
     }
