@@ -260,7 +260,7 @@ export default async function handler(req, res) {
             chat_id: from.id,
             video: VIDEO,
             supports_streaming: true,
-            caption: '\ud83d\udd11 <b>THE VAULT</b>\n\nWatch this \ud83d\udc47',
+            caption: 'Watch this first \ud83d\udc47',
             parse_mode: 'HTML'
           });
           videoSent = !!(vr && vr.ok);
@@ -280,16 +280,25 @@ export default async function handler(req, res) {
         parse_mode: 'HTML',
         disable_web_page_preview: true,
         text:
-          (videoSent ? '' : `\ud83d\udd11 <b>THE VAULT</b>\n\n`) +
-          `Live calls. My levels. My reasoning. \ud83d\udcaf\n\n` +
-          `Costs you nothing. Three steps.\n\n` +
-          `1\ufe0f\u20e3 <b>Open your account</b>\n` +
+          `\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\n` +
+          `This is my signals room. My live trades, my levels and my reasoning, ` +
+          `posted while it is happening. \ud83d\udcaf\n\n` +
+          `It costs you nothing to be in here. Three steps and you are in \ud83d\udc47\n\n` +
+          `1\ufe0f\u20e3 <b>OPEN YOUR TRADING ACCOUNT</b>\n` +
+          `This is the account you will trade from. Open it with my link. ` +
+          `That is what keeps this room free for you.\n` +
           `\ud83d\udc49 ${LINK || '(link coming shortly)'}\n\n` +
-          `2\ufe0f\u20e3 <b>Send me the screenshot</b>\n\n` +
-          `3\ufe0f\u20e3 <b>I let you in</b> \ud83d\udd12\n\n` +
-          `\u26a0\ufe0f Trading is risky. Read this first:\n` +
+          `2\ufe0f\u20e3 <b>SEND ME A SCREENSHOT</b>\n` +
+          `Once you are signed up, take a picture of your account page and send it ` +
+          `right here in this chat. No passwords, no card details.\n\n` +
+          `3\ufe0f\u20e3 <b>I LET YOU IN</b> \ud83d\udd13\n` +
+          `I check every single one myself. Once you are approved I send you a private ` +
+          `invite. It works once and it is yours only.\n\n` +
+          `\ud83e\udded <b>Never done this before?</b> I walk you through the whole setup here:\n` +
+          `https://themarketbully.com/onboard\n\n` +
+          `\u26a0\ufe0f Trading carries real risk. Read this before you fund anything:\n` +
           `https://themarketbully.com/legal\n\n` +
-          `Done step 1? Tap below \ud83d\udc47`,
+          `\u2b07\ufe0f Tap the button below once step 1 is done.`,
         reply_markup: {
           inline_keyboard: [[{ text: '\u2705 I opened my account', callback_data: 'opened' }]]
         }
@@ -376,6 +385,7 @@ export default async function handler(req, res) {
         `1\ufe0f\u20e3 Open your account\n\ud83d\udc49 ${LINK || '(link coming shortly)'}\n\n` +
         `2\ufe0f\u20e3 Send me the screenshot\n\n` +
         `3\ufe0f\u20e3 I approve you and send your invite\n\n` +
+        `\ud83e\udded New to this? Full walkthrough:\nhttps://themarketbully.com/onboard\n\n` +
         `Send /start to see it again.`
     });
     return res.status(200).end();
