@@ -260,7 +260,7 @@ export default async function handler(req, res) {
             chat_id: from.id,
             video: VIDEO,
             supports_streaming: true,
-            caption: '\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\nWatch this, then read below \ud83d\udc47',
+            caption: '\ud83d\udd11 <b>THE VAULT</b>\n\nWatch this \ud83d\udc47',
             parse_mode: 'HTML'
           });
           videoSent = !!(vr && vr.ok);
@@ -280,21 +280,16 @@ export default async function handler(req, res) {
         parse_mode: 'HTML',
         disable_web_page_preview: true,
         text:
-          (videoSent ? '' : `\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\n`) +
-          `This is the room. Live calls, my levels, my reasoning, while it is happening.\n\n` +
-          `Getting in costs you nothing. You just open your trading account through my link. `+
-          `That is what keeps the room free for everybody in it. \ud83d\udcaf\n\n` +
-          `<b>Three steps. Let's go.</b>\n\n` +
+          (videoSent ? '' : `\ud83d\udd11 <b>THE VAULT</b>\n\n`) +
+          `Live calls. My levels. My reasoning. \ud83d\udcaf\n\n` +
+          `Costs you nothing. Three steps.\n\n` +
           `1\ufe0f\u20e3 <b>Open your account</b>\n` +
           `\ud83d\udc49 ${LINK || '(link coming shortly)'}\n\n` +
-          `2\ufe0f\u20e3 <b>Screenshot it</b>\n` +
-          `Once you are logged in, send the confirmation right here in this chat.\n\n` +
-          `3\ufe0f\u20e3 <b>I let you in</b>\n` +
-          `I check every single one myself. Approved and you get a private invite. `+
-          `One use, your name on it, nobody else's. \ud83d\udd12\n\n` +
-          `\u26a0\ufe0f Trading carries real risk. Read this before you fund anything:\n` +
+          `2\ufe0f\u20e3 <b>Send me the screenshot</b>\n\n` +
+          `3\ufe0f\u20e3 <b>I let you in</b> \ud83d\udd12\n\n` +
+          `\u26a0\ufe0f Trading is risky. Read this first:\n` +
           `https://themarketbully.com/legal\n\n` +
-          `Tap below once step 1 is done \ud83d\udc47`,
+          `Done step 1? Tap below \ud83d\udc47`,
         reply_markup: {
           inline_keyboard: [[{ text: '\u2705 I opened my account', callback_data: 'opened' }]]
         }
