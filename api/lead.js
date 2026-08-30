@@ -95,35 +95,62 @@ async function toViato(d) {
   if (!key) return { ok: false, reason: 'no-key' };
 
   const who = splitName(d.name);
-  const body = {
+  const body = JSON.stringify({
     first_name: who.first,
     last_name: who.last,
     email: d.email || '',
     phone: d.phone || '',
     tags: ['rung-1-new-lead'],
     notes: noteFor(d)
-  };
+  });
 
-  // The public API does not document which header carries the key, so send it
-  // on every plausible one. Extra headers are ignored, the right one is used.
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + key,
-    'x-api-key': key,
-    'api-key': key,
-    'X-Api-Key': key
-  };
+  // Viato does not document which header carries the key, so try each shape
+  // at once. Only the correct one can succeed, the rest come back 401.
+  const attempts = [
+    ['Authorization: Bearer', { Authorization: 'Bearer ' + key }, ''],
+    ['Authorization: raw', { Authorization: key }, ''],
+    ['Authorization: ApiKey', { Authorization: 'ApiKey ' + key }, ''],
+    ['Authorization: Token', { Authorization: 'Token ' + key }, ''],
+    ['x-api-key', { 'x-api-key': key }, ''],
+    ['X-API-KEY', { 'X-API-KEY': key }, ''],
+    ['api-key', { 'api-key': key }, ''],
+    ['apikey', { apikey: key }, ''],
+    ['x-viato-api-key', { 'x-viato-api-key': key }, ''],
+    ['viato-api-key', { 'viato-api-key': key }, ''],
+    ['x-api-token', { 'x-api-token': key }, ''],
+    ['query api_key', {}, '?api_key=' + encodeURIComponent(key)],
+    ['query apiKey', {}, '?apiKey=' + encodeURIComponent(key)],
+    ['query key', {}, '?key=' + encodeURIComponent(key)]
+  ];
 
-  try {
-    const r = await fetch(VIATO_URL, { method: 'POST', headers, body: JSON.stringify(body) });
-    const text = await r.text();
-    if (r.status >= 200 && r.status < 300) return { ok: true };
-    console.error('Viato rejected the contact:', r.status, text.slice(0, 400));
-    return { ok: false, reason: 'http-' + r.status, detail: text.slice(0, 200) };
-  } catch (err) {
-    console.error('Viato call failed:', err);
-    return { ok: false, reason: 'network' };
+  const results = await Promise.all(attempts.map(async ([label, hdrs, qs]) => {
+    try {
+      const r = await fetch(VIATO_URL + qs, {
+        method: 'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, hdrs),
+        body
+      });
+      const text = await r.text();
+      return { label, status: r.status, text: text.slice(0, 160) };
+    } catch (err) {
+      return { label, status: 0, text: String(err).slice(0, 80) };
+    }
+  }));
+
+  const win = results.find((x) => x.status >= 200 && x.status < 300);
+  if (win) {
+    console.log('Viato accepted the key on:', win.label);
+    return { ok: true, detail: 'header=' + win.label };
   }
+
+  const notAuth = results.filter((x) => x.status !== 401);
+  console.error('Viato rejected every shape:', JSON.stringify(results));
+  return {
+    ok: false,
+    reason: 'auth-shape-unknown',
+    detail: (notAuth.length ? notAuth : results.slice(0, 2))
+      .map((x) => x.label + '=' + x.status + ' ' + x.text).join(' ~ ').slice(0, 500)
+  };
 }
 
 export default async function handler(req, res) {
