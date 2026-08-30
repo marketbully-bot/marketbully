@@ -66,7 +66,7 @@ function line(label, value) {
 // ---------------------------------------------------------------
 // Viato. Creates the contact and tags it, which starts campaign 1.
 // ---------------------------------------------------------------
-const VIATO_URL = 'https://viato.ai/api/contacts';
+const VIATO_URL = 'https://viato.ai/api/v1/contacts';
 
 function splitName(full) {
   const parts = String(full || '').trim().split(/\s+/).filter(Boolean);
@@ -104,11 +104,14 @@ async function toViato(d) {
     notes: noteFor(d)
   };
 
-  // Different builds accept the key on different headers, so send both.
+  // The public API does not document which header carries the key, so send it
+  // on every plausible one. Extra headers are ignored, the right one is used.
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ' + key,
-    'x-api-key': key
+    'x-api-key': key,
+    'api-key': key,
+    'X-Api-Key': key
   };
 
   try {
@@ -216,6 +219,7 @@ export default async function handler(req, res) {
     ok: true,
     telegram: telegram.ok,
     viato: viato.ok,
-    reason: [telegram.reason, viato.reason].filter(Boolean).join(' | ') || undefined
+    reason: [telegram.reason, viato.reason].filter(Boolean).join(' | ') || undefined,
+    detail: viato.detail || undefined
   });
 }
