@@ -56,6 +56,7 @@ export default async function handler(req, res) {
   const LINK = String(process.env.BROKER_LINK || '').trim();
   const SECRET = String(process.env.TELEGRAM_WEBHOOK_SECRET || '').trim();
   const FREE = String(process.env.FREE_CHANNEL_LINK || 'https://t.me/+ukr-PkZbU1lmMmIx').trim();
+  const VIDEO = String(process.env.WELCOME_VIDEO || '').trim();
 
   // ---- one time webhook registration, no token ever in the URL ----
   if (req.method === 'GET') {
@@ -229,12 +230,22 @@ export default async function handler(req, res) {
     const text = (m.text || '').trim();
 
     if (/^\/start/i.test(text)) {
+      if (VIDEO) {
+        // works for a file id, or a public https link to an mp4
+        await tg('sendVideo', {
+          chat_id: from.id,
+          video: VIDEO,
+          supports_streaming: true,
+          caption: '\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\nWatch this, then read below \ud83d\udc47',
+          parse_mode: 'HTML'
+        });
+      }
       await tg('sendMessage', {
         chat_id: from.id,
         parse_mode: 'HTML',
         disable_web_page_preview: true,
         text:
-          `\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\n` +
+          (VIDEO ? '' : `\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\n`) +
           `This is the room. Live calls, my levels, my reasoning, while it is happening.\n\n` +
           `Getting in costs you nothing. You just open your trading account through my link. `+
           `That is what keeps the room free for everybody in it. \ud83d\udcaf\n\n` +
@@ -256,8 +267,28 @@ export default async function handler(req, res) {
       return res.status(200).end();
     }
 
+    // Richard sends a clip: hand back the file id so it can be saved as WELCOME_VIDEO.
+    // Telegram files the same clip as video, animation, video_note or document
+    // depending on length, sound and how it was sent, so accept all of them.
+    const clip = m.video || m.animation || m.video_note || m.document || null;
+
+    if (clip && String(from.id) === ADMIN) {
+      const kind = m.video ? 'video' : m.animation ? 'animation'
+                 : m.video_note ? 'video note' : 'document';
+      await tg('sendMessage', {
+        chat_id: from.id,
+        parse_mode: 'HTML',
+        text:
+          '\ud83c\udfac <b>Got your welcome clip.</b>  <i>(' + kind + ')</i>\n\nIts file id is:\n\n' +
+          '<code>' + esc(clip.file_id) + '</code>\n\n' +
+          'Tap that to copy it, then add it in Vercel as <b>WELCOME_VIDEO</b> and redeploy. ' +
+          'After that every applicant gets it the moment they send /start.'
+      });
+      return res.status(200).end();
+    }
+
     // a screenshot arrives
-    if (m.photo || m.document) {
+    if (m.photo || m.document || m.video || m.animation || m.video_note) {
       await tg('sendMessage', {
         chat_id: from.id,
         text: '\ud83d\udd25 Got it. I am looking at this myself, usually same day.\n\nSit tight, I will come straight back to you.'
@@ -283,6 +314,22 @@ export default async function handler(req, res) {
             { text: '✕ Decline', callback_data: 'no:' + from.id }
           ]]
         }
+      });
+      return res.status(200).end();
+    }
+
+    // Admin sent something we did not recognise: show exactly what arrived.
+    if (String(from.id) === ADMIN && !text) {
+      const keys = Object.keys(m).filter(function (k) {
+        return ['message_id', 'from', 'chat', 'date'].indexOf(k) === -1;
+      });
+      await tg('sendMessage', {
+        chat_id: from.id,
+        parse_mode: 'HTML',
+        text:
+          '\ud83d\udd0e <b>I did not recognise that.</b>\n\n' +
+          'Telegram sent me these fields:\n<code>' + esc(keys.join(', ') || 'none') + '</code>\n\n' +
+          'Send that line to Claude and it will handle the rest.'
       });
       return res.status(200).end();
     }
