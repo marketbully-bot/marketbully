@@ -34,6 +34,11 @@ const LABELS = {
     '3h-plus': 'Three or more hours a day',
     'weekends': 'Weekends only'
   },
+  onehouse: {
+    'member': 'Yes, already subscribed',
+    'watched': 'Not subscribed, has watched the sessions',
+    'new': 'No, new to 1House'
+  },
   capital: {
     '100-200': '$100 to $200 ready',
     '200-plus': 'More than $200 ready',
@@ -47,6 +52,7 @@ const HEADINGS = {
   experience: 'Where they are',
   pain: 'What is going wrong',
   time: 'Time per day',
+  onehouse: 'Subscribed to 1House.TV',
   capital: 'Capital'
 };
 
@@ -77,7 +83,7 @@ function splitName(full) {
 
 function noteFor(d) {
   const rows = [];
-  for (const key of ['motive', 'experience', 'pain', 'time', 'capital']) {
+  for (const key of ['motive', 'experience', 'pain', 'time', 'onehouse', 'capital']) {
     const raw = d[key];
     if (!raw) continue;
     const nice = (LABELS[key] && LABELS[key][raw]) || raw;
@@ -165,7 +171,7 @@ export default async function handler(req, res) {
   }
 
   msg += '\n<b>Their answers</b>\n';
-  for (const key of ['motive', 'experience', 'pain', 'time', 'capital']) {
+  for (const key of ['motive', 'experience', 'pain', 'time', 'onehouse', 'capital']) {
     const raw = d[key];
     if (!raw) continue;
     const nice = (LABELS[key] && LABELS[key][raw]) || raw;
