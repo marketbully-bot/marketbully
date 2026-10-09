@@ -894,6 +894,66 @@ nav.pages .navig:hover{color:#fff;background:var(--panel)}
 .bio p{font-size:17px;line-height:1.7;color:var(--silver-2);margin:0 0 16px}
 .bio p.bio-lead{font-size:clamp(19px,2.8vw,23px);line-height:1.45;color:var(--silver);font-weight:600}
 .bio b{color:var(--silver)}
+/* ============ speaking page (/speaking) ============ */
+.sp-hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.sp-hero .sp-vid{position:relative}
+.sp-hero video{display:block;width:100%;height:auto;aspect-ratio:5/4;object-fit:cover;object-position:60% 30%;background:#000}
+.sp-hero .sp-vid::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,6,11,.35) 0%,rgba(4,6,11,0) 30%,rgba(4,6,11,.25) 62%,#04060B 100%)}
+.sp-hero .sp-in{position:relative;z-index:2;width:100%;max-width:var(--maxw);margin:-64px auto 0;padding:0 22px 40px}
+.sp-hero h1{font-size:clamp(40px,8.4vw,86px);line-height:1;margin:0 0 18px;max-width:14ch}
+.sp-hero .lede{max-width:52ch;color:var(--silver)}
+.sp-hero .row{margin-top:26px}
+.sp-proof{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);max-width:var(--maxw);margin:0 auto}
+.sp-proof div{padding:22px 22px;border-top:1px solid var(--line)}
+.sp-proof div:nth-child(odd){border-right:1px solid var(--line)}
+.sp-proof div:nth-child(-n+2){border-top:none}
+.sp-proof b{display:block;font-family:var(--display);font-size:clamp(20px,3.4vw,28px);color:var(--silver);line-height:1.1}
+.sp-proof span{display:block;margin-top:6px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver-dim)}
+.sp-wide{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line-hi);background:#000;box-shadow:0 0 60px rgba(46,107,255,.18)}
+.sp-wide video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.sp-reel{display:grid;grid-auto-flow:column;grid-auto-columns:min(64vw,250px);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 22px 14px;margin:18px -22px 0;scrollbar-width:none}
+.sp-reel::-webkit-scrollbar{display:none}
+.sp-clip{position:relative;scroll-snap-align:start;border-radius:18px;overflow:hidden;border:1px solid var(--line-hi);background:#000;min-width:0}
+.sp-clip video{display:block;width:100%;height:auto;aspect-ratio:9/16;object-fit:cover}
+.sp-play{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;padding:16px;text-align:left;border:0;cursor:pointer;color:#fff;font-family:var(--ui);
+  background:linear-gradient(180deg,rgba(4,6,11,0) 45%,rgba(4,6,11,.88) 100%)}
+.sp-play i{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:999px;background:rgba(30,82,224,.92);box-shadow:0 0 34px rgba(46,107,255,.6);display:flex;align-items:center;justify-content:center}
+.sp-play i svg{margin-left:3px}
+.sp-play .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue-hi)}
+.sp-play b{font-family:var(--display);font-size:16px;line-height:1.25;font-weight:700}
+.sp-wide .sp-play b{font-size:clamp(18px,3.4vw,26px);max-width:22ch}
+.playing>.sp-play{display:none}
+.sp-swipe{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver-dim);margin:6px 0 0}
+.sp-topics{counter-reset:spt}
+.sp-topics .card{counter-increment:spt}
+.sp-topics .card h3::before{content:"0" counter(spt);display:block;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--blue-hi);margin-bottom:12px}
+.sp-topics .card .q{margin-top:14px;padding-left:12px;border-left:2px solid var(--blue);color:var(--silver);font-style:italic}
+.sp-formats{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.sp-formats span{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver-2);border:1px solid var(--line-hi);border-radius:999px;padding:8px 14px;background:rgba(255,255,255,.03)}
+.sp-gal{columns:2;column-gap:10px}
+.sp-gal figure{margin:0 0 10px;break-inside:avoid;border-radius:14px;overflow:hidden;border:1px solid var(--line-hi);background:#0b0f18}
+.sp-gal img{display:block;width:100%;height:auto}
+.sp-intro{padding:28px 26px;border-radius:18px}
+.sp-intro p{font-size:17px;line-height:1.65;color:var(--silver);margin:0}
+.sp-intro .eyebrow{margin-bottom:14px}
+.sp-copy{margin-top:18px}
+.sp-book{text-align:center}
+.sp-book h2{max-width:18ch;margin:0 auto 14px}
+.sp-book p{max-width:52ch;margin:0 auto;color:var(--silver-2)}
+.sp-book .row{justify-content:center;margin-top:26px}
+@media(min-width:820px){
+  .sp-proof{grid-template-columns:repeat(4,1fr)}
+  .sp-proof div{border-top:none;border-right:1px solid var(--line)}
+  .sp-proof div:last-child{border-right:none}
+  .sp-reel{grid-auto-flow:row;grid-template-columns:repeat(4,1fr);overflow:visible;padding:0;margin:18px 0 0}
+  .sp-swipe{display:none}
+  .sp-gal{columns:4}
+  .sp-hero{min-height:min(86vh,720px);display:flex;align-items:flex-end}
+  .sp-hero .sp-vid{position:absolute;inset:0}
+  .sp-hero video{height:100%;aspect-ratio:auto;object-position:50% 30%}
+  .sp-hero .sp-vid::after{background:linear-gradient(180deg,rgba(4,6,11,.5) 0%,rgba(4,6,11,.15) 30%,rgba(4,6,11,.8) 70%,#04060B 100%)}
+  .sp-hero .sp-in{margin:0 auto;padding:140px 30px 64px}
+}
 /* ============ member area (/members) ============ */
 body.memberpage .toast{display:none!important}
 .mb{max-width:860px;margin:0 auto}
@@ -1028,6 +1088,7 @@ body.vaultpath .funnelmeta{display:none}
       <button data-go="home" aria-current="page">Home</button>
       <button data-go="onboarding" class="hot">Onboarding</button>
       <button data-go="about">About</button>
+      <button data-go="speaking">Speaking</button>
       <button data-go="community">Community</button>
       <button data-go="faq">FAQ</button>
       <button data-go="contact">Contact</button>
@@ -1506,7 +1567,7 @@ body.vaultpath .funnelmeta{display:none}
             <li><b>Built the Market Bully Strategy and the Olympus Scanner</b>, both my own.</li>
             <li><b>Los Angeles</b>, and the community work is still here.</li>
           </ul>
-          <div class="row" style="margin-top:28px"><a class="btn ghost" href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">Watch a session</a></div>
+          <div class="row" style="margin-top:28px"><a class="btn ghost" href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">Watch a session</a><button class="btn ghost" data-go="speaking">Book him to speak</button></div>
         </div>
       </div>
     </div>
@@ -1899,9 +1960,105 @@ body.vaultpath .funnelmeta{display:none}
       <details><summary>Who does not get approved?</summary><div class="body"><p>People who are not ready to open and fund a trading account yet, because the room will not do anything for them. Start with the lessons instead. And people who show up to argue or to recruit for their own group. Both are easy to spot in the application.</p></div></details>
       <details><summary>Can I share my invite with a friend?</summary><div class="body"><p>It will not work. Every invite is made for one person and expires the moment it is used. If you want somebody in, send them to the application and they go through the same door you did.</p></div></details>
       <details><summary>I am already in The Vault. Where do I start?</summary><div class="body"><p>In the <button class="inline-link" data-go="members">member area</button>. Sign in with Telegram and you will see your first week: your apps, the five starter lessons, the quiz, the community chat and the live session times.</p></div></details>
-      <details><summary>Can I book Richard to speak?</summary><div class="body"><p>Yes. Use the form on the <button class="inline-link" data-go="contact">Contact page</button> and choose &ldquo;Book Richard to speak.&rdquo; My executive assistant reviews every request and handles the scheduling.</p></div></details>
+      <details><summary>Can I book Richard to speak?</summary><div class="body"><p>Yes. See the <button class="inline-link" data-go="speaking">Speaking page</button> for clips and topics, then use the form on the <button class="inline-link" data-go="contact">Contact page</button> and choose &ldquo;Book Richard to speak.&rdquo; My executive assistant reviews every request and handles the scheduling.</p></div></details>
       <details><summary>Can I get a refund?</summary><div class="body"><p>There is nothing to refund for The Vault, because you never pay me for it. Anything you pay 1House Global or deposit into a trading account is governed by their terms, not mine, and you should read those before you pay.</p></div></details>
       </div>
+    </div>
+  </section>
+</main>
+
+<!-- ==================== SPEAKING ==================== -->
+<main class="page" id="speaking">
+  <section class="sp-hero">
+    <div class="sp-vid"><video id="spHero" muted loop playsinline preload="none" poster="/media/sp-hero.jpg"><source src="/media/sp-hero.mp4" type="video/mp4"></video></div>
+    <div class="sp-in">
+      <p class="eyebrow">Speaking</p>
+      <h1>Put The Market Bully on your stage</h1>
+      <p class="lede">Richard &ldquo;Pops&rdquo; Hall Jr. speaks on discipline, financial literacy, and building a team that wins together. He speaks from experience, and he moves the room.</p>
+      <div class="row"><button class="btn lg" data-go="contact" data-calltype="speaking">Check his availability</button><button class="btn ghost lg" type="button" data-spjump="spWatch">Watch him speak</button></div>
+    </div>
+  </section>
+  <div class="sp-proof">
+    <div><b>#1</b><span>Most streamed on 1House.TV</span></div>
+    <div><b>100,000+</b><span>Views, a platform first</span></div>
+    <div><b>2023</b><span>Educator of the Year, 1House Global</span></div>
+    <div><b>10,000+</b><span>Students taught</span></div>
+  </div>
+
+  <section class="band" id="spWatch">
+    <div class="band-in">
+      <div class="sec-head rv">
+        <p class="eyebrow"><i>01</i> Hear him</p>
+        <h2>In his own words</h2>
+        <p>Straight from him. Tap any clip to play it with sound.</p>
+      </div>
+      <div class="sp-wide rv" data-spclip="stage"><video playsinline preload="none" poster="/media/sp-stage.jpg"><source src="/media/sp-stage.mp4" type="video/mp4"></video>
+        <button class="sp-play" type="button" aria-label="Play: Commitment gets you to show up"><i aria-hidden="true"><svg width="20" height="22" viewBox="0 0 20 22"><path d="M2 1.5v19l16-9.5z" fill="#fff"/></svg></i><span class="k">On stage &middot; 0:26</span><b>&ldquo;Commitment will get you to the point where you show up.&rdquo;</b></button></div>
+      <div class="sp-reel">
+        <div class="sp-clip rv" data-spclip="community"><video playsinline preload="none" poster="/media/sp-community.jpg"><source src="/media/sp-community.mp4" type="video/mp4"></video><button class="sp-play" type="button" aria-label="Play: You enroll for yourself, but you're not by yourself."><i aria-hidden="true"><svg width="20" height="22" viewBox="0 0 20 22"><path d="M2 1.5v19l16-9.5z" fill="#fff"/></svg></i><span class="k">On community &middot; 0:41</span><b>&ldquo;You enroll for yourself, but you&rsquo;re not by yourself.&rdquo;</b></button></div>
+        <div class="sp-clip rv" data-spclip="student"><video playsinline preload="none" poster="/media/sp-student.jpg"><source src="/media/sp-student.mp4" type="video/mp4"></video><button class="sp-play" type="button" aria-label="Play: I'm a master student."><i aria-hidden="true"><svg width="20" height="22" viewBox="0 0 20 22"><path d="M2 1.5v19l16-9.5z" fill="#fff"/></svg></i><span class="k">On staying a student &middot; 0:22</span><b>&ldquo;I&rsquo;m a master student.&rdquo;</b></button></div>
+        <div class="sp-clip rv" data-spclip="dream"><video playsinline preload="none" poster="/media/sp-dream.jpg"><source src="/media/sp-dream.mp4" type="video/mp4"></video><button class="sp-play" type="button" aria-label="Play: What is your dream worth to you per day?"><i aria-hidden="true"><svg width="20" height="22" viewBox="0 0 20 22"><path d="M2 1.5v19l16-9.5z" fill="#fff"/></svg></i><span class="k">On motivation &middot; 0:42</span><b>&ldquo;What is your dream worth to you per day?&rdquo;</b></button></div>
+        <div class="sp-clip rv" data-spclip="teachone"><video playsinline preload="none" poster="/media/sp-teachone.jpg"><source src="/media/sp-teachone.mp4" type="video/mp4"></video><button class="sp-play" type="button" aria-label="Play: Each one, teach one."><i aria-hidden="true"><svg width="20" height="22" viewBox="0 0 20 22"><path d="M2 1.5v19l16-9.5z" fill="#fff"/></svg></i><span class="k">On winning together &middot; 0:20</span><b>&ldquo;Each one, teach one.&rdquo;</b></button></div>
+      </div>
+      <p class="sp-swipe">Swipe for more &rarr;</p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="band-in">
+      <div class="sec-head rv">
+        <p class="eyebrow"><i>02</i> The talks</p>
+        <h2>What he speaks on</h2>
+        <p>Every talk is built for the room it is given in. These are four he can bring to yours.</p>
+      </div>
+      <div class="gridcards c2 sp-topics">
+        <div class="glass card rv"><span class="topedge"></span><h3>Team-Made</h3><p>Nobody wins alone. How to build a community that holds a standard, celebrates each other, and keeps people in the room when it gets hard.</p><p class="q">&ldquo;I&rsquo;m not self-made. I&rsquo;m team-made.&rdquo;</p></div>
+        <div class="glass card rv"><span class="topedge"></span><h3>Commitment and Conviction</h3><p>Commitment gets you to show up. Conviction is what keeps you there. A talk on remembering why you started, and on what your dream is worth to you per day.</p><p class="q">&ldquo;Dreams come true by the steps we take in reality.&rdquo;</p></div>
+        <div class="glass card rv"><span class="topedge"></span><h3>The Master Student</h3><p>Why the best leaders stay students. Discipline, patience, and being strong enough to take a loss and come back tomorrow.</p><p class="q">&ldquo;The day we think we know everything is the day we begin to die.&rdquo;</p></div>
+        <div class="glass card rv"><span class="topedge"></span><h3>Starting Over</h3><p>From corporate sales to business owner, through the financial crisis and back again. What losing it taught him about the difference between earning money and understanding it.</p><p class="q">&ldquo;There&rsquo;s been so many ups, there&rsquo;s been so many downs. There&rsquo;s even been breaking points.&rdquo;</p></div>
+      </div>
+      <div class="sp-formats rv"><span>Keynotes</span><span>Workshops</span><span>Panels</span><span>Youth and community events</span><span>Podcasts and media</span></div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="band-in">
+      <div class="sec-head rv">
+        <p class="eyebrow"><i>03</i> In the room</p>
+        <h2>On stage, and with the people</h2>
+      </div>
+      <div class="sp-gal">
+        <figure class="rv"><img loading="lazy" src="/media/sp-photo-stage.jpg" alt="Richard Hall Jr. on stage in a grey suit, fists raised, smoke rising behind him"></figure>
+        <figure class="rv"><img loading="lazy" src="/media/sp-photo-mic.jpg" alt="Richard Hall Jr. speaking to an audience with a 1House microphone"></figure>
+        <figure class="rv"><img loading="lazy" src="/media/sp-photo-pops.jpg" alt="Portrait of Richard Hall Jr. in a blue cap that reads Pops, arms crossed"></figure>
+        <figure class="rv"><img loading="lazy" src="/media/sp-photo-teaching.jpg" alt="Richard Hall Jr. teaching market structure from a chart on a projector screen"></figure>
+        <figure class="rv"><img loading="lazy" src="/media/sp-photo-award.jpg" alt="Richard Hall Jr. holding his Educator of the Year certificate"></figure>
+        <figure class="rv"><img loading="lazy" src="/media/sp-photo-seated.jpg" alt="Richard Hall Jr. seated at an event in a blue suit"></figure>
+        <figure class="rv"><img loading="lazy" src="/media/sp-photo-walk.jpg" alt="Richard Hall Jr. walking through a venue with a group behind him"></figure>
+        <figure class="rv"><img loading="lazy" src="/media/sp-photo-smile.jpg" alt="Richard Hall Jr. smiling in his trading studio"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="band-in">
+      <div class="sec-head rv">
+        <p class="eyebrow"><i>04</i> For your host</p>
+        <h2>How to introduce him</h2>
+        <p>Ready to read from the stage. Copy it as it is.</p>
+      </div>
+      <div class="glass sp-intro rv">
+        <p id="spIntro">Richard &ldquo;Pops&rdquo; Hall Jr. is The Market Bully: entrepreneur, day trading educator, and the first educator in 1House.TV history to pass 100,000 views. Named Educator of the Year by 1House Global in 2023, and recognised by Congresswoman Sydney Kamlager-Dove for his financial literacy work in Los Angeles, he has taught more than 10,000 students to approach the markets with discipline. He lives by one line: &ldquo;I&rsquo;m not self-made. I&rsquo;m team-made.&rdquo;</p>
+        <button class="btn ghost sm sp-copy" type="button" id="spCopy">Copy the introduction</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="band tight">
+    <div class="band-in sp-book rv">
+      <h2>Bring him to your room</h2>
+      <p>Tell us the date, the city and the audience. Richard&rsquo;s executive assistant reviews every request and replies by email.</p>
+      <div class="row"><button class="btn lg" data-go="contact" data-calltype="speaking">Request a date</button><button class="btn ghost lg" data-go="about">Read his story</button></div>
     </div>
   </section>
 </main>
@@ -2405,7 +2562,7 @@ body.vaultpath .funnelmeta{display:none}
         </div>
         <p>Live trading education from Richard &ldquo;Pops&rdquo; Hall Jr. Los Angeles.</p>
       </div>
-      <div><h3>Site</h3><button data-go="home">Home</button><button data-go="about">About</button><button data-go="community">Community</button><button data-go="faq">FAQ</button></div>
+      <div><h3>Site</h3><button data-go="home">Home</button><button data-go="about">About</button><button data-go="speaking">Speaking</button><button data-go="community">Community</button><button data-go="faq">FAQ</button></div>
       <div><h3>Start</h3><button data-go="start">Application</button><button data-go="members">Member area</button><button data-go="contact">Request a call</button><button data-go="legal">Risk &amp; disclosure</button></div>
       <div><h3>Watch</h3><a href="https://t.me/+ukr-PkZbU1lmMmIx" target="_blank" rel="noopener">The Market Bully channel</a><a href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">1House.TV</a><a href="https://www.instagram.com/therealmarketbully/" target="_blank" rel="noopener">Instagram</a><a href="https://subscribe.1house.tv/MARKETBULLY" target="_blank" rel="noopener">1House plans</a></div>
     </div>
@@ -2451,7 +2608,7 @@ body.vaultpath .funnelmeta{display:none}
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(err){}
-  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal','live','lessons','members','onboarding','lesson-1','lesson-2','lesson-3','lesson-4','lesson-5'];
+  var PAGES = ['home','about','speaking','community','faq','start','steps','onboard','contact','legal','live','lessons','members','onboarding','lesson-1','lesson-2','lesson-3','lesson-4','lesson-5'];
   /* the five starter lessons. /lesson-2 and so on are the links used in the follow-up emails */
   var LESSONS={1:['Foundations','lesson-1-foundations'],2:['Market Trends','lesson-2-market-trends'],3:['Lots and Pips','lesson-3-lots-and-pips'],
                4:['Take Profit and Stop Loss','lesson-4-take-profit-and-stop-loss'],5:['Market Orders','lesson-5-market-orders']};
@@ -2612,7 +2769,7 @@ body.vaultpath .funnelmeta{display:none}
   function go(id){
     if(PAGES.indexOf(id)===-1)id='home';
     trackPage(id);
-    try{ var TT={home:'',about:'About',community:'Community',faq:'FAQ',start:'Apply',steps:'Your steps',live:'Apply',lessons:'Starter lessons',onboarding:'Onboarding',members:'Member area',contact:'Contact and booking',legal:'Risk and disclosure',onboard:'Set-up'};
+    try{ var TT={home:'',about:'About',speaking:'Speaking and booking',community:'Community',faq:'FAQ',start:'Apply',steps:'Your steps',live:'Apply',lessons:'Starter lessons',onboarding:'Onboarding',members:'Member area',contact:'Contact and booking',legal:'Risk and disclosure',onboard:'Set-up'};
       var tt=/^lesson-/.test(id)?'Starter lesson':TT[id];
       document.title=tt?tt+' | The Market Bully':'Richard \u201CPops\u201D Hall Jr. | The Market Bully | #1 Most Streamed on 1House.TV'; }catch(err){}
     var want=id;                       // /steps is the application page opened on its finish screen
@@ -2623,6 +2780,7 @@ body.vaultpath .funnelmeta{display:none}
     if(ln){ id='lesson'; setLesson(parseInt(ln[1],10)); }
     else if(lvid){ try{ lvid.pause(); }catch(err){} }
     if(lpage) lpage.classList.toggle('on',id==='lesson');
+    if(window.__spPage) window.__spPage(id==='speaking');
     PAGES.forEach(function(p){var el=document.getElementById(p);if(el)el.classList.toggle('on',p===id);});
     document.querySelectorAll('#nav button').forEach(function(b){
       if(b.dataset.go===id)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
@@ -3607,6 +3765,48 @@ body.vaultpath .funnelmeta{display:none}
         .then(function(){ btn.disabled=false; });
     });
   }
+
+  /* Speaking page: the hero reel plays silently, clips play with sound one at a time,
+     and everything stops when the visitor leaves the page. */
+  (function(){
+    var pg=document.getElementById('speaking'); if(!pg) return;
+    var hero=document.getElementById('spHero'), boxes=[].slice.call(pg.querySelectorAll('[data-spclip]'));
+    function stopAll(except){
+      boxes.forEach(function(b){ var v=b.querySelector('video'); if(v&&v!==except){ try{ v.pause(); }catch(err){} } });
+    }
+    boxes.forEach(function(b){
+      var v=b.querySelector('video'), btn=b.querySelector('.sp-play');
+      btn.addEventListener('click',function(){
+        stopAll(v); v.controls=true; v.muted=false; b.classList.add('playing');
+        var p=v.play(); if(p&&p.catch) p.catch(function(){ b.classList.remove('playing'); v.controls=false; });
+        track('speaking_clip_play',{clip:b.dataset.spclip});
+      });
+      v.addEventListener('play',function(){ stopAll(v); });
+      v.addEventListener('ended',function(){ b.classList.remove('playing'); v.controls=false; try{ v.load(); }catch(err){} });
+    });
+    window.__spPage=function(on){
+      if(on){ if(hero && !reduce){ var p=hero.play(); if(p&&p.catch) p.catch(function(){}); } }
+      else { stopAll(null); if(hero){ try{ hero.pause(); }catch(err){} } }
+    };
+    pg.querySelectorAll('[data-spjump]').forEach(function(b){
+      b.addEventListener('click',function(){ var t=document.getElementById(b.dataset.spjump); if(t) t.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'}); });
+    });
+    var cp=document.getElementById('spCopy');
+    if(cp) cp.addEventListener('click',function(){
+      var txt=document.getElementById('spIntro').textContent.trim();
+      function done(){ cp.textContent='Copied'; setTimeout(function(){ cp.textContent='Copy the introduction'; },2200); track('speaking_intro_copy',{}); }
+      if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done,function(){ cp.textContent='Press and hold the text to copy'; });
+      else cp.textContent='Press and hold the text to copy';
+    });
+    if(pg.classList.contains('on')) window.__spPage(true);
+  })();
+  /* Buttons that open the Contact form already set to the right kind of request. */
+  document.addEventListener('click',function(e){
+    var b=e.target.closest?e.target.closest('[data-calltype]'):null; if(!b) return;
+    var sel=document.getElementById('callType'); if(!sel) return;
+    sel.value=b.dataset.calltype; sel.dispatchEvent(new Event('change'));
+    track('speaking_book_click',{from:whereAmI(b)});
+  });
 
   var toast=document.getElementById('toast');
   setTimeout(function(){
