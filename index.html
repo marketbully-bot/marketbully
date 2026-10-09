@@ -1877,7 +1877,7 @@ body.vaultpath .funnelmeta{display:none}
     var L=LESSONS[n], v=document.getElementById('lsnVideo'); if(!L||!v) return;
     document.getElementById('lsnCount').textContent='Lesson '+n+' of 5';
     document.getElementById('lsnTitle').textContent=L[0];
-    document.getElementById('lsnNext').textContent = n<5 ? 'Lesson '+(n+1)+' lands in your inbox tomorrow.' : 'That is all five lessons.';
+    document.getElementById('lsnNext').textContent = n<5 ? 'Lesson '+(n+1)+' is in your next email from me.' : 'That is all five lessons.';
     if(lessonNow!==n){ lessonNow=n; v.poster='/lessons/'+L[1]+'.jpg'; v.src='/lessons/'+L[1]+'.mp4'; v.dataset.played=''; }
   }
 
