@@ -751,6 +751,13 @@ body.onboarding .ob-center{text-align:center}
 .vp-fine b.s{color:var(--silver)}
 .vp-fine .inline-link{color:var(--silver-2)}
 #vaultbar{margin:22px auto 0}
+.lsn{max-width:860px;margin:0 auto}
+.lsn-h{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,50px);line-height:1.06;letter-spacing:-.04em;color:var(--silver);margin:0 0 22px;max-width:none}
+.lsn-frame{border-radius:16px;overflow:hidden;border:1px solid var(--line-hi);background:#000;box-shadow:0 0 60px rgba(46,107,255,.2)}
+.lsn-frame video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000}
+.lsn-next{font-size:14.5px;color:var(--silver-dim);margin:14px 0 0}
+.lsn-cta{margin-top:30px}
+@media(min-width:700px){.lsn-cta .btn{width:auto;justify-self:start}}
 .cookiebar{position:fixed;left:12px;right:12px;bottom:12px;z-index:250;display:none;align-items:center;justify-content:space-between;
   gap:12px 18px;flex-wrap:wrap;max-width:760px;margin:0 auto;padding:14px 16px;border-radius:14px;border:1px solid var(--line-hi);
   background:rgba(7,10,18,.96);box-shadow:0 20px 60px -20px #000}
@@ -1781,6 +1788,24 @@ body.vaultpath .funnelmeta{display:none}
   </section>
 </main>
 
+<main class="page" id="lesson">
+  <section class="wrap" style="padding-top:64px;padding-bottom:70px">
+    <div class="lsn">
+      <p class="eyebrow" id="lsnCount">Lesson 1 of 5</p>
+      <h1 class="lsn-h" id="lsnTitle">Foundations</h1>
+      <div class="lsn-frame"><video id="lsnVideo" controls playsinline preload="metadata"></video></div>
+      <p class="lsn-next" id="lsnNext"></p>
+      <div class="vp-card lsn-cta">
+        <p class="eyebrow" style="margin:0">Your next step</p>
+        <h3>Finish your path into The Vault</h3>
+        <p>The lessons are the warm-up. The Vault is where I trade it live. Your steps are saved right where you left them.</p>
+        <button class="btn" data-go="steps">Go to my steps &rarr;</button>
+      </div>
+      <p class="ob-fine">Educational only. Nothing here is financial advice. Trading carries real risk and you can lose money. <button class="inline-link" data-go="legal">Read the full risk disclosure</button></p>
+    </div>
+  </section>
+</main>
+
 <footer>
   <div class="foot-in">
     <div class="foot-grid">
@@ -1843,7 +1868,18 @@ body.vaultpath .funnelmeta{display:none}
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(err){}
-  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal'];
+  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal','lesson-1','lesson-2','lesson-3','lesson-4','lesson-5'];
+  /* the five starter lessons. /lesson-2 and so on are the links used in the follow-up emails */
+  var LESSONS={1:['Foundations','lesson-1-foundations'],2:['Market Trends','lesson-2-market-trends'],3:['Lots and Pips','lesson-3-lots-and-pips'],
+               4:['Take Profit and Stop Loss','lesson-4-take-profit-and-stop-loss'],5:['Market Orders','lesson-5-market-orders']};
+  var lessonNow=0;
+  function setLesson(n){
+    var L=LESSONS[n], v=document.getElementById('lsnVideo'); if(!L||!v) return;
+    document.getElementById('lsnCount').textContent='Lesson '+n+' of 5';
+    document.getElementById('lsnTitle').textContent=L[0];
+    document.getElementById('lsnNext').textContent = n<5 ? 'Lesson '+(n+1)+' lands in your inbox tomorrow.' : 'That is all five lessons.';
+    if(lessonNow!==n){ lessonNow=n; v.poster='/lessons/'+L[1]+'.jpg'; v.src='/lessons/'+L[1]+'.mp4'; v.dataset.played=''; }
+  }
 
   /* ---------- ticker ---------- */
   var titles=[["Olympus Master Class, Day 1","1:45:03"],["MB Strategy: Fibonacci Settings","2:21:28"],["Strong Optimal Entries","2:07:19"],["Olympus Volume Metric Order Blocks","2:08:04"],["Market Bully 4 Hour Sauce","2:23:56"],["MB Strategy: Reversal Entries Simplified","2:13:49"],["Olympus Sauce, Gold Melts","2:57:07"],["Olympus Master Class, Day 2","1:11:44"],["Olympus Master Class, Day 3","2:02:47"]];
@@ -1980,6 +2016,10 @@ body.vaultpath .funnelmeta{display:none}
     trackPage(id);
     var want=id;                       // /steps is the application page opened on its finish screen
     if(id==='steps') id='start';
+    var ln=/^lesson-([1-5])$/.exec(id), lpage=document.getElementById('lesson'), lvid=document.getElementById('lsnVideo');
+    if(ln){ id='lesson'; setLesson(parseInt(ln[1],10)); }
+    else if(lvid){ try{ lvid.pause(); }catch(err){} }
+    if(lpage) lpage.classList.toggle('on',id==='lesson');
     PAGES.forEach(function(p){var el=document.getElementById(p);if(el)el.classList.toggle('on',p===id);});
     document.querySelectorAll('#nav button').forEach(function(b){
       if(b.dataset.go===id)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
@@ -2432,6 +2472,11 @@ body.vaultpath .funnelmeta{display:none}
       }).catch(function(){});
     }catch(err){}
   });
+
+  (function(){
+    var v=document.getElementById('lsnVideo'); if(!v) return;
+    v.addEventListener('play',function(){ if(v.dataset.played) return; v.dataset.played='1'; track('lesson_play',{lesson:lessonNow,where:'lesson-page'}); });
+  })();
 
   /* lesson player */
   var vmodal=document.getElementById('vmodal'), vvid=document.getElementById('vmodalV'), vopener=null;
