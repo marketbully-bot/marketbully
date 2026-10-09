@@ -820,8 +820,17 @@ nav.pages .navig:hover{color:#fff;background:var(--panel)}
 .ig-count{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue-hi)!important;margin:0 0 8px!important}
 .ig-kind{position:absolute;right:8px;top:8px;width:26px;height:26px;border-radius:8px;background:rgba(4,6,11,.66);display:flex;align-items:center;justify-content:center}
 .ig-tile{animation:screenIn .5s var(--ease) both}
+.ig-tile.gone{display:none}
+.ig-pin{position:absolute;left:8px;top:8px;display:flex;align-items:center;gap:5px;padding:5px 9px 5px 7px;border-radius:999px;background:rgba(30,82,224,.92);
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#fff}
+.ig-pin b{font-weight:500}
+.ig-tile.pinned{border-color:var(--blue);box-shadow:0 0 26px rgba(46,107,255,.3)}
+.ig-more{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;aspect-ratio:1;padding:10px;text-align:center;text-decoration:none;
+  color:#fff;background:linear-gradient(160deg,#4079FF,#1B4ED8);border-color:rgba(110,157,255,.6)}
+.ig-more b{font-family:var(--ui);font-size:13.5px;line-height:1.25;font-weight:700}
+.ig-more:hover{filter:brightness(1.1)}
 .ig-mock{margin:14px 0 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--risk)}
-@media(min-width:760px){.ig-head{grid-template-columns:auto 1fr auto;gap:24px}.ig-grid{grid-template-columns:repeat(6,1fr);gap:10px}.ig-head .btn{justify-self:end}}
+@media(min-width:900px){.ig{display:grid;grid-template-columns:1fr minmax(0,540px);gap:56px;align-items:center}.ig-head+.ig-grid{margin-top:0}.ig-grid{gap:10px}.ig-ring{width:120px;height:120px}}
 @media(prefers-reduced-motion:reduce){.ig-ring,.ig-ring img{animation:none}}
 /* ============ onboarding hub (/onboarding) ============ */
 .oh{max-width:980px;margin:0 auto}
@@ -3287,36 +3296,63 @@ body.vaultpath .funnelmeta{display:none}
     });
   })();
 
-  /* Instagram: the six newest posts, handed over by the feed service.
-     It loads only when the section is about to scroll into view, and keeps the
-     answer for six hours, because the feed itself refreshes once a day.
-     If anything fails, the ring and the Follow button stand on their own. */
+  /* Instagram tiles: his pinned posts first, then his newest posts from the
+     feed service. The feed loads only when the section is about to scroll into
+     view, and the answer is kept for six hours, because the feed itself
+     refreshes once a day. If the feed fails, the pinned tiles still show. */
   (function(){
     var FEED='https://feeds.behold.so/05b0vXqtpvH88JRD8IS7';
+    var PROFILE='https://www.instagram.com/therealmarketbully/';
+    /* Pinned on his Instagram. The feed does not say which posts are pinned, so
+       these are set by hand. Change them here when he changes his pins. */
+    var PINNED=[
+      {id:'pin1', type:'CAROUSEL_ALBUM', permalink:'https://www.instagram.com/p/DHKC0ahyVL0/', img:'/media/ig-pinned-1.jpg'},
+      {id:'pin2', type:'VIDEO', permalink:'https://www.instagram.com/reel/DIDVUZruLE4/', img:'/media/ig-pinned-2.jpg'}
+    ];
     var HIDE=[];                                   // ids of posts to leave off the site
     var grid=document.getElementById('igGrid'); if(!grid) return;
     var sec=grid.closest('.ig'), started=false, KEY='mb_ig_v1', TTL=1000*60*60*6;
     var ICON={
       CAROUSEL_ALBUM:'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2" aria-hidden="true"><rect x="3" y="7" width="13" height="13" rx="2.5"/><path d="M8 4h10.5a2.5 2.5 0 0 1 2.5 2.5V17"/></svg>',
-      VIDEO:'<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" fill="#fff"/></svg>'
+      VIDEO:'<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" fill="#fff"/></svg>',
+      PIN:'<svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><circle cx="12" cy="8" r="5" fill="#fff"/><path d="M12 13v8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>'
     };
     function short(n){ return n>=1000000?(Math.round(n/100000)/10)+'M':(n>=1000?(Math.round(n/100)/10)+'K':String(n)); }
+    function tile(p,i,pinned){
+      var a=document.createElement('a'); a.className='ig-tile'+(pinned?' pinned':''); a.href=p.permalink; a.target='_blank'; a.rel='noopener';
+      a.style.animationDelay=(i*60)+'ms';
+      a.setAttribute('aria-label',pinned?'Open this pinned post on Instagram':'Open this post on Instagram');
+      var im=document.createElement('img'); im.alt=''; im.width=480; im.height=480; im.loading='lazy';
+      im.onerror=function(){ a.classList.add('gone'); };
+      im.src=p.img; a.appendChild(im);
+      if(ICON[p.type]){ var k=document.createElement('span'); k.className='ig-kind'; k.innerHTML=ICON[p.type]; a.appendChild(k); }
+      if(pinned){ var pn=document.createElement('span'); pn.className='ig-pin'; pn.innerHTML=ICON.PIN+'<b>Pinned</b>'; a.appendChild(pn); }
+      return a;
+    }
+    function more(){
+      var a=document.createElement('a'); a.className='ig-tile ig-more'; a.href=PROFILE; a.target='_blank'; a.rel='noopener';
+      a.innerHTML='<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg><b>See more on Instagram</b>';
+      return a;
+    }
     function paint(j){
-      if(!j||!j.posts||!j.posts.length) return;
-      grid.innerHTML='';
-      j.posts.filter(function(p){ return p&&p.permalink&&p.img&&HIDE.indexOf(String(p.id))===-1; }).slice(0,6).forEach(function(p,i){
-        var a=document.createElement('a'); a.className='ig-tile'; a.href=p.permalink; a.target='_blank'; a.rel='noopener';
-        a.style.animationDelay=(i*70)+'ms';
-        a.setAttribute('aria-label','Open this post on Instagram');
-        var im=document.createElement('img'); im.alt=''; im.width=480; im.height=480; im.loading='lazy';
-        im.onerror=function(){ if(a.parentNode) a.parentNode.removeChild(a); if(!grid.children.length) grid.hidden=true; };
-        im.src=p.img; a.appendChild(im);
-        if(ICON[p.type]){ var k=document.createElement('span'); k.className='ig-kind'; k.innerHTML=ICON[p.type]; a.appendChild(k); }
-        grid.appendChild(a);
+      var seen={}, latest=[];
+      PINNED.forEach(function(p){ seen[p.permalink.replace(/\/+$/,'')]=1; });
+      ((j&&j.posts)||[]).forEach(function(p){
+        if(!p||!p.permalink||!p.img||HIDE.indexOf(String(p.id))!==-1) return;
+        var key=p.permalink.replace(/\/+$/,''); if(seen[key]) return; seen[key]=1; latest.push(p);
       });
+      latest=latest.slice(0,6);
+      // always fill whole rows of three: one short, add the "see more" tile; one over, drop the oldest
+      var n=PINNED.length+latest.length, addMore=false;
+      if(n%3===1 && latest.length){ latest.pop(); } else if(n%3===2){ addMore=true; } else if(n%3===1){ addMore=false; }
+      grid.innerHTML='';
+      var i=0;
+      PINNED.forEach(function(p){ grid.appendChild(tile(p,i++,true)); });
+      latest.forEach(function(p){ grid.appendChild(tile(p,i++,false)); });
+      if(addMore) grid.appendChild(more());
       grid.hidden=!grid.children.length;
       var c=document.getElementById('igCount');
-      if(c && j.followers>0){ c.textContent=short(j.followers)+' followers'; c.hidden=false; }
+      if(c && j && j.followers>0){ c.textContent=short(j.followers)+' followers'; c.hidden=false; }
     }
     function slim(j){   // keep only what the page uses
       return {followers:j.followersCount||0, posts:(j.posts||[]).map(function(p){
@@ -3327,10 +3363,11 @@ body.vaultpath .funnelmeta{display:none}
     function load(){
       if(started) return; started=true;
       try{ var c=JSON.parse(localStorage.getItem(KEY)||'null'); if(c&&c.t&&Date.now()-c.t<TTL&&c.j){ paint(c.j); return; } }catch(err){}
+      paint(null);                                  // pinned tiles straight away
       fetch(FEED).then(function(r){ if(!r.ok) throw new Error('feed'); return r.json(); }).then(function(j){
         var s=slim(j); paint(s);
         try{ localStorage.setItem(KEY,JSON.stringify({t:Date.now(),j:s})); }catch(err){}
-      }).catch(function(){ grid.hidden=true; });
+      }).catch(function(){ /* the pinned tiles stay */ });
     }
     if('IntersectionObserver' in window && sec){
       var io2=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ load(); io2.disconnect(); } }); },{rootMargin:'700px 0px'});
