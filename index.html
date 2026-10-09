@@ -822,7 +822,20 @@ nav.pages .navig:hover{color:#fff;background:var(--panel)}
 .rvw-card .av{flex:none;width:30px;height:30px;border-radius:50%;background:linear-gradient(160deg,#4079FF,#1B4ED8);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
 .rvw-card .who b{color:var(--silver);font-weight:700}
 .rvw-fine{max-width:var(--maxw);margin:0 auto;padding:18px 30px 60px;font-size:12px;line-height:1.6;color:var(--silver-dim)}
+.rvw-swipe{display:none}
 @media(min-width:800px){.rvw-head{grid-template-columns:1fr auto}.rvw-head .btn{justify-self:end}.rvw-card{width:360px}}
+@media(max-width:699px){
+  .rvw-rows{display:none}
+  .rvw-swipe{display:block}
+  .rvw-reel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .rvw-reel::-webkit-scrollbar{display:none}
+  .rvw-reel .rvw-slide{flex:none;width:100%;box-sizing:border-box;padding:0 20px;scroll-snap-align:center;display:flex}
+  .rvw-reel .rvw-card{width:100%;min-height:230px;padding:22px}
+  .rvw-reel .rvw-card p{font-size:16.5px;line-height:1.55}
+  .rvw-nav{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:16px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver-dim)}
+  .rvw-nav button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line-hi);background:var(--panel);color:var(--silver);font-size:18px;cursor:pointer}
+  .rvw-nav button:active{background:var(--panel-2)}
+}
 @media(max-width:860px){.rvw-fine{padding-left:20px;padding-right:20px}}
 @media(prefers-reduced-motion:reduce){.rvw-track{animation:none}.rvw-row{overflow-x:auto}}
 /* ============ Instagram ============ */
@@ -1088,6 +1101,14 @@ body.vaultpath .funnelmeta{display:none}
     <div class="rvw-rows" id="rvwRows" aria-label="Selected student reviews">
       <div class="rvw-row"><div class="rvw-track" id="rvwA"></div></div>
       <div class="rvw-row rev"><div class="rvw-track" id="rvwB"></div></div>
+    </div>
+    <div class="rvw-swipe" id="rvwSwipe" aria-label="Selected student reviews, one at a time">
+      <div class="rvw-reel" id="rvwReel"></div>
+      <div class="rvw-nav">
+        <button type="button" id="rvwPrev" aria-label="Previous review">&larr;</button>
+        <span id="rvwCount">1 of 22</span>
+        <button type="button" id="rvwNext" aria-label="Next review">&rarr;</button>
+      </div>
     </div>
     <p class="rvw-fine">Selected reviews from my public 1House.TV page, shown in the student&rsquo;s own words and shortened for length. Rating and count as shown there on 9 October 2026. Each review is that student&rsquo;s own experience and is not a promise of results.</p>
   </section>
@@ -3439,6 +3460,30 @@ body.vaultpath .funnelmeta{display:none}
     }
     var half=Math.ceil(R.length/2);
     fill(A,R.slice(0,half)); fill(B,R.slice(half));
+    // phones: one whole review at a time. It moves on by itself every few seconds,
+    // and the visitor can swipe or use the arrows.
+    var reel=document.getElementById('rvwReel'), count=document.getElementById('rvwCount');
+    if(reel){
+      R.forEach(function(r){ var sl=document.createElement('div'); sl.className='rvw-slide'; sl.appendChild(card(r)); reel.appendChild(sl); });
+      var idx=0, hold=0, seen=false;
+      function show(i,smooth){
+        idx=(i+R.length)%R.length;
+        try{ reel.scrollTo({left:idx*reel.clientWidth,behavior:smooth?'smooth':'auto'}); }catch(err){ reel.scrollLeft=idx*reel.clientWidth; }
+        if(count) count.textContent=(idx+1)+' of '+R.length;
+      }
+      reel.addEventListener('scroll',function(){
+        if(!reel.clientWidth) return;
+        var i=Math.round(reel.scrollLeft/reel.clientWidth); if(i!==idx){ idx=i; if(count) count.textContent=(idx+1)+' of '+R.length; }
+      },{passive:true});
+      function touched(){ hold=Date.now()+12000; }
+      reel.addEventListener('touchstart',touched,{passive:true});
+      document.getElementById('rvwPrev').addEventListener('click',function(){ touched(); show(idx-1,true); });
+      document.getElementById('rvwNext').addEventListener('click',function(){ touched(); show(idx+1,true); });
+      if('IntersectionObserver' in window) new IntersectionObserver(function(es){ es.forEach(function(e){ seen=e.isIntersecting; }); },{threshold:.5}).observe(reel);
+      else seen=true;
+      if(!reduce) setInterval(function(){ if(seen && Date.now()>hold && reel.clientWidth) show(idx+1,true); },5000);
+      if(count) count.textContent='1 of '+R.length;
+    }
     if(rows){
       rows.addEventListener('touchstart',function(){ rows.classList.add('hold'); },{passive:true});
       rows.addEventListener('touchend',function(){ setTimeout(function(){ rows.classList.remove('hold'); },1500); },{passive:true});
