@@ -89,6 +89,7 @@ function noteFor(d) {
     const nice = (LABELS[key] && LABELS[key][raw]) || raw;
     rows.push(HEADINGS[key] + ': ' + nice);
   }
+  if (d.onehouse_free) rows.push('Tapped the free 1House.TV sign-up link: yes');
   if (d.besttime) rows.push('Best time to call: ' + d.besttime);
   if (d.tz) rows.push('Timezone: ' + d.tz);
   const src = [d.utm_source, d.utm_campaign, d.src, d.ref, d.referrer].filter(Boolean).join(' / ');
@@ -177,6 +178,7 @@ export default async function handler(req, res) {
     const nice = (LABELS[key] && LABELS[key][raw]) || raw;
     msg += `${HEADINGS[key]}: ${esc(nice)}\n`;
   }
+  if (d.onehouse_free) msg += 'Tapped the free 1House.TV sign-up link: yes\n';
 
   const src = [d.utm_source, d.utm_campaign, d.src, d.ref, d.referrer]
     .filter(Boolean).map(esc).join(' · ');

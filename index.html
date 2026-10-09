@@ -620,6 +620,113 @@ body.onboarding .ob-center{text-align:center}
   .ob-tabs{grid-template-columns:1fr;gap:6px}
   .ob-nav{flex-direction:column}
 }
+
+/* ============ onboarding additions: lesson 1, free 1House step, path into The Vault ============ */
+.l1card{display:flex;align-items:center;gap:14px;width:100%;max-width:420px;margin:22px auto 0;padding:10px;border-radius:14px;
+  border:1px solid rgba(110,157,255,.45);background:rgba(46,107,255,.08);text-align:left;cursor:pointer;font-family:var(--ui);
+  color:var(--silver-2);transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.l1card:hover{border-color:var(--blue-hi);transform:translateY(-2px)}
+.l1card .th{position:relative;flex:none;width:124px;border-radius:9px;overflow:hidden;display:block}
+.l1card .th img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.l1card .th svg{position:absolute;left:50%;top:50%;width:30px;height:30px;transform:translate(-50%,-50%)}
+.l1card .tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.l1card .tx i{font-style:normal;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue-hi)}
+.l1card .tx b{font-weight:700;font-size:15px;color:var(--silver)}
+.l1card .tx span{font-size:13px;color:var(--silver-2)}
+
+.vmodal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(2,4,8,.9)}
+.vmodal.on{display:flex}
+.vmodal .box{width:min(100%,960px)}
+.vmodal .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;color:var(--silver);font-weight:700;font-size:15px}
+.vmodal .x{background:var(--panel-2);border:1px solid var(--line-hi);color:var(--silver);border-radius:10px;min-width:44px;min-height:44px;font-size:22px;line-height:1;cursor:pointer}
+.vmodal video{display:block;width:100%;max-height:78vh;border-radius:14px;background:#000;border:1px solid var(--line-hi)}
+
+.qhouse{display:none;padding:6px 0}
+.qhouse.on{display:block;animation:screenIn .5s var(--ease)}
+.qhouse .qhint{margin-bottom:24px}
+.housecard{max-width:520px;margin:0 auto 14px;padding:20px 18px;border-radius:16px;border:1px solid var(--blue);
+  background:rgba(46,107,255,.1);box-shadow:0 0 34px rgba(46,107,255,.22);display:grid;gap:12px;text-align:left}
+.housecard .tick{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--silver)}
+.housecard .tick svg{flex:none;width:18px;height:18px}
+.housecard .btn{width:100%;margin-top:2px;text-align:center}
+.housecard .fine{text-align:center;font-size:12.5px;line-height:1.5;color:var(--silver-2);margin:0}
+.qhouse .skip{width:100%;max-width:520px}
+.qhouse .optnote{font-size:12.5px;color:var(--silver-dim);margin:12px auto 0}
+
+.qdone.vp{text-align:left}
+.vp-head{display:grid;gap:14px}
+.vp-badge{justify-self:start;display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border:1px solid rgba(95,211,155,.4);
+  border-radius:999px;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ok)}
+.vp-badge svg{width:12px;height:12px}
+.qdone.vp .qtitle{margin:0;max-width:none;text-align:left}
+.qdone.vp .qhint{margin:0;max-width:62ch;color:var(--silver-2)}
+.vp-prog .lab{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--silver-dim);margin-bottom:8px}
+.vp-prog .lab b{color:var(--silver);font-weight:500}
+.vp-prog .track{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.vp-prog .track i{display:block;height:100%;width:25%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--blue-hi));transition:width .6s var(--ease)}
+.vp-steps{display:grid;gap:10px;margin:22px 0 0}
+.vp-step{display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:14px;border:1px solid var(--line);background:var(--panel)}
+.vp-step .no{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--silver-dim)}
+.vp-step h3{font-size:17px;margin:0}
+.vp-step p{font-size:14.5px;line-height:1.55;margin:0;color:var(--silver-2)}
+.vp-step p.sm{font-size:12.5px}
+.vp-step .here{display:none;font-size:10px;letter-spacing:.12em;color:#fff;background:var(--blue);padding:3px 9px;border-radius:999px}
+.vp-step .curonly{display:none}
+.vp-step.cur{border-color:var(--blue);background:rgba(46,107,255,.1);box-shadow:0 0 34px rgba(46,107,255,.22)}
+.vp-step.cur .no{color:var(--blue-hi)}
+.vp-step.cur .here{display:inline-block}
+.vp-step.cur .curonly{display:inline-flex}
+.vp-step.cur p.curonly{display:block}
+.vp-step.cur h3{font-size:19px}
+.vp-step.done{border-color:rgba(95,211,155,.35);background:rgba(95,211,155,.05)}
+.vp-step.done .no{color:var(--ok)}
+.vp-check{display:flex;align-items:center;gap:10px;min-height:44px;font-size:14.5px;font-weight:600;color:var(--silver);cursor:pointer;
+  border-top:1px solid var(--line-hi);padding-top:8px;margin-top:auto}
+.vp-check input{width:20px;height:20px;accent-color:var(--blue);flex:none;margin:0}
+.vp-sec{margin-top:34px;min-width:0}
+.vp-sec .eyebrow{margin-bottom:10px}
+.vp-sec h3.big{font-size:22px;letter-spacing:-.03em;margin:0 0 14px}
+.vp-clicks{list-style:none;margin:0;padding:20px 18px;border-radius:14px;border:1px solid var(--line);background:var(--panel);
+  display:grid;gap:14px;font-size:14.5px;line-height:1.55}
+.vp-clicks li{display:flex;gap:12px}
+.vp-clicks .n{flex:none;width:28px;height:28px;border-radius:999px;background:#1E52E0;color:#fff;font-weight:800;font-size:13.5px;
+  display:flex;align-items:center;justify-content:center}
+.vp-clicks b{color:var(--silver)}
+.vp-note{font-size:13px;line-height:1.55;color:var(--silver-dim);margin:12px 0 0}
+.vp-video{position:relative;display:block;width:100%;padding:0;border-radius:14px;overflow:hidden;border:1px solid var(--line-hi);
+  background:#000;cursor:pointer;box-shadow:0 0 60px rgba(46,107,255,.2)}
+.vp-video img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.vp-video .pill{position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;
+  background:#1E52E0;color:#fff;font-family:var(--ui);font-weight:700;font-size:13.5px}
+.vp-video .pill svg{width:10px;height:12px}
+.vp-card{padding:20px 18px;border-radius:14px;border:1px solid var(--line);background:var(--panel);display:grid;gap:10px}
+.vp-card h3{font-size:18px;margin:0}
+.vp-card p{font-size:14.5px;line-height:1.55;margin:0}
+.vp-card .btn{width:100%}
+.vp-stuck{display:grid;gap:10px}
+.vp-stuck button{text-align:left;min-height:48px;padding:12px 14px;border-radius:10px;border:1px solid var(--line-hi);
+  background:rgba(255,255,255,.03);color:var(--silver);font-family:var(--ui);font-size:14.5px;font-weight:600;cursor:pointer}
+.vp-stuck button:hover{border-color:var(--blue-hi)}
+.vp-stuck button.sel{border-color:var(--blue);background:rgba(46,107,255,.14)}
+.vp-reply{display:none;font-size:14.5px;line-height:1.55;color:var(--silver);border-left:2px solid var(--blue);padding:4px 0 4px 12px;margin:4px 0 0}
+.vp-reply.on{display:block}
+.vp-fine{margin-top:34px;padding-top:20px;border-top:1px solid var(--line);font-size:11.5px;line-height:1.6;color:var(--silver-dim);display:grid;gap:8px}
+.vp-fine p{margin:0}
+.vp-fine b{font-family:var(--mono);font-weight:500;letter-spacing:.1em}
+.vp-fine b.r{color:var(--risk)}
+.vp-fine b.s{color:var(--silver)}
+.vp-fine .inline-link{color:var(--silver-2)}
+#vaultbar{margin:22px auto 0}
+body.vaultpath .funnelmeta{display:none}
+@media(min-width:900px){
+  body.vaultpath .quizwrap{max-width:1080px}
+  body.vaultpath .funnelstage{justify-content:flex-start;padding-top:34px}
+  .vp-steps{grid-template-columns:repeat(4,1fr);align-items:stretch}
+  .vp-two{display:grid;grid-template-columns:3fr 2fr;gap:28px;align-items:start}
+  .vp-half{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+}
 </style>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="mesh" aria-hidden="true"></div>
@@ -685,6 +792,23 @@ body.onboarding .ob-center{text-align:center}
 
   <div class="tape" aria-hidden="true"><div class="tape-track" id="tape"></div></div>
   <p class="tape-note">Real session titles from the 1House.TV catalog. No simulated prices on this site.</p>
+
+  <section class="band">
+    <div class="band-in">
+      <div class="stream">
+        <div class="rv">
+          <p class="eyebrow">New to trading? Start here</p>
+          <h2>Watch Lesson&nbsp;1.<br>No sign-up.</h2>
+          <p class="dim">This is the first of five short lessons that take you from &ldquo;what is day trading&rdquo; to placing an order. Two minutes, and nothing to fill in.</p>
+          <div class="row" style="margin-top:26px"><button class="btn" data-go="start">Start your application</button></div>
+        </div>
+        <button class="vp-video rv" type="button" data-lesson="1" aria-label="Play Lesson 1, Foundations">
+          <img src="/lessons/lesson-1-foundations.jpg" alt="" loading="lazy" width="1280" height="720">
+          <span class="pill"><svg viewBox="0 0 12 14" aria-hidden="true"><path d="M1 1 L11 7 L1 13 Z" fill="#fff"/></svg>Play Lesson 1 &middot; 2:16</span>
+        </button>
+      </div>
+    </div>
+  </section>
 
   <section class="band">
     <div class="band-in">
@@ -1137,6 +1261,14 @@ body.onboarding .ob-center{text-align:center}
           </div>
           <button class="btn lg wide" id="qgo">Start here &rarr;</button>
           <p class="mini">About two minutes &middot; No card &middot; Nothing to pay</p>
+          <button class="l1card" type="button" data-lesson="1">
+            <span class="th"><img src="/lessons/lesson-1-foundations.jpg" alt="" width="1280" height="720"><svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="14" fill="#1E52E0"/><path d="M12 9 L22 15 L12 21 Z" fill="#fff"/></svg></span>
+            <span class="tx"><i>Not ready yet?</i><b>Watch Lesson 1 first</b><span>Foundations &middot; 2:16 &middot; no sign-up</span></span>
+          </button>
+          <div class="resumebar" id="vaultbar">
+            <p>Already sent your application?</p>
+            <button class="btn sm" type="button" data-go="steps">Go to my steps</button>
+          </div>
           <div class="resumebar" id="resumebar">
             <p>You started this already. Pick up where you left off?</p>
             <button class="btn sm" id="resumeYes">Continue</button>
@@ -1244,31 +1376,119 @@ body.onboarding .ob-center{text-align:center}
             </form>
           </div>
 
-          <div class="qstep qdone" data-step="7">
-            <div class="qmark"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 12.6l5 5L19.5 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <h2 class="qtitle">You are in the queue.</h2>
-            <p class="qhint">I read every one of these personally. Here is what happens next, and there are two different doors.</p>
-            <div class="splitcards">
-              <div class="glass splitcard now">
-                <p class="lbl">Walk in now, free</p>
-                <h3>The Market Bully channel</h3>
-                <p>No approval, nothing to pay, no account needed. Updates, results, exclusive calls, and a real look at the community before you commit to anything.</p>
-                <div class="row" style="margin-top:22px"><a class="btn" href="https://t.me/+ukr-PkZbU1lmMmIx" target="_blank" rel="noopener">Join the channel &rarr;</a></div>
-              </div>
-              <div class="glass splitcard earn">
-                <p class="lbl">You have to earn this one</p>
-                <h3>The Vault</h3>
-                <p>The signals room, and you have to earn it. Start at the door below. You open your trading account through my link, send the confirmation back, and I review every one myself. Approved and you get a private invite that works once, for you alone.</p>
-                <div class="row" style="margin-top:22px"><a class="btn ghost" href="https://t.me/thevaultkey_bot" target="_blank" rel="noopener">Go to the door &rarr;</a></div>
+          <div class="qstep qdone vp" data-step="7">
+            <div class="vp-head">
+              <div class="vp-badge" id="vpBadge"><svg viewBox="0 0 14 14" fill="none" stroke="#5FD39B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5 L5.5 10.5 L11.5 3.5"/></svg>Application received</div>
+              <h2 class="qtitle">You are in the queue.</h2>
+              <p class="qhint"><span id="vpIntro">I read every one of these personally. While I do, here is your path into The Vault.</span> <span id="vpLine">You are one step in, three to go.</span></p>
+              <div class="vp-prog">
+                <div class="lab"><span>Your progress</span><b id="vpCount">1 of 4 complete</b></div>
+                <div class="track"><i id="vpBar"></i></div>
               </div>
             </div>
-            <div style="margin:30px auto 0;max-width:520px">
-              <button class="btn lg wide" data-go="onboard" style="width:100%">I am in the chats. Set me up &rarr;</button>
-              <p class="small dim" style="margin:12px 0 0;text-align:center">Step by step: open your account, get in the rooms, place your first trade.</p>
+
+            <div class="vp-steps">
+              <div class="vp-step done">
+                <div class="no"><span>01 &middot; Done</span></div>
+                <h3>Start your application</h3>
+                <p>Sent. It comes straight to me.</p>
+              </div>
+              <div class="vp-step cur" id="vpS2">
+                <div class="no"><span id="vpN2">02</span><span class="here">You are here</span></div>
+                <h3>Open your account</h3>
+                <p>Tap the button. The door on Telegram walks you through it, one screen at a time.</p>
+                <a class="btn curonly" href="https://t.me/thevaultkey_bot" target="_blank" rel="noopener">Go to the door &rarr;</a>
+                <p class="sm">Read the <button class="inline-link" data-go="legal">risk notes</button> before you fund anything.</p>
+                <label class="vp-check"><input type="checkbox" id="vpT1">My account is open</label>
+              </div>
+              <div class="vp-step" id="vpS3">
+                <div class="no"><span id="vpN3">03 &middot; Next</span><span class="here">You are here</span></div>
+                <h3>Send confirmation</h3>
+                <p>Screenshot your account confirmation and drop it at the door.</p>
+                <a class="btn curonly" href="https://t.me/thevaultkey_bot" target="_blank" rel="noopener">Go to the door &rarr;</a>
+                <label class="vp-check"><input type="checkbox" id="vpT2">I sent my screenshot</label>
+              </div>
+              <div class="vp-step" id="vpS4">
+                <div class="no"><span>04</span><span class="here">Waiting on me</span></div>
+                <h3>I let you in</h3>
+                <p>Approved, and you get a private invite to The Vault.</p>
+                <p class="sm curonly">I review every one myself. Your invite arrives at the door. It works once and it expires in 24 hours, so use it when it lands.</p>
+              </div>
             </div>
-            <p class="eyebrow" style="margin:34px 0 0;justify-content:center">Tagged on your record</p>
-            <div class="tagpills" id="tagPills"></div>
+
+            <div class="vp-two">
+              <div class="vp-sec">
+                <p class="eyebrow">Click by click</p>
+                <h3 class="big">How to do steps 2 and 3</h3>
+                <ol class="vp-clicks">
+                  <li><span class="n">1</span><span><b>Tap &ldquo;Go to the door&rdquo;.</b> It opens the door on Telegram.</span></li>
+                  <li><span class="n">2</span><span><b>Press Start.</b> You get my welcome and the link to open your trading account.</span></li>
+                  <li><span class="n">3</span><span><b>Tap the link, fill in the form and hit Sign Up.</b> Email, name, password, country and phone number. About two minutes.</span></li>
+                  <li><span class="n">4</span><span><b>Click the link in the email they send you.</b> Check your spam folder if it is not there.</span></li>
+                  <li><span class="n">5</span><span><b>Go back to the door and tap &ldquo;I opened my account&rdquo;.</b></span></li>
+                  <li><span class="n">6</span><span><b>Send a screenshot of your confirmation.</b> The confirmation screen or your welcome email, either works. No passwords, no card details, nothing with a balance on it.</span></li>
+                </ol>
+                <p class="vp-note">About five minutes. You do not need to fund the account to send your confirmation.</p>
+              </div>
+              <div class="vp-sec">
+                <div class="vp-card">
+                  <h3>Stuck? Tell me what&rsquo;s holding you up</h3>
+                  <p>One tap. No judgement. It tells me how to help you.</p>
+                  <div class="vp-stuck" id="vpStuck">
+                    <button type="button" data-stuck="funding">I&rsquo;m not ready to fund an account yet</button>
+                    <button type="button" data-stuck="broker">I&rsquo;m not sure about the broker</button>
+                    <button type="button" data-stuck="confused">I got confused on a step</button>
+                    <button type="button" data-stuck="country">It isn&rsquo;t available in my country</button>
+                  </div>
+                  <p class="vp-reply" id="vpReply" role="status"></p>
+                  <p><button class="inline-link" data-go="contact">Or request a call &rarr;</button></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="vp-half">
+              <div class="vp-sec">
+                <p class="eyebrow">While you get set up</p>
+                <h3 class="big">Start with Lesson 1</h3>
+                <button class="vp-video" type="button" data-lesson="1" aria-label="Play Lesson 1, Foundations">
+                  <img src="/lessons/lesson-1-foundations.jpg" alt="" loading="lazy" width="1280" height="720">
+                  <span class="pill"><svg viewBox="0 0 12 14" aria-hidden="true"><path d="M1 1 L11 7 L1 13 Z" fill="#fff"/></svg>Play Lesson 1 &middot; 2:16</span>
+                </button>
+                <p class="vp-note">Lesson 1 of 5: Foundations.</p>
+              </div>
+              <div class="vp-sec">
+                <div class="vp-card">
+                  <p class="eyebrow" style="margin:0">Walk in now, free</p>
+                  <h3>The Market Bully channel</h3>
+                  <p>No approval, nothing to pay, no account needed. A real look at the community before you commit to anything.</p>
+                  <a class="btn ghost" href="https://t.me/+ukr-PkZbU1lmMmIx" target="_blank" rel="noopener">Join the channel &rarr;</a>
+                </div>
+                <p class="vp-note">Already approved? <button class="inline-link" data-go="onboard">Set up your trading app &rarr;</button></p>
+              </div>
+            </div>
+
+            <div class="vp-fine">
+              <p><b class="r">RISK WARNING.</b> Trading leveraged instruments carries a substantial risk of loss and is not suitable for everyone. You can lose all of the money you deposit. Nothing on this site is financial advice.</p>
+              <p><b class="s">PAID LINKS.</b> Some links on this site are paid links. <button class="inline-link" data-go="legal">Risk and disclosure</button></p>
+            </div>
           </div>
+
+        <div class="qhouse" id="qhouse">
+          <p class="qcount">One quick thing before question 6</p>
+          <h2 class="qtitle">No problem. Get on 1House.TV free.</h2>
+          <p class="qhint">It is where I teach live. Make your free account now so you are already set up on the platform.</p>
+          <div class="housecard">
+            <div class="tick"><svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="#5FD39B"/><path d="M6.5 11.5 L9.5 14.5 L15.5 7.5" stroke="#04060B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Free to register</div>
+            <div class="tick"><svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="#5FD39B"/><path d="M6.5 11.5 L9.5 14.5 L15.5 7.5" stroke="#04060B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Your own 1House dashboard</div>
+            <div class="tick"><svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="#5FD39B"/><path d="M6.5 11.5 L9.5 14.5 L15.5 7.5" stroke="#04060B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>About a minute</div>
+            <a class="btn lg" id="houseGo" href="https://subscribe.1house.tv/MARKETBULLY" target="_blank" rel="noopener sponsored">Create my free 1House.TV account &rarr;</a>
+            <p class="fine">Opens in a new tab. Your place here is saved.</p>
+            <p class="fine">The free account is dashboard access. Live streams and replays are on the paid plans.</p>
+          </div>
+          <button class="btn ghost lg skip" type="button" id="houseNext">Continue to question 6 &rarr;</button>
+          <p class="optnote">Optional. You do not need 1House.TV to be in the signals chat.</p>
+          <div class="qnav"><button class="qback" type="button" id="houseBack">Back</button></div>
+        </div>
 
         <div class="qresponse" id="qresponse">
           <div class="qmark"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 12.6l5 5L19.5 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -1550,6 +1770,15 @@ body.onboarding .ob-center{text-align:center}
 </footer>
 </div>
 
+<div class="vmodal" id="vmodal" role="dialog" aria-modal="true" aria-label="Lesson 1, Foundations">
+  <div class="box">
+    <div class="bar"><span>Lesson 1 &middot; Foundations</span><button class="x" type="button" id="vmodalX" aria-label="Close video">&times;</button></div>
+    <video id="vmodalV" controls playsinline preload="none" poster="/lessons/lesson-1-foundations.jpg">
+      <source src="/lessons/lesson-1-foundations.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+
 <div class="toast" id="toast">
   <span class="dot" style="margin-top:5px"></span>
   <div>
@@ -1570,7 +1799,7 @@ body.onboarding .ob-center{text-align:center}
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(err){}
-  var PAGES = ['home','about','community','faq','start','onboard','contact','legal'];
+  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal'];
 
   /* ---------- ticker ---------- */
   var titles=[["Olympus Master Class, Day 1","1:45:03"],["MB Strategy: Fibonacci Settings","2:21:28"],["Strong Optimal Entries","2:07:19"],["Olympus Volume Metric Order Blocks","2:08:04"],["Market Bully 4 Hour Sauce","2:23:56"],["MB Strategy: Reversal Entries Simplified","2:13:49"],["Olympus Sauce, Gold Melts","2:57:07"],["Olympus Master Class, Day 2","1:11:44"],["Olympus Master Class, Day 3","2:02:47"]];
@@ -1689,6 +1918,8 @@ body.onboarding .ob-center{text-align:center}
   var toastShown=false;
   function go(id){
     if(PAGES.indexOf(id)===-1)id='home';
+    var want=id;                       // /steps is the application page opened on its finish screen
+    if(id==='steps') id='start';
     PAGES.forEach(function(p){var el=document.getElementById(p);if(el)el.classList.toggle('on',p===id);});
     document.querySelectorAll('#nav button').forEach(function(b){
       if(b.dataset.go===id)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
@@ -1702,6 +1933,7 @@ body.onboarding .ob-center{text-align:center}
     if(id==='start'){ requestAnimationFrame(function(){ window.scrollTo(0,0); }); setTimeout(function(){ window.scrollTo(0,0); },60); }
     bindReveals(document.getElementById(id));
     onScroll();
+    if(want==='steps' && window.__mbSteps) window.__mbSteps();
   }
   var standalone=(function(){try{return window.top===window.self;}catch(err){return false;}})();
   function writeUrl(id){
@@ -1824,6 +2056,7 @@ body.onboarding .ob-center{text-align:center}
   var rail=document.getElementById('qrail');
   var welcome=document.getElementById('qwelcome');
   var resp=document.getElementById('qresponse');
+  var house=document.getElementById('qhouse');
   var rHead=document.getElementById('qrHead');
   var rBody=document.getElementById('qrBody');
   var autobar=document.getElementById('autobar');
@@ -1843,10 +2076,12 @@ body.onboarding .ob-center{text-align:center}
   function hideAll(){
     steps.forEach(function(s){s.classList.remove('on');});
     if(resp) resp.classList.remove('on');
+    if(house) house.classList.remove('on');
     if(welcome) welcome.classList.remove('on');
   }
   function showStep(n){
     step=Math.max(0,Math.min(n,steps.length-1));
+    document.body.classList.remove('vaultpath');
     hideAll();
     steps[step].classList.add('on');
     if(rail) rail.style.display='flex';
@@ -1876,6 +2111,21 @@ body.onboarding .ob-center{text-align:center}
   }
   if(rNext) rNext.addEventListener('click',go2next);
 
+  /* A "no" on the 1House.TV question gets the free sign-up screen instead of
+     the usual reply. Nothing moves on by itself here, the person chooses. */
+  function showHouse(nextIndex){
+    clearTimeout(timer);
+    hideAll();
+    house.classList.add('on');
+    scrollTop();
+    pending=nextIndex;
+  }
+  if(house){
+    document.getElementById('houseNext').addEventListener('click',go2next);
+    document.getElementById('houseBack').addEventListener('click',function(){ clearTimeout(timer); pending=null; showStep(4); });
+    document.getElementById('houseGo').addEventListener('click',function(){ answers.onehouse_free='tapped'; save(); });
+  }
+
   function begin(){
     started=true;
     if(welcome) welcome.classList.remove('on');
@@ -1893,7 +2143,11 @@ body.onboarding .ob-center{text-align:center}
       answers[q]=v; save();
       try{ if(navigator.vibrate) navigator.vibrate(12); }catch(err){}
       var idx=steps.indexOf(group.closest('.qstep'));
-      setTimeout(function(){ showResponse(q,v,idx+1); }, 260);
+      if(q==='onehouse' && v==='member') delete answers.onehouse_free;
+      setTimeout(function(){
+        if(q==='onehouse' && v!=='member' && house) showHouse(idx+1);
+        else showResponse(q,v,idx+1);
+      }, 260);
     });
   });
 
@@ -1909,6 +2163,8 @@ body.onboarding .ob-center{text-align:center}
       if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go2next(); }
       return;
     }
+    if(house && house.classList.contains('on')) return;
+    if(document.body.classList.contains('vaultpath')) return;
     if(welcome && welcome.classList.contains('on')){
       if(e.key==='Enter'){ e.preventDefault(); begin(); }
       return;
@@ -1984,12 +2240,9 @@ body.onboarding .ob-center{text-align:center}
       function finish(){
         submitted=true; clearSaved();
         var first=String(fd.get('name')||'').trim().split(/\s+/)[0];
-        var head=document.querySelector('#start .qstep[data-step="7"] .qtitle');
-        if(head&&first) head.textContent='You are in the queue, '+first+'.';
-        hideAll();
-        steps[7].classList.add('on');
-        if(rail){ step=7; paintRail(); }
-        scrollTop();
+        vsave({n:first, e:String(fd.get('email')||'').trim(), t1:false, t2:false, at:Date.now()});
+        openVault();
+        try{ if(standalone) history.replaceState({page:'steps'},'','/steps'); }catch(err){}
       }
       if(ENDPOINT){
         var btn=document.getElementById('submitBtn');
@@ -2014,6 +2267,119 @@ body.onboarding .ob-center{text-align:center}
       }
     });
   }
+
+  /* ========================= PATH INTO THE VAULT =========================
+     The finish screen. It remembers the person's name and their two tick
+     boxes on this device, so /steps can be opened again later (it is the
+     link to use in follow-up emails). */
+  var VSTORE='mb_vault_v1';
+  function vload(){
+    try{ var d=JSON.parse(localStorage.getItem(VSTORE)||'null');
+      if(!d||Date.now()-(d.at||0)>1000*60*60*24*90) return null; return d;
+    }catch(err){ return null; }
+  }
+  function vsave(d){ try{ localStorage.setItem(VSTORE, JSON.stringify(d)); }catch(err){} }
+
+  var vpT1=document.getElementById('vpT1'), vpT2=document.getElementById('vpT2');
+  function paintVault(){
+    var t1=!!(vpT1&&vpT1.checked), t2=!!(vpT2&&vpT2.checked);
+    var n=1+(t1?1:0)+(t2?1:0);
+    var s2=document.getElementById('vpS2'), s3=document.getElementById('vpS3'), s4=document.getElementById('vpS4');
+    if(!s2||!s3||!s4) return;
+    s2.classList.toggle('done',t1); s2.classList.toggle('cur',!t1);
+    s3.classList.toggle('done',t2); s3.classList.toggle('cur',t1&&!t2);
+    s4.classList.toggle('cur',t1&&t2);
+    document.getElementById('vpN2').innerHTML = t1 ? '02 &middot; Done' : '02';
+    document.getElementById('vpN3').innerHTML = t2 ? '03 &middot; Done' : (t1 ? '03' : '03 &middot; Next');
+    document.getElementById('vpCount').textContent = n+' of 4 complete';
+    document.getElementById('vpBar').style.width = (n*25)+'%';
+    document.getElementById('vpLine').textContent =
+      n===1 ? 'You are one step in, three to go.' :
+      n===2 ? 'Two steps in, two to go.' :
+              'Three steps in. The last one is on me.';
+  }
+  function tickChanged(which){
+    if(which===2 && vpT2.checked) vpT1.checked=true;      // a screenshot means the account is open
+    if(which===1 && !vpT1.checked) vpT2.checked=false;
+    var d=vload()||{at:Date.now()};
+    d.t1=vpT1.checked; d.t2=vpT2.checked; vsave(d);
+    paintVault();
+  }
+  if(vpT1) vpT1.addEventListener('change',function(){ tickChanged(1); });
+  if(vpT2) vpT2.addEventListener('change',function(){ tickChanged(2); });
+
+  function openVault(){
+    var st=vload();
+    var head=document.querySelector('#start .qstep[data-step="7"] .qtitle');
+    var badge=document.getElementById('vpBadge'), intro=document.getElementById('vpIntro');
+    if(st){
+      if(head) head.textContent = st.n ? 'You are in the queue, '+st.n+'.' : 'You are in the queue.';
+      if(vpT1) vpT1.checked=!!st.t1;
+      if(vpT2) vpT2.checked=!!st.t2;
+    } else {
+      // opened on a device that has not seen the application, for example from an email
+      if(head) head.textContent='Your path into The Vault.';
+      if(badge) badge.style.display='none';
+      if(intro) intro.textContent='Your application is step one. Here are the other three.';
+    }
+    paintVault();
+    pending=null; clearTimeout(timer);
+    hideAll();
+    step=7;
+    steps[7].classList.add('on');
+    if(rail) rail.style.display='none';
+    document.body.classList.add('vaultpath');
+    scrollTop();
+  }
+  window.__mbSteps=openVault;
+  if(readUrl()==='steps') openVault();
+  (function(){
+    var bar=document.getElementById('vaultbar');
+    if(bar && vload() && readUrl()!=='steps') bar.classList.add('on');
+  })();
+
+  /* one tap "what is holding you up" */
+  var STUCK={
+    funding:"No rush. You do not need to fund the account to send your confirmation. Open it, send the screenshot, and fund it when you are ready.",
+    broker:"Fair. Read the risk and disclosure page before you decide. The free channel is yours either way.",
+    confused:"Got it. I will reach out and walk you through it. You can also message me at the door.",
+    country:"Got it. I will get back to you personally about that."
+  };
+  var stuckBox=document.getElementById('vpStuck');
+  if(stuckBox) stuckBox.addEventListener('click',function(e){
+    var b=e.target.closest('[data-stuck]'); if(!b) return;
+    stuckBox.querySelectorAll('button').forEach(function(x){ x.classList.toggle('sel',x===b); });
+    var r=document.getElementById('vpReply');
+    r.textContent=STUCK[b.dataset.stuck]||'Got it.';
+    r.classList.add('on');
+    var st=vload()||{};
+    try{
+      fetch('/api/stuck',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({reason:b.dataset.stuck,name:st.n||'',email:st.e||'',step:(st.t2?4:(st.t1?3:2))})
+      }).catch(function(){});
+    }catch(err){}
+  });
+
+  /* lesson player */
+  var vmodal=document.getElementById('vmodal'), vvid=document.getElementById('vmodalV'), vopener=null;
+  function closeLesson(){
+    if(!vmodal||!vmodal.classList.contains('on')) return;
+    try{ vvid.pause(); }catch(err){}
+    vmodal.classList.remove('on');
+    if(vopener&&vopener.focus) vopener.focus();
+  }
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-lesson]');
+    if(t&&vmodal){
+      e.preventDefault(); vopener=t;
+      vmodal.classList.add('on');
+      try{ var p=vvid.play(); if(p&&p.catch) p.catch(function(){}); }catch(err){}
+      document.getElementById('vmodalX').focus();
+      return;
+    }
+    if(e.target===vmodal||e.target.closest('#vmodalX')) closeLesson();
+  });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeLesson(); });
 
   var callForm=document.getElementById('callForm');
   if(callForm){

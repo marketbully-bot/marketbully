@@ -9,6 +9,11 @@ Website for Richard "Pops" Hall Jr. — The Market Bully.
 - `vercel.json` — tells Vercel that /start, /about, /community, /faq, /contact and /legal
   are real addresses. Without this file those URLs return a 404 when typed directly.
 
+- `lessons/` — the Lesson 1 video and its cover picture, shown on the home page, the welcome screen of `/start`, and `/steps`.
+- `api/lead.js` — receives an application and sends it to Telegram and Viato.
+- `api/stuck.js` — receives a tap on "Tell me what's holding you up" and sends it to Telegram.
+- `api/telegram.js` — the door.
+
 ## Deploying
 
 1. Push both files to the root of this repository.
@@ -24,7 +29,8 @@ Website for Richard "Pops" Hall Jr. — The Market Bully.
 | `/about` | About |
 | `/community` | Community and financial literacy work |
 | `/faq` | FAQ |
-| `/start` | The five question application |
+| `/start` | The six question application |
+| `/steps` | The finish screen of the application: the four steps into The Vault, with tick boxes. Use this link in follow-up emails. It remembers the person's name and ticks on the device they applied from. |
 | `/contact` | Contact and call request |
 | `/legal` | Risk and disclosure |
 
