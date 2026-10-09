@@ -42,6 +42,18 @@ Open `index.html`, search for `var ENDPOINT = "";` near the start of the script 
 bottom of the file. Paste the Google Apps Script `/exec` URL between the quotes and commit.
 Until that is filled in, the application collects and tags answers but does not transmit them.
 
+## Analytics
+
+Google Analytics is built in but switched off until a Measurement ID is pasted in. Open
+`index.html`, search for `window.MB_GA_ID = "";` near the top, and put the ID (it looks like
+`G-AB12CD34EF`) between the quotes.
+
+It counts page views and these taps: starting the application, each question answered, the free
+1House.TV screen and button, reaching the contact step, sending the application, the two tick
+boxes on `/steps`, the "what's holding you up" buttons, Lesson 1 plays, and taps on the door, the
+free channel and the 1House links. No name, email or phone number is ever sent. Visitors in Europe
+and the UK see a small cookie notice first.
+
 ## Domain notes
 
 The domain has email on it. Connect it with **A / CNAME records only** — never by switching

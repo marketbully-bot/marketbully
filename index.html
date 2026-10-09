@@ -33,6 +33,37 @@
 <meta name="twitter:title" content="The Market Bully">
 <meta name="twitter:description" content="Live sessions, real mentorship and a free signals chat with Richard &quot;Pops&quot; Hall Jr. Start with six quick questions.">
 <meta name="twitter:image" content="https://themarketbully.com/og.jpg">
+
+<script>
+/* =========================================================
+   GOOGLE ANALYTICS
+   Paste the Measurement ID (it looks like G-AB12CD34EF)
+   between the quotes. Empty quotes = analytics switched off.
+   No name, email or phone number is ever sent to it.
+   ========================================================= */
+window.MB_GA_ID = "";
+(function(){
+  var id=window.MB_GA_ID;
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){ window.dataLayer.push(arguments); }
+  window.gtag=gtag;
+  // Visitors in Europe and the UK are asked before any analytics cookie is set.
+  var eu=false, choice=null;
+  try{ var tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+       eu=/^(Europe\/|Arctic\/|Atlantic\/(Reykjavik|Canary|Madeira|Azores|Faroe|Faeroe))/.test(tz); }catch(err){}
+  try{ choice=localStorage.getItem('mb_cookies'); }catch(err){}
+  var granted=(choice==='yes')||(!eu&&choice!=='no');
+  gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',
+                            analytics_storage:granted?'granted':'denied'});
+  window.__mbConsent={eu:eu,choice:choice};
+  if(!id) return;
+  gtag('js',new Date());
+  gtag('config',id,{send_page_view:false});
+  var el=document.createElement('script');
+  el.async=true; el.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(id);
+  document.head.appendChild(el);
+})();
+</script>
 </head>
 <body>
 <title>The Market Bully</title>
@@ -719,6 +750,12 @@ body.onboarding .ob-center{text-align:center}
 .vp-fine b.s{color:var(--silver)}
 .vp-fine .inline-link{color:var(--silver-2)}
 #vaultbar{margin:22px auto 0}
+.cookiebar{position:fixed;left:12px;right:12px;bottom:12px;z-index:250;display:none;align-items:center;justify-content:space-between;
+  gap:12px 18px;flex-wrap:wrap;max-width:760px;margin:0 auto;padding:14px 16px;border-radius:14px;border:1px solid var(--line-hi);
+  background:rgba(7,10,18,.96);box-shadow:0 20px 60px -20px #000}
+.cookiebar.on{display:flex}
+.cookiebar p{margin:0;font-size:14px;line-height:1.5;color:var(--silver-2);flex:1 1 260px}
+.cookiebar .acts{display:flex;gap:10px}
 body.vaultpath .funnelmeta{display:none}
 @media(min-width:900px){
   body.vaultpath .quizwrap{max-width:1080px}
@@ -1582,7 +1619,7 @@ body.vaultpath .funnelmeta{display:none}
       <p class="eyebrow">Legal</p>
       <h1><span class="ln"><span>Risk and</span></span><span class="ln"><span>disclosure</span></span></h1>
       <p class="lede rv">Read this before you open an account, fund an account, or treat anything posted in the chat as a reason to place a trade.</p>
-      <p class="updated rv">Last updated 29 August 2026</p>
+      <p class="updated rv">Last updated 8 October 2026</p>
     </div>
   </section>
   <section class="band">
@@ -1630,6 +1667,7 @@ body.vaultpath .funnelmeta{display:none}
 
       <h2 class="rv">Your data</h2>
       <p class="rv">Information submitted through the application is used to review that application, to contact you about the chat, and to keep a record of applicants. It is stored in the systems used to run this operation and is not sold. You can ask for your data to be deleted at any time by replying to any email or messaging me on Telegram.</p>
+      <p class="rv">This site uses Google Analytics to count visits and to see which pages and steps people use, so I can fix the parts that confuse people. It sets cookies to tell one visit from the next. It is not used for advertising, and your name, email and phone number are never sent to it. If you are in Europe or the United Kingdom you are asked first, and you can say no.</p>
 
       <h2 class="rv">Limitation of liability</h2>
       <p class="rv">The Market Bully and Richard Hall Jr. accept no liability for any trading loss, financial loss, or other damage arising from use of this website, the signals chat, the sessions, or any connected material. You use all of it at your own risk.</p>
@@ -1768,6 +1806,11 @@ body.vaultpath .funnelmeta{display:none}
     <p class="colophon">&copy; 2026 The Market Bully</p>
   </div>
 </footer>
+</div>
+
+<div class="cookiebar" id="cookiebar" role="region" aria-label="Cookies">
+  <p>This site uses cookies to count visits, nothing else. No ads. <button class="inline-link" data-go="legal">Details</button></p>
+  <div class="acts"><button class="btn sm" type="button" id="ckYes">OK</button><button class="btn sm ghost" type="button" id="ckNo">No thanks</button></div>
 </div>
 
 <div class="vmodal" id="vmodal" role="dialog" aria-modal="true" aria-label="Lesson 1, Foundations">
@@ -1914,10 +1957,26 @@ body.vaultpath .funnelmeta{display:none}
   window.addEventListener('scroll',onScroll,{passive:true});
   onScroll();
 
+  /* ---------- analytics ----------
+     Does nothing until a Measurement ID is pasted in at the top of the file.
+     Only page names and button names go out. Never a name, email or phone. */
+  function track(name,params){
+    try{ if(window.MB_GA_ID && window.gtag) window.gtag('event',name,params||{}); }catch(err){}
+  }
+  var firstView=true;
+  function trackPage(id){
+    var p=(id==='home')?'/':'/'+id;
+    var q=''; try{ if(firstView) q=location.search||''; }catch(err){}
+    firstView=false;
+    track('page_view',{page_path:p,page_location:location.origin+p+q,page_title:'The Market Bully'+(id==='home'?'':' - '+id)});
+  }
+  function whereAmI(el){ var m=el&&el.closest?el.closest('main.page'):null; return m?m.id:''; }
+
   /* ---------- routing ---------- */
   var toastShown=false;
   function go(id){
     if(PAGES.indexOf(id)===-1)id='home';
+    trackPage(id);
     var want=id;                       // /steps is the application page opened on its finish screen
     if(id==='steps') id='start';
     PAGES.forEach(function(p){var el=document.getElementById(p);if(el)el.classList.toggle('on',p===id);});
@@ -1958,7 +2017,7 @@ body.vaultpath .funnelmeta{display:none}
   });
   window.addEventListener('popstate',function(){go(readUrl());});
   window.addEventListener('hashchange',function(){go(readUrl());});
-  (function(){var initial=readUrl(); if(initial!=='home') go(initial);})();
+  (function(){var initial=readUrl(); if(initial!=='home') go(initial); else trackPage('home');})();
 
 
   /* ---------- onboarding ---------- */
@@ -2081,6 +2140,7 @@ body.vaultpath .funnelmeta{display:none}
   }
   function showStep(n){
     step=Math.max(0,Math.min(n,steps.length-1));
+    if(step===6) track('contact_step_view');
     document.body.classList.remove('vaultpath');
     hideAll();
     steps[step].classList.add('on');
@@ -2114,6 +2174,7 @@ body.vaultpath .funnelmeta{display:none}
   /* A "no" on the 1House.TV question gets the free sign-up screen instead of
      the usual reply. Nothing moves on by itself here, the person chooses. */
   function showHouse(nextIndex){
+    track('onehouse_free_shown');
     clearTimeout(timer);
     hideAll();
     house.classList.add('on');
@@ -2123,10 +2184,11 @@ body.vaultpath .funnelmeta{display:none}
   if(house){
     document.getElementById('houseNext').addEventListener('click',go2next);
     document.getElementById('houseBack').addEventListener('click',function(){ clearTimeout(timer); pending=null; showStep(4); });
-    document.getElementById('houseGo').addEventListener('click',function(){ answers.onehouse_free='tapped'; save(); });
+    document.getElementById('houseGo').addEventListener('click',function(){ answers.onehouse_free='tapped'; save(); track('onehouse_free_click'); });
   }
 
   function begin(){
+    track('application_start');
     started=true;
     if(welcome) welcome.classList.remove('on');
     showStep(0);
@@ -2143,6 +2205,7 @@ body.vaultpath .funnelmeta{display:none}
       answers[q]=v; save();
       try{ if(navigator.vibrate) navigator.vibrate(12); }catch(err){}
       var idx=steps.indexOf(group.closest('.qstep'));
+      track('question_answered',{question:q,answer:v,question_number:idx+1});
       if(q==='onehouse' && v==='member') delete answers.onehouse_free;
       setTimeout(function(){
         if(q==='onehouse' && v!=='member' && house) showHouse(idx+1);
@@ -2241,8 +2304,10 @@ body.vaultpath .funnelmeta{display:none}
         submitted=true; clearSaved();
         var first=String(fd.get('name')||'').trim().split(/\s+/)[0];
         vsave({n:first, e:String(fd.get('email')||'').trim(), t1:false, t2:false, at:Date.now()});
+        track('generate_lead',{onehouse:answers.onehouse||'',capital:answers.capital||'',experience:answers.experience||''});
         openVault();
         try{ if(standalone) history.replaceState({page:'steps'},'','/steps'); }catch(err){}
+        trackPage('steps');
       }
       if(ENDPOINT){
         var btn=document.getElementById('submitBtn');
@@ -2303,6 +2368,7 @@ body.vaultpath .funnelmeta{display:none}
     if(which===1 && !vpT1.checked) vpT2.checked=false;
     var d=vload()||{at:Date.now()};
     d.t1=vpT1.checked; d.t2=vpT2.checked; vsave(d);
+    track('vault_tick',{box:which===1?'account_open':'screenshot_sent',ticked:which===1?vpT1.checked:vpT2.checked});
     paintVault();
   }
   if(vpT1) vpT1.addEventListener('change',function(){ tickChanged(1); });
@@ -2352,6 +2418,7 @@ body.vaultpath .funnelmeta{display:none}
     var r=document.getElementById('vpReply');
     r.textContent=STUCK[b.dataset.stuck]||'Got it.';
     r.classList.add('on');
+    track('stuck_reason',{reason:b.dataset.stuck});
     var st=vload()||{};
     try{
       fetch('/api/stuck',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -2372,6 +2439,7 @@ body.vaultpath .funnelmeta{display:none}
     var t=e.target.closest('[data-lesson]');
     if(t&&vmodal){
       e.preventDefault(); vopener=t;
+      track('lesson_play',{lesson:1,where:whereAmI(t)||'home'});
       vmodal.classList.add('on');
       try{ var p=vvid.play(); if(p&&p.catch) p.catch(function(){}); }catch(err){}
       document.getElementById('vmodalX').focus();
@@ -2380,6 +2448,31 @@ body.vaultpath .funnelmeta{display:none}
     if(e.target===vmodal||e.target.closest('#vmodalX')) closeLesson();
   });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeLesson(); });
+
+  /* taps on the links that leave the site */
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a[href^="http"]'); if(!a||a.id==='houseGo') return;
+    var h=a.getAttribute('href')||'', name='';
+    if(h.indexOf('t.me/thevaultkey')!==-1) name='door_click';
+    else if(h.indexOf('t.me/')!==-1) name='channel_join_click';
+    else if(h.indexOf('subscribe.1house.tv')!==-1) name='onehouse_plans_click';
+    else if(h.indexOf('1house.tv')!==-1) name='onehouse_watch_click';
+    if(name) track(name,{where:whereAmI(a)||'footer'});
+  });
+
+  /* cookie notice: only when analytics is on, only for visitors in Europe and the UK, only until they answer */
+  (function(){
+    var bar=document.getElementById('cookiebar'), c=window.__mbConsent||{};
+    if(!bar||!window.MB_GA_ID||!c.eu||c.choice) return;
+    bar.classList.add('on');
+    function answer(v){
+      try{ localStorage.setItem('mb_cookies',v); }catch(err){}
+      if(v==='yes'){ try{ window.gtag('consent','update',{analytics_storage:'granted'}); }catch(err){} }
+      bar.classList.remove('on');
+    }
+    document.getElementById('ckYes').addEventListener('click',function(){ answer('yes'); });
+    document.getElementById('ckNo').addEventListener('click',function(){ answer('no'); });
+  })();
 
   var callForm=document.getElementById('callForm');
   if(callForm){
