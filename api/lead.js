@@ -178,6 +178,8 @@ export default async function handler(req, res) {
   d.ref = makeRef();
   // The link said out loud on 1House sessions, themarketbully.com/live
   if (d.src === '1house-live') d.src = '1House live session';
+  // The "Start the lessons" button on the Onboarding page
+  if (d.src === 'onboarding') d.src = 'Onboarding tab';
 
   const when = new Date().toLocaleString('en-US', {
     timeZone: 'America/Los_Angeles',

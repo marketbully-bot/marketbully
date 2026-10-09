@@ -1941,7 +1941,7 @@ body.vaultpath .funnelmeta{display:none}
             <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>A few quick questions first, so I know where you are starting from</span></li>
             <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Then your steps to earn your seat in The Vault</span></li>
           </ul>
-          <button class="btn lg" data-go="start">Start the lessons &rarr;</button>
+          <button class="btn lg" data-go="lessons">Start the lessons &rarr;</button>
         </div>
         <div class="oh-card">
           <p class="eyebrow">Vault members</p>
@@ -2253,7 +2253,7 @@ body.vaultpath .funnelmeta{display:none}
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(err){}
-  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal','live','members','onboarding','lesson-1','lesson-2','lesson-3','lesson-4','lesson-5'];
+  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal','live','lessons','members','onboarding','lesson-1','lesson-2','lesson-3','lesson-4','lesson-5'];
   /* the five starter lessons. /lesson-2 and so on are the links used in the follow-up emails */
   var LESSONS={1:['Foundations','lesson-1-foundations'],2:['Market Trends','lesson-2-market-trends'],3:['Lots and Pips','lesson-3-lots-and-pips'],
                4:['Take Profit and Stop Loss','lesson-4-take-profit-and-stop-loss'],5:['Market Orders','lesson-5-market-orders']};
@@ -2416,7 +2416,8 @@ body.vaultpath .funnelmeta{display:none}
     trackPage(id);
     var want=id;                       // /steps is the application page opened on its finish screen
     if(id==='steps') id='start';
-    if(id==='live'){ id='start'; if(window.__mbLive) window.__mbLive(); }   // the link said out loud on 1House sessions
+    if(id==='live'){ id='start'; if(window.__mbLive) window.__mbLive(); }
+    if(id==='lessons') id='start';         // "Start the lessons" on the Onboarding page   // the link said out loud on 1House sessions
     var ln=/^lesson-([1-5])$/.exec(id), lpage=document.getElementById('lesson'), lvid=document.getElementById('lsnVideo');
     if(ln){ id='lesson'; setLesson(parseInt(ln[1],10)); }
     else if(lvid){ try{ lvid.pause(); }catch(err){} }
@@ -2436,6 +2437,7 @@ body.vaultpath .funnelmeta{display:none}
     bindReveals(document.getElementById(id));
     onScroll();
     if(want==='steps' && window.__mbSteps) window.__mbSteps();
+    if(want==='lessons' && window.__mbOpen) window.__mbOpen();
     if(id==='members' && window.__mbMembers) window.__mbMembers();
   }
   var standalone=(function(){try{return window.top===window.self;}catch(err){return false;}})();
@@ -2551,6 +2553,20 @@ body.vaultpath .funnelmeta{display:none}
       n++; qc.textContent='Question '+n+' of 5';
     });
     paintRail();
+  }
+  /* Open mode: someone who tapped "Start the lessons" on the Onboarding page.
+     Same six questions as the normal application, but all five lessons are
+     open on their finish screen, and the application is tagged "onboarding". */
+  var OPEN=false, OPENKEY='mb_open';
+  function setOpen(){
+    if(LIVE||OPEN) return; OPEN=true;
+    try{ localStorage.setItem(OPENKEY,String(Date.now())); }catch(err){}
+    document.body.classList.add('livemode');
+    SOURCE.src='onboarding';
+    var h=document.getElementById('qwHead'), p=document.getElementById('qwIntro'), l5=document.getElementById('l5Head');
+    if(h) h.innerHTML='Your five<em>starter lessons</em>';
+    if(p) p.textContent='Six quick questions so I know where you are starting from. Then all five lessons open, with your path into The Vault.';
+    if(l5) l5.style.display='';
   }
   var STORE='mb_app_v2', submitted=false;
 
@@ -2777,8 +2793,8 @@ body.vaultpath .funnelmeta{display:none}
       function finish(){
         submitted=true; clearSaved();
         var first=String(fd.get('name')||'').trim().split(/\s+/)[0];
-        vsave({n:first, e:String(fd.get('email')||'').trim(), r:leadRef, live:LIVE, t1:false, t2:false, at:Date.now()});
-        track('generate_lead',{onehouse:answers.onehouse||'',capital:answers.capital||'',experience:answers.experience||'',came_from:LIVE?'1house-live':'site'});
+        vsave({n:first, e:String(fd.get('email')||'').trim(), r:leadRef, live:(LIVE||OPEN), t1:false, t2:false, at:Date.now()});
+        track('generate_lead',{onehouse:answers.onehouse||'',capital:answers.capital||'',experience:answers.experience||'',came_from:LIVE?'1house-live':(OPEN?'onboarding':'site')});
         openVault();
         try{ if(standalone) history.replaceState({page:'steps'},'','/steps'); }catch(err){}
         trackPage('steps');
@@ -2886,6 +2902,20 @@ body.vaultpath .funnelmeta{display:none}
     var recent=false;
     try{ recent=Date.now()-parseInt(localStorage.getItem(LIVEKEY)||'0',10) < 1000*60*60*24*14; }catch(err){}
     if(readUrl()==='live' || (recent && readUrl()==='start')) setLive();
+  })();
+  /* "Start the lessons": someone who has already applied goes straight to their
+     steps with all five lessons open. Everyone else gets the application first. */
+  function openLessons(){
+    var st=vload();
+    if(st){ if(!st.live){ st.live=true; vsave(st); } openVault(); return; }
+    setOpen();
+  }
+  window.__mbOpen=openLessons;
+  (function(){
+    var recent=false;
+    try{ recent=Date.now()-parseInt(localStorage.getItem(OPENKEY)||'0',10) < 1000*60*60*24*14; }catch(err){}
+    if(readUrl()==='lessons') openLessons();
+    else if(recent && readUrl()==='start' && !vload()) setOpen();
   })();
   (function(){
     var bar=document.getElementById('vaultbar');
