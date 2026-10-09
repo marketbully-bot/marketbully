@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /members
+Disallow: /steps
+Sitemap: https://themarketbully.com/sitemap.xml

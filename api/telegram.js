@@ -169,7 +169,7 @@ export default async function handler(req, res) {
             chat_id: target,
             text:
               'Appreciate you applying. I cannot let you into THE VAULT right now.\n\n' +
-              'The free channel is still wide open though, and there is real value in there \ud83d\udc47\n\n' +
+              'The Market Bully channel is still open to you, and there is real value in there \ud83d\udc47\n\n' +
               FREE
           });
           await tg('sendMessage', Object.assign({ parse_mode: 'HTML', text: '✕ Declined' + by + '. They have been told.' }, back));
