@@ -889,6 +889,8 @@ nav.pages .navig:hover{color:#fff;background:var(--panel)}
 .oh-list li{display:flex;gap:10px;align-items:flex-start}
 .oh-list svg{flex:none;width:16px;height:16px;margin-top:3px;color:var(--ok)}
 @media(min-width:820px){.oh-grid{grid-template-columns:1fr 1fr}.oh-card{padding:32px 28px}}
+/* ============ about: portrait in the hero ============ */
+@media(max-width:999px){#about .herogrid .portraitframe{order:-1;max-width:none;max-height:none;aspect-ratio:1/1}#about .herogrid{gap:30px}}
 /* ============ about: the story ============ */
 .bio h3{font-family:var(--display);font-size:clamp(19px,2.6vw,23px);color:var(--silver);margin:38px 0 12px;padding-left:14px;border-left:2px solid var(--blue)}
 .bio p{font-size:17px;line-height:1.7;color:var(--silver-2);margin:0 0 16px}
@@ -1416,7 +1418,7 @@ body.vaultpath .funnelmeta{display:none}
 <!-- ==================== ABOUT ==================== -->
 <main class="page" id="about">
   <section class="wrap hero">
-    <div class="inner">
+    <div class="inner herogrid">
       <div>
         <p class="eyebrow">About</p>
         <h1><span class="ln"><span>Richard</span></span><span class="ln"><span>&ldquo;Pops&rdquo; Hall Jr.</span></span></h1>
@@ -1430,6 +1432,10 @@ body.vaultpath .funnelmeta{display:none}
           <div><b>1House</b><span>Platform educator</span></div>
           <div><b>CA-37</b><span>Congressional recognition</span></div>
         </div>
+      </div>
+      <div class="portraitframe rv" id="aboutPortrait">
+        <img src="/media/about-portrait.jpg" alt="Richard Hall Jr. in a blue suit and glasses, seated at an event" width="592" height="701">
+        <span class="cap">Richard &ldquo;Pops&rdquo; Hall Jr.</span>
       </div>
     </div>
   </section>
