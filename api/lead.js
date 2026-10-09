@@ -9,6 +9,11 @@
 // which is what starts campaign 1. Neither one can block the other, and
 // neither one can block the person getting their confirmation screen.
 
+// The private alerts group: Richard, Yen and the door, nobody else.
+// Leave empty and every alert goes to Richard alone (TELEGRAM_CHAT_ID).
+// Keep this line the same in lead.js, stuck.js, member.js and telegram.js.
+const ALERTS_ROOM = '';
+
 const LABELS = {
   motive: {
     'side-income': 'Build something on the side',
@@ -154,7 +159,8 @@ export default async function handler(req, res) {
   }
 
   const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-  const CHAT = process.env.TELEGRAM_CHAT_ID;
+  const OWNER = String(process.env.TELEGRAM_CHAT_ID || '').trim();
+  const CHAT = String(process.env.ALERTS_CHAT_ID || ALERTS_ROOM || OWNER).trim();
 
   let d = req.body;
   if (typeof d === 'string') {
@@ -213,17 +219,22 @@ export default async function handler(req, res) {
         return { ok: false, reason: 'not-configured' };
       }
       try {
-        const tg = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: CHAT,
-            text: msg,
-            parse_mode: 'HTML',
-            disable_web_page_preview: true
-          })
-        });
-        const out = await tg.json();
+        const send = async (chat) => {
+          const tg = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: chat,
+              text: msg,
+              parse_mode: 'HTML',
+              disable_web_page_preview: true
+            })
+          });
+          return tg.json();
+        };
+        let out = await send(CHAT);
+        // If the alerts group cannot be reached, Richard still gets it.
+        if (!out.ok && OWNER && OWNER !== CHAT) out = await send(OWNER);
         if (!out.ok) {
           console.error('Telegram rejected the message:', out);
           return { ok: false, reason: out.description };

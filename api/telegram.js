@@ -10,6 +10,11 @@
 // One time setup, once the variables are saved and deployed, open in a browser:
 //   https://themarketbully.com/api/telegram?setup=YOUR_WEBHOOK_SECRET
 
+// The private alerts group: Richard, Yen and the door, nobody else.
+// Leave empty and every alert goes to Richard alone (TELEGRAM_CHAT_ID).
+// Keep this line the same in lead.js, stuck.js, member.js and telegram.js.
+const ALERTS_ROOM = '';
+
 const API = (m) => `https://api.telegram.org/bot${String(process.env.TELEGRAM_BOT_TOKEN || '').trim()}/${m}`;
 
 async function tg(method, payload) {
@@ -67,6 +72,18 @@ export default async function handler(req, res) {
   const TOKEN = String(process.env.TELEGRAM_BOT_TOKEN || '').trim();
   const ADMIN = String(process.env.TELEGRAM_CHAT_ID || '').trim();
   const ROOM = String(process.env.SIGNALS_CHAT_ID || '').trim();
+  // Where alerts go: the alerts group if there is one, otherwise Richard.
+  const ALERTS = String(process.env.ALERTS_CHAT_ID || ALERTS_ROOM || ADMIN).trim();
+  const SHARED = !!ALERTS && ALERTS !== ADMIN;
+  // If the alerts group cannot be reached, Richard still gets the alert.
+  async function alert(method, payload) {
+    let out = null;
+    try { out = await tg(method, Object.assign({}, payload, { chat_id: ALERTS })); } catch (e) { out = null; }
+    if (SHARED && ADMIN && !(out && out.ok)) {
+      try { out = await tg(method, Object.assign({}, payload, { chat_id: ADMIN })); } catch (e) { /* nothing more to try */ }
+    }
+    return out;
+  }
   const LINK = String(process.env.BROKER_LINK || '').trim();
   const SECRET = String(process.env.TELEGRAM_WEBHOOK_SECRET || '').trim();
   const FREE = String(process.env.FREE_CHANNEL_LINK || 'https://t.me/+ukr-PkZbU1lmMmIx').trim();
@@ -119,9 +136,18 @@ export default async function handler(req, res) {
         return res.status(200).end();
       }
 
-      // Richard approving or declining. Only he can.
+      // Approving or declining. Richard can, an admin of THE VAULT can, and so
+      // can anyone tapping the button inside the private alerts group.
       if (data.startsWith('ok:') || data.startsWith('no:')) {
-        const allowed = await canApprove(from.id, ADMIN, ROOM);
+        const tappedIn = cq.message && cq.message.chat ? String(cq.message.chat.id) : '';
+        const inAlerts = SHARED && tappedIn === ALERTS;
+        const allowed = inAlerts || await canApprove(from.id, ADMIN, ROOM);
+        // In the alerts group the answer is posted there, under the screenshot
+        // message, with the name of who tapped, so nobody handles it twice.
+        const back = inAlerts
+          ? { chat_id: ALERTS, reply_to_message_id: cq.message.message_id, allow_sending_without_reply: true }
+          : { chat_id: from.id };
+        const by = inAlerts ? ' by ' + who(from) : '';
         if (!allowed) {
           await tg('sendMessage', {
             chat_id: from.id,
@@ -146,12 +172,12 @@ export default async function handler(req, res) {
               'The free channel is still wide open though, and there is real value in there \ud83d\udc47\n\n' +
               FREE
           });
-          await tg('sendMessage', { chat_id: from.id, text: 'Declined. They have been told.' });
+          await tg('sendMessage', Object.assign({ parse_mode: 'HTML', text: '✕ Declined' + by + '. They have been told.' }, back));
           return res.status(200).end();
         }
 
         if (!ROOM) {
-          await tg('sendMessage', { chat_id: from.id, text: 'SIGNALS_CHAT_ID is not set, so I cannot make an invite.' });
+          await tg('sendMessage', Object.assign({ text: 'SIGNALS_CHAT_ID is not set, so I cannot make an invite.' }, back));
           return res.status(200).end();
         }
 
@@ -164,11 +190,10 @@ export default async function handler(req, res) {
         });
 
         if (!inv.ok) {
-          await tg('sendMessage', {
-            chat_id: from.id,
+          await tg('sendMessage', Object.assign({
             text: 'Could not create the invite: ' + esc(inv.description) +
                   '\n\nUsually this means I am not an admin in the signals chat, or I do not have the invite users permission.'
-          });
+          }, back));
           return res.status(200).end();
         }
 
@@ -182,7 +207,7 @@ export default async function handler(req, res) {
             '\n\n⚡ It works <b>once</b>, it has your name on it, and it dies in 24 hours. ' +
             'Forwarding it does nothing, so use it now.\n\nWelcome to the room. 🤝'
         });
-        await tg('sendMessage', { chat_id: from.id, text: 'Approved. Single use invite sent.' });
+        await tg('sendMessage', Object.assign({ parse_mode: 'HTML', text: '✅ Approved' + by + '. Single use invite sent.' }, back));
         return res.status(200).end();
       }
       return res.status(200).end();
@@ -199,8 +224,8 @@ export default async function handler(req, res) {
           text:
             `I was just added to <b>${esc(c.title || 'a chat')}</b> as <b>${esc(st)}</b>.\n\n` +
             `Its ID is:\n<code>${esc(c.id)}</code>\n\n` +
-            `Put that into <b>SIGNALS_CHAT_ID</b> in Vercel, then redeploy.` +
-            (st === 'administrator' ? '' : '\n\n⚠️ I need to be an <b>admin</b> with <b>Invite Users via Link</b> to make invites.')
+            `If this is your private <b>alerts group</b>, send that number to Claude. Nothing else to do.\n\n` +
+            `If this is <b>THE VAULT</b>, it goes into SIGNALS_CHAT_ID in Vercel, and I need to be an <b>admin</b> with <b>Invite Users via Link</b>.`
         });
       }
       return res.status(200).end();
@@ -327,9 +352,8 @@ export default async function handler(req, res) {
       // Replying to this message keeps the ref attached to the screenshot.
       if (ref) ask.reply_markup = { force_reply: true, input_field_placeholder: 'Attach your screenshot' };
       await tg('sendMessage', ask);
-      if (ref && ADMIN) {
-        await tg('sendMessage', {
-          chat_id: ADMIN,
+      if (ref && ALERTS) {
+        await alert('sendMessage', {
           parse_mode: 'HTML',
           text:
             `\ud83d\udd17 <b>${who(from)}</b> just came to the door from the website.\n` +
@@ -426,8 +450,7 @@ export default async function handler(req, res) {
         text: '\ud83d\udd25 Got it. I am looking at this myself, usually same day.\n\nSit tight, I will come straight back to you.'
       });
 
-      await tg('forwardMessage', {
-        chat_id: ADMIN,
+      await alert('forwardMessage', {
         from_chat_id: from.id,
         message_id: m.message_id
       });
@@ -437,8 +460,7 @@ export default async function handler(req, res) {
       const repliedTo = m.reply_to_message || {};
       const shotRef = (/Application ref ([A-Z0-9]{4,12})/.exec(String(repliedTo.text || repliedTo.caption || '')) || [])[1] || '';
 
-      await tg('sendMessage', {
-        chat_id: ADMIN,
+      await alert('sendMessage', {
         parse_mode: 'HTML',
         text:
           `📸 <b>Confirmation from ${who(from)}</b>\n` +

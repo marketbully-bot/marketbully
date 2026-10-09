@@ -7,6 +7,11 @@
 // This never blocks the person: the page shows its reply straight away and
 // does not wait on this call.
 
+// The private alerts group: Richard, Yen and the door, nobody else.
+// Leave empty and every alert goes to Richard alone (TELEGRAM_CHAT_ID).
+// Keep this line the same in lead.js, stuck.js, member.js and telegram.js.
+const ALERTS_ROOM = '';
+
 const REASONS = {
   funding: 'Not ready to fund an account yet',
   broker: 'Not sure about the broker',
@@ -43,7 +48,8 @@ export default async function handler(req, res) {
   if (!reason) return res.status(400).json({ ok: false, error: 'Unknown reason' });
 
   const TOKEN = String(process.env.TELEGRAM_BOT_TOKEN || '').trim();
-  const CHAT = String(process.env.TELEGRAM_CHAT_ID || '').trim();
+  const OWNER = String(process.env.TELEGRAM_CHAT_ID || '').trim();
+  const CHAT = String(process.env.ALERTS_CHAT_ID || ALERTS_ROOM || OWNER).trim();
   if (!TOKEN || !CHAT) {
     console.error('Telegram not configured. Stuck reason received:', JSON.stringify(d));
     return res.status(200).json({ ok: true, telegram: false });
@@ -64,17 +70,22 @@ export default async function handler(req, res) {
   msg += `<i>${esc(when)} PT</i>`;
 
   try {
-    const tg = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: CHAT,
-        text: msg,
-        parse_mode: 'HTML',
-        disable_web_page_preview: true
-      })
-    });
-    const out = await tg.json();
+    const send = async (chat) => {
+      const tg = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chat,
+          text: msg,
+          parse_mode: 'HTML',
+          disable_web_page_preview: true
+        })
+      });
+      return tg.json();
+    };
+    let out = await send(CHAT);
+    // If the alerts group cannot be reached, Richard still gets it.
+    if (!out.ok && OWNER && OWNER !== CHAT) out = await send(OWNER);
     if (!out.ok) console.error('Telegram rejected the message:', out);
     return res.status(200).json({ ok: true, telegram: !!out.ok });
   } catch (err) {

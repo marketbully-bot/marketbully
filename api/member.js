@@ -17,6 +17,11 @@
 //   SIGNALS_CHAT_ID     - THE VAULT
 //   TELEGRAM_CHAT_ID    - Richard, for the "finished onboarding" message
 
+// The private alerts group: Richard, Yen and the door, nobody else.
+// Leave empty and every alert goes to Richard alone (TELEGRAM_CHAT_ID).
+// Keep this line the same in lead.js, stuck.js, member.js and telegram.js.
+const ALERTS_ROOM = '';
+
 const COOKIE = 'mb_member';
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
@@ -103,7 +108,8 @@ export default async function handler(req, res) {
 
   const TOKEN = String(process.env.TELEGRAM_BOT_TOKEN || '').trim();
   const ROOM = String(process.env.SIGNALS_CHAT_ID || '').trim();
-  const ADMIN = String(process.env.TELEGRAM_CHAT_ID || '').trim();
+  const OWNER = String(process.env.TELEGRAM_CHAT_ID || '').trim();
+  const ADMIN = String(process.env.ALERTS_CHAT_ID || ALERTS_ROOM || OWNER).trim();
   if (!TOKEN || !ROOM) return res.status(503).json({ ok: false, reason: 'not-configured' });
 
   if (req.method !== 'GET' && req.method !== 'POST') {
@@ -151,19 +157,25 @@ export default async function handler(req, res) {
   if (req.method === 'POST' && body.action === 'done') {
     if (ADMIN) {
       try {
-        await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: ADMIN,
-            parse_mode: 'HTML',
-            text:
-              `🎓 <b>${esc(who.n || 'A member')}</b> finished member onboarding.\n` +
-              (who.h ? `@${esc(who.h)}\n` : '') +
-              `id ${esc(who.u)}\n\n` +
-              'All six steps ticked: apps, five lessons, quiz, hello in the chat, first live session.'
-          })
-        });
+        const send = async (chat) => {
+          const r = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: chat,
+              parse_mode: 'HTML',
+              text:
+                `🎓 <b>${esc(who.n || 'A member')}</b> finished member onboarding.\n` +
+                (who.h ? `@${esc(who.h)}\n` : '') +
+                `id ${esc(who.u)}\n\n` +
+                'All six steps ticked: apps, five lessons, quiz, hello in the chat, first live session.'
+            })
+          });
+          return r.json();
+        };
+        const out = await send(ADMIN);
+        // If the alerts group cannot be reached, Richard still gets it.
+        if (!(out && out.ok) && OWNER && OWNER !== ADMIN) await send(OWNER);
       } catch (e) { /* the member still sees their confirmation */ }
     }
     return res.status(200).json({ ok: true, sent: true });
