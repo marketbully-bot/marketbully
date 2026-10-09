@@ -20,7 +20,7 @@
 // The private alerts group: Richard, Yen and the door, nobody else.
 // Leave empty and every alert goes to Richard alone (TELEGRAM_CHAT_ID).
 // Keep this line the same in lead.js, stuck.js, member.js and telegram.js.
-const ALERTS_ROOM = '';
+const ALERTS_ROOM = '-5310077180';
 
 const COOKIE = 'mb_member';
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
