@@ -170,6 +170,8 @@ export default async function handler(req, res) {
   if (d.company) return res.status(200).json({ ok: true });
 
   d.ref = makeRef();
+  // The link said out loud on 1House sessions, themarketbully.com/live
+  if (d.src === '1house-live') d.src = '1House live session';
 
   const when = new Date().toLocaleString('en-US', {
     timeZone: 'America/Los_Angeles',

@@ -751,6 +751,16 @@ body.onboarding .ob-center{text-align:center}
 .vp-fine b.s{color:var(--silver)}
 .vp-fine .inline-link{color:var(--silver-2)}
 #vaultbar{margin:22px auto 0}
+.l5{display:none;gap:10px}
+.l5 button{display:flex;align-items:center;gap:12px;width:100%;padding:8px;border-radius:12px;border:1px solid var(--line-hi);background:rgba(255,255,255,.03);
+  cursor:pointer;text-align:left;font-family:var(--ui);color:var(--silver-2)}
+.l5 button:hover{border-color:var(--blue-hi)}
+.l5 img{flex:none;width:112px;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:8px;display:block}
+.l5 b{display:block;color:var(--silver);font-size:15px;font-weight:700}
+.l5 span span{font-size:13px}
+body.livemode .l5{display:grid}
+body.livemode .l1only{display:none}
+.lsn-next .inline-link{font-weight:700}
 .lsn{max-width:860px;margin:0 auto}
 .lsn-h{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,50px);line-height:1.06;letter-spacing:-.04em;color:var(--silver);margin:0 0 22px;max-width:none}
 .lsn-frame{border-radius:16px;overflow:hidden;border:1px solid var(--line-hi);background:#000;box-shadow:0 0 60px rgba(46,107,255,.2)}
@@ -792,7 +802,7 @@ body.vaultpath .funnelmeta{display:none}
       </svg>
       <span><b>The Market Bully</b><em>All Pips Matter</em></span>
     </button>
-    <span class="funnelmeta"><span class="dot"></span> 6 questions &middot; about 2 minutes</span>
+    <span class="funnelmeta"><span class="dot"></span> <span id="fmCount">6</span> questions &middot; about 2 minutes</span>
     <nav class="pages" id="nav">
       <button data-go="home" aria-current="page">Home</button>
       <button data-go="about">About</button>
@@ -1299,8 +1309,8 @@ body.vaultpath .funnelmeta{display:none}
 
         <div class="qwelcome on" id="qwelcome">
           <div class="qmark"><svg viewBox="0 0 24 24" fill="none"><path d="M13.4 2.5 4.8 13.6h5.6l-.8 7.9 8.6-11.1h-5.6z" fill="#fff"/></svg></div>
-          <h2>Welcome to the<em>Market Bully Universe</em></h2>
-          <p class="intro">Glad you made it. Six quick questions and I will tell you exactly where to start, and what to do first.</p>
+          <h2 id="qwHead">Welcome to the<em>Market Bully Universe</em></h2>
+          <p class="intro" id="qwIntro">Glad you made it. Six quick questions and I will tell you exactly where to start, and what to do first.</p>
           <div class="trustrow">
             <span>10,000+ students taught</span><span>Recognised by Congress</span><span>Educator of the Year</span>
           </div>
@@ -1495,12 +1505,20 @@ body.vaultpath .funnelmeta{display:none}
             <div class="vp-half">
               <div class="vp-sec">
                 <p class="eyebrow">While you get set up</p>
-                <h3 class="big">Start with Lesson 1</h3>
-                <button class="vp-video" type="button" data-lesson="1" aria-label="Play Lesson 1, Foundations">
+                <h3 class="big l1only">Start with Lesson 1</h3>
+                <h3 class="big" id="l5Head" style="display:none">Your five starter lessons</h3>
+                <div class="l5" id="l5">
+                  <button type="button" data-go="lesson-1"><img src="/lessons/lesson-1-foundations.jpg" alt="" loading="lazy" width="1280" height="720"><span><b>1. Foundations</b><span>2:16</span></span></button>
+                  <button type="button" data-go="lesson-2"><img src="/lessons/lesson-2-market-trends.jpg" alt="" loading="lazy" width="1280" height="720"><span><b>2. Market Trends</b><span>1:39</span></span></button>
+                  <button type="button" data-go="lesson-3"><img src="/lessons/lesson-3-lots-and-pips.jpg" alt="" loading="lazy" width="1280" height="720"><span><b>3. Lots and Pips</b><span>1:47</span></span></button>
+                  <button type="button" data-go="lesson-4"><img src="/lessons/lesson-4-take-profit-and-stop-loss.jpg" alt="" loading="lazy" width="1280" height="720"><span><b>4. Take Profit and Stop Loss</b><span>2:03</span></span></button>
+                  <button type="button" data-go="lesson-5"><img src="/lessons/lesson-5-market-orders.jpg" alt="" loading="lazy" width="1280" height="720"><span><b>5. Market Orders</b><span>2:38</span></span></button>
+                </div>
+                <button class="vp-video l1only" type="button" data-lesson="1" aria-label="Play Lesson 1, Foundations">
                   <img src="/lessons/lesson-1-foundations.jpg" alt="" loading="lazy" width="1280" height="720">
                   <span class="pill"><svg viewBox="0 0 12 14" aria-hidden="true"><path d="M1 1 L11 7 L1 13 Z" fill="#fff"/></svg>Play Lesson 1 &middot; 2:16</span>
                 </button>
-                <p class="vp-note">Lesson 1 of 5: Foundations.</p>
+                <p class="vp-note l1only">Lesson 1 of 5: Foundations.</p>
               </div>
               <div class="vp-sec">
                 <div class="vp-card">
@@ -1868,7 +1886,7 @@ body.vaultpath .funnelmeta{display:none}
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(err){}
-  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal','lesson-1','lesson-2','lesson-3','lesson-4','lesson-5'];
+  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal','live','lesson-1','lesson-2','lesson-3','lesson-4','lesson-5'];
   /* the five starter lessons. /lesson-2 and so on are the links used in the follow-up emails */
   var LESSONS={1:['Foundations','lesson-1-foundations'],2:['Market Trends','lesson-2-market-trends'],3:['Lots and Pips','lesson-3-lots-and-pips'],
                4:['Take Profit and Stop Loss','lesson-4-take-profit-and-stop-loss'],5:['Market Orders','lesson-5-market-orders']};
@@ -1877,7 +1895,11 @@ body.vaultpath .funnelmeta{display:none}
     var L=LESSONS[n], v=document.getElementById('lsnVideo'); if(!L||!v) return;
     document.getElementById('lsnCount').textContent='Lesson '+n+' of 5';
     document.getElementById('lsnTitle').textContent=L[0];
-    document.getElementById('lsnNext').textContent = n<5 ? 'Lesson '+(n+1)+' is in your next email from me.' : 'That is all five lessons.';
+    var nx=document.getElementById('lsnNext'), allOpen=false;
+    try{ var vs=JSON.parse(localStorage.getItem('mb_vault_v1')||'null'); allOpen=!!(vs&&vs.live); }catch(err){}
+    if(n>=5) nx.textContent='That is all five lessons.';
+    else if(allOpen) nx.innerHTML='<button class="inline-link" data-go="lesson-'+(n+1)+'">Next: Lesson '+(n+1)+', '+LESSONS[n+1][0]+' &rarr;</button>';
+    else nx.textContent='Lesson '+(n+1)+' is in your next email from me.';
     if(lessonNow!==n){ lessonNow=n; v.poster='/lessons/'+L[1]+'.jpg'; v.src='/lessons/'+L[1]+'.mp4'; v.dataset.played=''; }
   }
 
@@ -2016,6 +2038,7 @@ body.vaultpath .funnelmeta{display:none}
     trackPage(id);
     var want=id;                       // /steps is the application page opened on its finish screen
     if(id==='steps') id='start';
+    if(id==='live'){ id='start'; if(window.__mbLive) window.__mbLive(); }   // the link said out loud on 1House sessions
     var ln=/^lesson-([1-5])$/.exec(id), lpage=document.getElementById('lesson'), lvid=document.getElementById('lsnVideo');
     if(ln){ id='lesson'; setLesson(parseInt(ln[1],10)); }
     else if(lvid){ try{ lvid.pause(); }catch(err){} }
@@ -2124,6 +2147,31 @@ body.vaultpath .funnelmeta{display:none}
   };
 
   var answers={}, step=0, TOTAL=7;
+  /* Live mode: someone who came from themarketbully.com/live, the link said on
+     1House sessions. They are already subscribed, so the 1House question is
+     answered for them and skipped, the application is tagged "1house-live",
+     and all five lessons are open on their finish screen. */
+  var LIVE=false, LIVEKEY='mb_live';
+  function setLive(){
+    if(LIVE) return; LIVE=true;
+    try{ localStorage.setItem(LIVEKEY,String(Date.now())); }catch(err){}
+    document.body.classList.add('livemode');
+    answers.onehouse='member';
+    SOURCE.src='1house-live';
+    TOTAL=6;
+    var h=document.getElementById('qwHead'), p=document.getElementById('qwIntro'), fm=document.getElementById('fmCount'), l5=document.getElementById('l5Head');
+    if(h) h.innerHTML='You are already<em>in my sessions</em>';
+    if(p) p.textContent='Five quick questions, then you get my five starter lessons and your path into The Vault.';
+    if(fm) fm.textContent='5';
+    if(l5) l5.style.display='';
+    var n=0;
+    document.querySelectorAll('#start .qstep').forEach(function(st){
+      var qc=st.querySelector('.qcount'); if(!qc||!/^Question/.test(qc.textContent)) return;
+      if(st.dataset.step==='4') return;
+      n++; qc.textContent='Question '+n+' of 5';
+    });
+    paintRail();
+  }
   var STORE='mb_app_v2', submitted=false;
 
   var SOURCE=(function(){
@@ -2167,7 +2215,8 @@ body.vaultpath .funnelmeta{display:none}
   function paintRail(){
     if(!rail) return;
     var out='';
-    for(var i=0;i<TOTAL;i++) out+='<i class="'+(i<step?'done':(i===step?'now':''))+'"></i>';
+    var at=(LIVE&&step>4)?step-1:step;     // live mode has one question fewer
+    for(var i=0;i<TOTAL;i++) out+='<i class="'+(i<at?'done':(i===at?'now':''))+'"></i>';
     rail.innerHTML=out;
   }
   function scrollTop(){
@@ -2180,6 +2229,7 @@ body.vaultpath .funnelmeta{display:none}
     if(welcome) welcome.classList.remove('on');
   }
   function showStep(n){
+    if(LIVE&&n===4) n=(step>4)?3:5;         // skip the 1House question in both directions
     step=Math.max(0,Math.min(n,steps.length-1));
     if(step===6) track('contact_step_view');
     document.body.classList.remove('vaultpath');
@@ -2192,6 +2242,7 @@ body.vaultpath .funnelmeta{display:none}
     var pair=(R[q]&&R[q][v])||["Got it.","Next question."];
     rHead.textContent=pair[0];
     rBody.textContent=pair[1];
+    if(LIVE&&nextIndex===4) nextIndex=5;
     rNext.textContent = nextIndex>=6 ? 'Last step →' : 'Next question →';
     hideAll();
     resp.classList.add('on');
@@ -2330,6 +2381,7 @@ body.vaultpath .funnelmeta{display:none}
         note.textContent='Name, email and the consent box are needed before this can go through.';
         note.style.color='var(--risk)'; return;
       }
+      if(LIVE) answers.onehouse='member';
       var payload={};
       fd.forEach(function(v,k){payload[k]=v;});
       Object.keys(answers).forEach(function(k){payload[k]=answers[k];});
@@ -2345,8 +2397,8 @@ body.vaultpath .funnelmeta{display:none}
       function finish(){
         submitted=true; clearSaved();
         var first=String(fd.get('name')||'').trim().split(/\s+/)[0];
-        vsave({n:first, e:String(fd.get('email')||'').trim(), r:leadRef, t1:false, t2:false, at:Date.now()});
-        track('generate_lead',{onehouse:answers.onehouse||'',capital:answers.capital||'',experience:answers.experience||''});
+        vsave({n:first, e:String(fd.get('email')||'').trim(), r:leadRef, live:LIVE, t1:false, t2:false, at:Date.now()});
+        track('generate_lead',{onehouse:answers.onehouse||'',capital:answers.capital||'',experience:answers.experience||'',came_from:LIVE?'1house-live':'site'});
         openVault();
         try{ if(standalone) history.replaceState({page:'steps'},'','/steps'); }catch(err){}
         trackPage('steps');
@@ -2422,6 +2474,10 @@ body.vaultpath .funnelmeta{display:none}
     var st=vload();
     var head=document.querySelector('#start .qstep[data-step="7"] .qtitle');
     var badge=document.getElementById('vpBadge'), intro=document.getElementById('vpIntro');
+    if(st && st.live){
+      document.body.classList.add('livemode');
+      var l5h=document.getElementById('l5Head'); if(l5h) l5h.style.display='';
+    }
     if(st){
       if(head) head.textContent = st.n ? 'You are in the queue, '+st.n+'.' : 'You are in the queue.';
       if(vpT1) vpT1.checked=!!st.t1;
@@ -2445,6 +2501,12 @@ body.vaultpath .funnelmeta{display:none}
   }
   window.__mbSteps=openVault;
   if(readUrl()==='steps') openVault();
+  window.__mbLive=setLive;
+  (function(){
+    var recent=false;
+    try{ recent=Date.now()-parseInt(localStorage.getItem(LIVEKEY)||'0',10) < 1000*60*60*24*14; }catch(err){}
+    if(readUrl()==='live' || (recent && readUrl()==='start')) setLive();
+  })();
   (function(){
     var bar=document.getElementById('vaultbar');
     if(bar && vload() && readUrl()!=='steps') bar.classList.add('on');
