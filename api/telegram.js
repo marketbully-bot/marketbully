@@ -398,10 +398,9 @@ export default async function handler(req, res) {
           `\ud83d\udd11 <b>Welcome to THE VAULT.</b>\n\n` +
           `This is my signals room. My live trades, my levels and my reasoning, ` +
           `posted while it is happening. \ud83d\udcaf\n\n` +
-          `It costs you nothing to be in here. Three steps and you are in \ud83d\udc47\n\n` +
+          `Seats in here are earned. Three steps and you are in \ud83d\udc47\n\n` +
           `1\ufe0f\u20e3 <b>OPEN YOUR TRADING ACCOUNT</b>\n` +
-          `This is the account you will trade from. Open it with my link. ` +
-          `That is what keeps this room free for you.\n` +
+          `This is the account you will trade from. Open it with my link.\n` +
           `\ud83d\udc49 ${LINK || '(link coming shortly)'}\n\n` +
           `2\ufe0f\u20e3 <b>SEND ME A SCREENSHOT</b>\n` +
           `Once you are signed up, take a picture of your account page and send it ` +
