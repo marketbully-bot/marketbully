@@ -3460,7 +3460,7 @@ body.vaultpath .funnelmeta{display:none}
     }
     var half=Math.ceil(R.length/2);
     fill(A,R.slice(0,half)); fill(B,R.slice(half));
-    // phones: one whole review at a time. It moves on by itself every few seconds,
+    // phones: one whole review at a time. It moves on by itself every three seconds,
     // and the visitor can swipe or use the arrows.
     var reel=document.getElementById('rvwReel'), count=document.getElementById('rvwCount');
     if(reel){
@@ -3481,7 +3481,7 @@ body.vaultpath .funnelmeta{display:none}
       document.getElementById('rvwNext').addEventListener('click',function(){ touched(); show(idx+1,true); });
       if('IntersectionObserver' in window) new IntersectionObserver(function(es){ es.forEach(function(e){ seen=e.isIntersecting; }); },{threshold:.5}).observe(reel);
       else seen=true;
-      if(!reduce) setInterval(function(){ if(seen && Date.now()>hold && reel.clientWidth) show(idx+1,true); },5000);
+      if(!reduce) setInterval(function(){ if(seen && Date.now()>hold && reel.clientWidth) show(idx+1,true); },3000);
       if(count) count.textContent='1 of '+R.length;
     }
     if(rows){
