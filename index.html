@@ -134,6 +134,8 @@ header.top.stuck .top-in{padding:11px 30px}
 nav.pages{display:flex;gap:2px;flex-wrap:wrap}
 nav.pages button{font-family:var(--ui);font-weight:600;font-size:13px;background:none;border:1px solid transparent;color:var(--silver-dim);padding:9px 12px;cursor:pointer;border-radius:9px;transition:.25s var(--ease);white-space:nowrap}
 nav.pages button:hover{color:#fff;background:var(--panel)}
+nav.pages button.hot{color:#fff;border-color:var(--blue);background:rgba(46,107,255,.16);box-shadow:0 0 22px rgba(46,107,255,.28)}
+nav.pages button.hot:hover{background:rgba(46,107,255,.28)}
 nav.pages button[aria-current="page"]{color:#fff;background:var(--panel-2);border-color:var(--line-hi);box-shadow:var(--edge)}
 .navcta.active{background:linear-gradient(180deg,#5A8CFF,#2F63EC)}
 .navcta{margin-left:6px;flex:none}
@@ -774,6 +776,24 @@ body.livemode .l1only{display:none}
 .lsn-next{font-size:14.5px;color:var(--silver-dim);margin:14px 0 0}
 .lsn-cta{margin-top:30px}
 @media(min-width:700px){.lsn-cta .btn{width:auto;justify-self:start}}
+/* ============ onboarding hub (/onboarding) ============ */
+.oh{max-width:980px;margin:0 auto}
+.oh-h{font-size:clamp(34px,6vw,58px);line-height:1.04;margin:0 0 14px;max-width:none}
+.oh-lede{font-size:18px;line-height:1.55;color:var(--silver-2);margin:0 0 28px;max-width:56ch}
+.oh-grid{display:grid;gap:16px}
+.oh-card{position:relative;display:flex;flex-direction:column;gap:14px;padding:26px 22px;border-radius:18px;border:1px solid var(--line-hi);background:var(--panel);min-width:0}
+.oh-card.a{border-color:var(--blue);background:rgba(46,107,255,.1);box-shadow:0 0 60px rgba(46,107,255,.2)}
+.oh-card .eyebrow{margin:0}
+.oh-card h2{font-size:clamp(24px,4.6vw,30px);margin:0}
+.oh-card p{margin:0;font-size:15.5px;line-height:1.55;color:var(--silver-2)}
+.oh-card .btn{width:100%;text-align:center;margin-top:auto}
+.oh-card .sm{font-size:13px;color:var(--silver-dim)}
+.oh-thumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.oh-thumbs img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:6px;border:1px solid var(--line-hi)}
+.oh-list{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:14.5px;color:var(--silver-2)}
+.oh-list li{display:flex;gap:10px;align-items:flex-start}
+.oh-list svg{flex:none;width:16px;height:16px;margin-top:3px;color:var(--ok)}
+@media(min-width:820px){.oh-grid{grid-template-columns:1fr 1fr}.oh-card{padding:32px 28px}}
 /* ============ member area (/members) ============ */
 body.memberpage .toast{display:none!important}
 .mb{max-width:860px;margin:0 auto}
@@ -906,11 +926,11 @@ body.vaultpath .funnelmeta{display:none}
     <span class="funnelmeta"><span class="dot"></span> <span id="fmCount">6</span> questions &middot; about 2 minutes</span>
     <nav class="pages" id="nav">
       <button data-go="home" aria-current="page">Home</button>
+      <button data-go="onboarding" class="hot">Onboarding</button>
       <button data-go="about">About</button>
       <button data-go="community">Community</button>
       <button data-go="faq">FAQ</button>
       <button data-go="contact">Contact</button>
-      <button data-go="legal">Legal</button>
     </nav>
   </div>
 </header>
@@ -1904,6 +1924,43 @@ body.vaultpath .funnelmeta{display:none}
   </section>
 </main>
 
+<main class="page" id="onboarding">
+  <section class="wrap" style="padding-top:56px;padding-bottom:70px">
+    <div class="oh">
+      <p class="eyebrow">Onboarding</p>
+      <h1 class="oh-h">Start here.</h1>
+      <p class="oh-lede">Two ways in. Pick the one that fits where you are right now.</p>
+      <div class="oh-grid">
+        <div class="oh-card a">
+          <p class="eyebrow">New here</p>
+          <h2>Watch the five starter lessons</h2>
+          <p>About ten minutes in total. This is the language of the room, so when I say &ldquo;pip&rdquo;, &ldquo;lot&rdquo; or &ldquo;stop loss&rdquo; you already know what I mean.</p>
+          <div class="oh-thumbs"><img src="/lessons/lesson-1-foundations.jpg" alt="" width="640" height="360" loading="lazy"><img src="/lessons/lesson-2-market-trends.jpg" alt="" width="640" height="360" loading="lazy"><img src="/lessons/lesson-3-lots-and-pips.jpg" alt="" width="640" height="360" loading="lazy"><img src="/lessons/lesson-4-take-profit-and-stop-loss.jpg" alt="" width="640" height="360" loading="lazy"><img src="/lessons/lesson-5-market-orders.jpg" alt="" width="640" height="360" loading="lazy"></div>
+          <ul class="oh-list">
+            <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Foundations, Market Trends, Lots and Pips, Take Profit and Stop Loss, Market Orders</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>A few quick questions first, so I know where you are starting from</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Then your steps to earn your seat in The Vault</span></li>
+          </ul>
+          <button class="btn lg" data-go="start">Start the lessons &rarr;</button>
+        </div>
+        <div class="oh-card">
+          <p class="eyebrow">Vault members</p>
+          <h2>Open your member area</h2>
+          <p>Your first week, in order. Everything you need to get set up and into your first live session with me.</p>
+          <ul class="oh-list">
+            <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Your two apps, with the download buttons</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>The five lessons and the starter quiz</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>The community chat and the live session times</span></li>
+          </ul>
+          <p class="sm">No code and no password. Only current members of The Vault can open it.</p>
+          <button class="btn lg ghost" data-go="members">Sign in with Telegram &rarr;</button>
+        </div>
+      </div>
+      <p class="ob-fine">Education only. Not financial advice. Trading carries a risk of loss. <button class="inline-link" data-go="legal">Risk and disclosure</button></p>
+    </div>
+  </section>
+</main>
+
 <main class="page" id="members">
   <section class="wrap" style="padding-top:56px;padding-bottom:70px">
     <div class="mb">
@@ -2196,7 +2253,7 @@ body.vaultpath .funnelmeta{display:none}
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(err){}
-  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal','live','members','lesson-1','lesson-2','lesson-3','lesson-4','lesson-5'];
+  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal','live','members','onboarding','lesson-1','lesson-2','lesson-3','lesson-4','lesson-5'];
   /* the five starter lessons. /lesson-2 and so on are the links used in the follow-up emails */
   var LESSONS={1:['Foundations','lesson-1-foundations'],2:['Market Trends','lesson-2-market-trends'],3:['Lots and Pips','lesson-3-lots-and-pips'],
                4:['Take Profit and Stop Loss','lesson-4-take-profit-and-stop-loss'],5:['Market Orders','lesson-5-market-orders']};
@@ -2370,7 +2427,7 @@ body.vaultpath .funnelmeta{display:none}
     });
     document.body.classList.toggle('funnel', id==='start');
     document.body.classList.toggle('onboarding', id==='onboard');
-    document.body.classList.toggle('memberpage', id==='members');
+    document.body.classList.toggle('memberpage', id==='members'||id==='onboarding');
     if(id==='onboard' && window.__obReset) window.__obReset();
     var tz=document.getElementById('toast');
     if(tz){ if(id==='start') tz.classList.remove('in'); else if(toastShown) tz.classList.add('in'); }
