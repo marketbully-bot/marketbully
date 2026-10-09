@@ -801,6 +801,30 @@ nav.pages .navig:hover{color:#fff;background:var(--panel)}
 .aw-cap{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver-dim);margin:12px 0 0}
 @media(min-width:900px){.aw{grid-template-columns:300px 1fr 230px;gap:48px}.aw-photo,.aw-clip{width:100%}}
 @media(prefers-reduced-motion:reduce){.aw-glow{animation:none}}
+/* ============ student reviews ============ */
+.rvw-band{overflow:hidden}
+.rvw-band .band-in{padding-bottom:26px}
+.rvw-head{display:grid;gap:18px;align-items:end}
+.rvw-head h2{margin:0 0 8px;font-size:clamp(30px,5.4vw,48px)}
+.rvw-stars{color:#F5C451;letter-spacing:.08em;text-shadow:0 0 22px rgba(245,196,81,.5);margin-right:6px}
+.rvw-sub{margin:0;color:var(--silver-2)}
+.rvw-head .btn{justify-self:start}
+.rvw-rows{display:grid;gap:12px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.rvw-row{overflow:hidden}
+.rvw-track{display:flex;gap:12px;width:max-content;animation:rvwSlide 90s linear infinite}
+.rvw-row.rev .rvw-track{animation-direction:reverse;animation-duration:105s}
+.rvw-rows:hover .rvw-track,.rvw-rows.hold .rvw-track{animation-play-state:paused}
+@keyframes rvwSlide{to{transform:translateX(-50%)}}
+.rvw-card{flex:none;width:280px;display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:16px;border:1px solid var(--line-hi);background:var(--panel)}
+.rvw-card .st{color:#F5C451;font-size:13px;letter-spacing:.14em}
+.rvw-card p{margin:0;font-size:14.5px;line-height:1.55;color:var(--silver)}
+.rvw-card .who{margin-top:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--silver-dim)}
+.rvw-card .av{flex:none;width:30px;height:30px;border-radius:50%;background:linear-gradient(160deg,#4079FF,#1B4ED8);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.rvw-card .who b{color:var(--silver);font-weight:700}
+.rvw-fine{max-width:var(--maxw);margin:0 auto;padding:18px 30px 60px;font-size:12px;line-height:1.6;color:var(--silver-dim)}
+@media(min-width:800px){.rvw-head{grid-template-columns:1fr auto}.rvw-head .btn{justify-self:end}.rvw-card{width:360px}}
+@media(max-width:860px){.rvw-fine{padding-left:20px;padding-right:20px}}
+@media(prefers-reduced-motion:reduce){.rvw-track{animation:none}.rvw-row{overflow-x:auto}}
 /* ============ Instagram ============ */
 .ig-head{display:grid;gap:18px;align-items:center}
 .ig-head+.ig-grid{margin-top:26px}
@@ -1048,6 +1072,24 @@ body.vaultpath .funnelmeta{display:none}
         </div>
       </div>
     </div>
+  </section>
+
+  <section class="band rvw-band">
+    <div class="band-in">
+      <div class="rvw-head rv">
+        <div>
+          <p class="eyebrow">What students say on 1House.TV</p>
+          <h2><span class="rvw-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> 5 out of 5</h2>
+          <p class="rvw-sub">107 student reviews on my 1House.TV page.</p>
+        </div>
+        <a class="btn ghost" href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">Read all 107 reviews &rarr;</a>
+      </div>
+    </div>
+    <div class="rvw-rows" id="rvwRows" aria-label="Selected student reviews">
+      <div class="rvw-row"><div class="rvw-track" id="rvwA"></div></div>
+      <div class="rvw-row rev"><div class="rvw-track" id="rvwB"></div></div>
+    </div>
+    <p class="rvw-fine">Selected reviews from my public 1House.TV page, shown in the student&rsquo;s own words and shortened for length. Rating and count as shown there on 9 October 2026. Each review is that student&rsquo;s own experience and is not a promise of results.</p>
   </section>
 
   <div class="tape" aria-hidden="true"><div class="tape-track" id="tape"></div></div>
@@ -3374,6 +3416,33 @@ body.vaultpath .funnelmeta{display:none}
       var io2=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ load(); io2.disconnect(); } }); },{rootMargin:'700px 0px'});
       io2.observe(sec);
     } else { window.addEventListener('load',load); }
+  })();
+
+  /* Student reviews: a selection from his public 1House.TV page, in the
+     students' own words. Names are first name and last initial. Reviews that
+     talk about money made are left out on purpose. */
+  (function(){
+    var A=document.getElementById('rvwA'), B=document.getElementById('rvwB'), rows=document.getElementById('rvwRows'); if(!A||!B) return;
+    var R=[["Deyanta J.", "Then I sat in my first class, and I haven’t stopped learning since. The first 90 days taught me more about myself than about trading. In the second 90, the trading itself started to click."], ["Jae Y.", "One of my favorites! Great teacher & communicates well"], ["Corvette D.", "What I admire about Pops the most is, no matter what he goes thru, he still shows up to teach us! We truly appreciate your presence Big Bully! Peace."], ["Jason A.", "The more I watch Pops videos, the more my knowledge of the market increases, the easier it gets for me. Pops just opens up my understanding by his teaching methods!!!"], ["Gage F.", "Pops is a blessing to all of us in this space the market bully himself is showing me how to become a market bully and I can’t thank him enough!"], ["Antoinette S.", "Trades will always come and go, and waiting for my setup is becoming easier. That shift in mindset is helping me become a more disciplined trader."], ["Mo N.", "Pops changed my whole perspective on how to look at life! The way he teaches his strategy and the psychology with trading aligns directly with life."], ["Alexia W.", "What stands out most is the way he pours into people beyond just trading building confidence, discipline, patience, and a stronger mindset overall."], ["Jackie F.", "I love how gentle and kind PoP’s is. He has high energy, but he makes learning fun and is very in depth for us 'Mature\" learners. Thank you from the bottom of my heart."], ["Omar H.", "was a great session really helped me understand it more"], ["TJ R.", "His sessions make me truly feel like I’m part of a genuine family. The community and culture he has built is so welcoming."], ["Mar H.", "FAVORITE EDUCATOR FOR SURE🔥🔥"], ["ChiNirah T.", "Pops is an absolute MASTER educator. He is extremely thorough, precise, knowledgeable and overall exceeds any and all expectations I had when I first joined."], ["Kadaishia B.", "Pops always has a vibe going! I have been on his sessions since I started 8 months ago. He explains everything so well and always willing to answer questions."], ["Dion T.", "You don’t just teach strategies—you teach mindset, patience, and how to approach the market with structure and confidence."], ["Millicent H.", "I anticipate a pops session! He is going to educate you and teach you how to fish!"], ["Colton S.", "He takes his time break breaking down every strategy and solution that he shows us, if you do not get it, he will go back again and re-explain."], ["Chadasi B.", "Best playlist on one house. Very educational. Feels like I’m having fun learning about trading."], ["Emon P.", "Love the sessions! Appreciate all the advice you give on your sessions! Real vibes in the sessions!"], ["Lamont C.", "I been rocking with the MarketBully for about 16 months now and I have learned so much about this day trading thing and I owe it all to his very simple strategy and dedication to the game."], ["Stacey S.", "Master educator, forever student, GOATED trader, hilarious guy, caring family man, a believer, energetic speaker, smart businessman and much more."], ["Ibrahim L.", "Best trading educator"]];
+    function card(r){
+      var d=document.createElement('div'); d.className='rvw-card';
+      var st=document.createElement('span'); st.className='st'; st.setAttribute('aria-label','5 out of 5 stars'); st.textContent='\u2605\u2605\u2605\u2605\u2605';
+      var p=document.createElement('p'); p.textContent='\u201C'+r[1]+'\u201D';
+      var w=document.createElement('span'); w.className='who';
+      var av=document.createElement('span'); av.className='av'; av.textContent=r[0].charAt(0); av.setAttribute('aria-hidden','true');
+      var b=document.createElement('b'); b.textContent=r[0];
+      w.appendChild(av); w.appendChild(b); w.appendChild(document.createTextNode(' \u00B7 1House.TV'));
+      d.appendChild(st); d.appendChild(p); d.appendChild(w); return d;
+    }
+    function fill(el,list){
+      for(var k=0;k<2;k++) list.forEach(function(r){ var c=card(r); if(k===1) c.setAttribute('aria-hidden','true'); el.appendChild(c); });
+    }
+    var half=Math.ceil(R.length/2);
+    fill(A,R.slice(0,half)); fill(B,R.slice(half));
+    if(rows){
+      rows.addEventListener('touchstart',function(){ rows.classList.add('hold'); },{passive:true});
+      rows.addEventListener('touchend',function(){ setTimeout(function(){ rows.classList.remove('hold'); },1500); },{passive:true});
+    }
   })();
 
   /* lesson player */
