@@ -41,6 +41,20 @@ async function canApprove(userId, admin, room) {
   }
 }
 
+// Signs the 10 minute pass that opens the member area on the site.
+// api/member.js checks it with the same key. Keep the two in step.
+async function memberPass(user, botToken) {
+  const c = await import('node:crypto');
+  const key = c.createHash('sha256').update('mb-member:' + botToken).digest();
+  // Only the Telegram id and an expiry go in the link. No name, no username.
+  const body = Buffer.from(JSON.stringify({
+    t: 'l',
+    u: user.id,
+    e: Math.floor(Date.now() / 1000) + 600
+  })).toString('base64url');
+  return body + '.' + c.createHmac('sha256', key).update(body).digest('base64url');
+}
+
 function who(u) {
   if (!u) return 'Someone';
   const name = [u.first_name, u.last_name].filter(Boolean).join(' ');
@@ -256,6 +270,46 @@ export default async function handler(req, res) {
     // through opening the account on the site, so skip the long welcome and
     // ask for the screenshot straight away.
     const startArg = (/^\/start(?:@\w+)?\s+(\S+)/i.exec(text) || [])[1] || '';
+    // Arriving from the site's "Sign in with Telegram" button on /members.
+    // Members of THE VAULT get a private button that opens their member area.
+    if (/^members$/i.test(startArg)) {
+      let member = false;
+      if (ROOM) {
+        try {
+          const r = await tg('getChatMember', { chat_id: ROOM, user_id: from.id });
+          const st = r && r.ok && r.result ? r.result.status : '';
+          member = st === 'creator' || st === 'administrator' || st === 'member' ||
+                   (st === 'restricted' && !!r.result.is_member);
+        } catch (e) { member = false; }
+      }
+      if (member) {
+        const pass = await memberPass(from, TOKEN);
+        await tg('sendMessage', {
+          chat_id: from.id,
+          parse_mode: 'HTML',
+          text:
+            '\ud83d\udd13 <b>Member access.</b>\n\n' +
+            'You are in THE VAULT, so your member area is open.\n\n' +
+            'Tap the button below \ud83d\udc47\n\n' +
+            '<i>This button is yours only and works for 10 minutes.</i>',
+          reply_markup: {
+            inline_keyboard: [[{ text: '\ud83d\udd11 Open my member area', url: 'https://themarketbully.com/members#k=' + pass }]]
+          }
+        });
+      } else {
+        await tg('sendMessage', {
+          chat_id: from.id,
+          parse_mode: 'HTML',
+          disable_web_page_preview: true,
+          text:
+            '\ud83d\udd12 <b>The member area is for THE VAULT.</b>\n\n' +
+            'You are not in the room yet. Here is how you earn your seat \ud83d\udc47\n\n' +
+            'https://themarketbully.com/steps'
+        });
+      }
+      return res.status(200).end();
+    }
+
     if (/^shot(?:_|$)/i.test(startArg)) {
       const ref = (/^shot_([A-Z0-9]{4,12})$/.exec(startArg) || [])[1] || '';
       const ask = {

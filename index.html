@@ -41,6 +41,12 @@
    between the quotes. Empty quotes = analytics switched off.
    No name, email or phone number is ever sent to it.
    ========================================================= */
+/* A member's sign-in key arrives in the address. Take it out of the address
+   before anything else runs, so it is never recorded anywhere. */
+(function(){ try{
+  var m=/[#&]k=([\w\-.]+)/.exec(location.hash||'')||/[?&]k=([\w\-.]+)/.exec(location.search||'');
+  if(m && /\/members\/?$/i.test(location.pathname)){ window.__mbKey=m[1]; history.replaceState(null,'','/members'); }
+}catch(err){} })();
 window.MB_GA_ID = "G-TQH3LYMHNR";
 (function(){
   var id=window.MB_GA_ID;
@@ -768,6 +774,101 @@ body.livemode .l1only{display:none}
 .lsn-next{font-size:14.5px;color:var(--silver-dim);margin:14px 0 0}
 .lsn-cta{margin-top:30px}
 @media(min-width:700px){.lsn-cta .btn{width:auto;justify-self:start}}
+/* ============ member area (/members) ============ */
+body.memberpage .toast{display:none!important}
+.mb{max-width:860px;margin:0 auto}
+.mb-state{display:none}
+.mb-state.on{display:block;animation:screenIn .5s var(--ease)}
+.mb-gate{max-width:480px;margin:5vh auto 0;padding:30px 24px;border-radius:18px;border:1px solid var(--line-hi);background:var(--panel);
+  box-shadow:0 0 60px rgba(46,107,255,.18);display:grid;gap:16px}
+.mb-gate h2{font-size:clamp(24px,5.4vw,30px);margin:0}
+.mb-gate p{margin:0;font-size:15.5px;line-height:1.55;color:var(--silver-2)}
+.mb-gate p.sm{font-size:13.5px;color:var(--silver-dim)}
+.mb-gate .btn{width:100%;text-align:center}
+.mb-alert{display:none;border-left:2px solid var(--risk);padding:4px 0 4px 12px;color:var(--silver)!important}
+.mb-alert.on{display:block}
+.mb-how{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:14.5px;line-height:1.5;color:var(--silver-2)}
+.mb-how li{display:flex;gap:11px}
+.mb-how .n{flex:none;width:24px;height:24px;border-radius:999px;background:#1E52E0;color:#fff;font-weight:800;font-size:12.5px;
+  display:flex;align-items:center;justify-content:center}
+.mb-how b{color:var(--silver)}
+.mb-top{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap}
+.mb-who{margin:0;font-size:13.5px;color:var(--silver-dim)}
+.mb-who span{color:var(--silver)}
+.mb-h{font-size:clamp(30px,5.6vw,50px);line-height:1.06;margin:0 0 14px;max-width:none}
+.mb-lede{font-size:17px;line-height:1.55;color:var(--silver-2);margin:0;max-width:60ch}
+.mb-steps{display:grid;gap:12px;margin:22px 0 0}
+.mb-step{display:flex;flex-direction:column;gap:12px;padding:20px 18px;border-radius:14px;border:1px solid var(--line);background:var(--panel);min-width:0}
+.mb-step .no{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--silver-dim)}
+.mb-step .here{display:none;font-size:10px;letter-spacing:.12em;color:#fff;background:var(--blue);padding:3px 9px;border-radius:999px}
+.mb-step h3{font-size:19px;margin:0}
+.mb-step p{font-size:14.5px;line-height:1.55;margin:0;color:var(--silver-2)}
+.mb-step p.sm{font-size:13px;color:var(--silver-dim)}
+.mb-step>.btn{text-align:center}
+.mb-step.cur{border-color:var(--blue);background:rgba(46,107,255,.1);box-shadow:0 0 34px rgba(46,107,255,.22)}
+.mb-step.cur .no{color:var(--blue-hi)}
+.mb-step.cur .here{display:inline-block}
+.mb-step.done{border-color:rgba(95,211,155,.35);background:rgba(95,211,155,.05)}
+.mb-step.done .no{color:var(--ok)}
+.mb-step .vp-check{margin-top:2px;padding-top:12px}
+.mb-apps{display:grid;gap:10px}
+.mb-app{display:grid;gap:8px;padding:14px;border-radius:12px;border:1px solid var(--line-hi);background:rgba(255,255,255,.03);min-width:0}
+.mb-app .cap{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver-dim)}
+.mb-app b{font-family:var(--display);font-size:18px;color:var(--silver)}
+.mb-app .row{display:flex;gap:8px;flex-wrap:wrap}
+.mb-app .row .btn{flex:1 1 84px;min-height:44px}
+.mb-lessons{display:grid;gap:10px}
+.mb-lessons button{display:flex;align-items:center;gap:12px;width:100%;padding:8px;border-radius:12px;border:1px solid var(--line-hi);
+  background:rgba(255,255,255,.03);cursor:pointer;text-align:left;font-family:var(--ui);color:var(--silver-2);min-width:0}
+.mb-lessons button:hover{border-color:var(--blue-hi)}
+.mb-lessons img{flex:none;width:112px;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:8px;display:block}
+.mb-lessons b{display:block;color:var(--silver);font-size:15px;font-weight:700}
+.mb-lessons .ltag{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--silver-dim);margin-bottom:3px}
+.mb-lessons button.w .ltag{color:var(--ok)}
+.mb-lessons button.next{border-color:var(--blue)}
+.mb-lessons button.next .ltag{color:var(--blue-hi)}
+.mb-score{display:none;font-weight:700;color:var(--silver)!important}
+.mb-score.on{display:block}
+.mb-sched{display:grid;border:1px solid var(--line-hi);border-radius:12px;overflow:hidden;font-size:14px}
+.mb-sched .r{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:8px;padding:12px 14px;border-top:1px solid var(--line);align-items:start}
+.mb-sched .r:first-child{border-top:none}
+.mb-sched .r.h{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--silver-dim);background:rgba(255,255,255,.03)}
+.mb-sched b{color:var(--silver);font-weight:700}
+.mb-sched small{display:block;font-size:12px;font-weight:500;color:var(--blue-hi);margin-top:2px}
+.mb-sched span small{color:var(--silver-dim)}
+.mb-sched span{color:var(--silver-2)}
+.mb-finish{margin-top:22px}
+.mb-pair{display:grid;gap:12px;margin-top:12px}
+.mb-quiz{display:none}
+.mb.quizzing .mb-main{display:none}
+.mb.quizzing .mb-quiz{display:block}
+.mq-from{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver-dim);margin:22px 0 10px}
+.mq-q{font-size:clamp(22px,4.6vw,32px);line-height:1.2;margin:0 0 20px;outline:none}
+.mq-hint{font-size:13.5px;color:var(--silver-dim);margin:16px 0 20px}
+.mq-miss{display:grid;gap:10px;margin:22px 0}
+.mq-miss .m{padding:14px 16px;border-radius:12px;border:1px solid var(--line-hi);background:rgba(255,255,255,.03);display:grid;gap:6px;font-size:14.5px;line-height:1.5}
+.mq-miss .m b{color:var(--silver)}
+.mq-miss .m .a{color:var(--ok)}
+.mq-acts{display:flex;gap:10px;flex-wrap:wrap}
+.lsn-cta.mem{display:none}
+body.ismember .lsn-cta.pub{display:none}
+body.ismember .lsn-cta.mem{display:grid}
+@media(max-width:520px){
+  .mb-sched .r{grid-template-columns:1fr 1fr 1fr;row-gap:6px}
+  .mb-sched .r.h{display:none}
+  .mb-sched .r>b{grid-column:1/-1}
+  .mb-sched span[data-z]::before{content:attr(data-z);display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--silver-dim)}
+  .mq-acts .btn{width:100%}
+  #mqNext{width:100%}
+}
+@media(min-width:760px){
+  .mb-apps{grid-template-columns:1fr 1fr}
+  .mb-pair{grid-template-columns:1fr 1fr}
+  .mb-step{padding:24px}
+  .mb-step>.btn{align-self:flex-start}
+  .mb-finish .btn{width:auto;justify-self:start}
+}
 .cookiebar{position:fixed;left:12px;right:12px;bottom:12px;z-index:250;display:none;align-items:center;justify-content:space-between;
   gap:12px 18px;flex-wrap:wrap;max-width:760px;margin:0 auto;padding:14px 16px;border-radius:14px;border:1px solid var(--line-hi);
   background:rgba(7,10,18,.96);box-shadow:0 20px 60px -20px #000}
@@ -1093,13 +1194,9 @@ body.vaultpath .funnelmeta{display:none}
         <div class="glass card rv" style="padding:38px 32px">
           <span class="topedge"></span>
           <p class="eyebrow">Member access</p>
-          <h2 style="font-size:27px">Already approved?</h2>
-          <p style="margin-bottom:24px">Enter the access code you were given to pick your onboarding back up.</p>
-          <div class="codebox">
-            <input id="code" type="text" placeholder="ACCESS CODE" aria-label="Access code">
-            <button class="btn" id="codebtn">Continue</button>
-          </div>
-          <p class="small dim" id="codenote" style="margin-top:16px">Codes are issued on Telegram once you are approved.</p>
+          <h2 style="font-size:27px">Already in The Vault?</h2>
+          <p style="margin-bottom:24px">Your member area is where your first week lives: your apps, the five starter lessons, the quiz and the live session times. Sign in with Telegram. No code and no password.</p>
+          <button class="btn" data-go="members">Open the member area</button>
         </div>
         <div class="glass card rv" style="padding:38px 32px">
           <span class="topedge"></span>
@@ -1527,7 +1624,7 @@ body.vaultpath .funnelmeta{display:none}
                   <p>No approval, nothing to pay, no account needed. A real look at the community before you commit to anything.</p>
                   <a class="btn ghost" href="https://t.me/+ukr-PkZbU1lmMmIx" target="_blank" rel="noopener">Join the channel &rarr;</a>
                 </div>
-                <p class="vp-note">Already approved? <button class="inline-link" data-go="onboard">Set up your trading app &rarr;</button></p>
+                <p class="vp-note">Already in The Vault? <button class="inline-link" data-go="members">Open your member area &rarr;</button></p>
               </div>
             </div>
 
@@ -1694,6 +1791,7 @@ body.vaultpath .funnelmeta{display:none}
       <h2 class="rv">Your data</h2>
       <p class="rv">Information submitted through the application is used to review that application, to contact you about the chat, and to keep a record of applicants. It is stored in the systems used to run this operation and is not sold. You can ask for your data to be deleted at any time by replying to any email or messaging me on Telegram.</p>
       <p class="rv">This site uses Google Analytics to count visits and to see which pages and steps people use, so I can fix the parts that confuse people. It sets cookies to tell one visit from the next. It is not used for advertising, and your name, email and phone number are never sent to it. If you are in Europe or the United Kingdom you are asked first, and you can say no.</p>
+      <p class="rv">If you sign in to the member area, the site keeps a sign-in cookie on your device for 30 days and asks Telegram whether your Telegram account is a member of The Vault. It sees your Telegram first name and username, nothing else: not your phone number and not your chats. Your onboarding ticks and quiz score are saved on your own device.</p>
 
       <h2 class="rv">Limitation of liability</h2>
       <p class="rv">The Market Bully and Richard Hall Jr. accept no liability for any trading loss, financial loss, or other damage arising from use of this website, the signals chat, the sessions, or any connected material. You use all of it at your own risk.</p>
@@ -1712,7 +1810,7 @@ body.vaultpath .funnelmeta{display:none}
       <div class="ob-step on" data-ob="1">
         <p class="ob-count">Step 1 of 3</p>
         <h2>Open your trading account</h2>
-        <p class="lede">This is the account your money sits in and where your trades are placed. You open it through my link. That is the only thing I ask, and it is what keeps the room free for you.</p>
+        <p class="lede">This is the account your money sits in and where your trades are placed. You open it through my link. It is the first step toward your seat in The Vault.</p>
 
         <div class="ob-list">
           <div class="ob-item hot"><span class="n">1</span><div><b>Tap the blue button below</b><span class="t">It opens the sign-up page in a new tab.</span></div></div>
@@ -1806,6 +1904,212 @@ body.vaultpath .funnelmeta{display:none}
   </section>
 </main>
 
+<main class="page" id="members">
+  <section class="wrap" style="padding-top:56px;padding-bottom:70px">
+    <div class="mb">
+
+      <!-- checking -->
+      <div class="mb-state on" data-mb="loading">
+        <div class="mb-gate"><p class="eyebrow" style="margin:0">Member access</p><h2>Checking your seat&hellip;</h2><p>One moment.</p></div>
+      </div>
+
+      <!-- signed out -->
+      <div class="mb-state" data-mb="signin">
+        <div class="mb-gate">
+          <p class="eyebrow" style="margin:0">Member access</p>
+          <h2>Vault members, sign in with Telegram</h2>
+          <p class="mb-alert" id="mbAlert"></p>
+          <p>No code. No password. Three taps and you are in.</p>
+          <a class="btn lg" id="mbSignin" href="https://t.me/thevaultkey_bot?start=members" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M22 3 2 11l6 2.5L18 7l-7.5 8v5l3-3.5 4.5 3.5z"/></svg>Sign in with Telegram</a>
+          <ol class="mb-how">
+            <li><span class="n">1</span><span>Tap <b>Sign in with Telegram</b>. It opens the door, my Telegram chat.</span></li>
+            <li><span class="n">2</span><span>Press <b>Start</b> at the bottom of that chat.</span></li>
+            <li><span class="n">3</span><span>Tap <b>Open my member area</b>, the key I send you. It is yours only and works for 10 minutes.</span></li>
+          </ol>
+          <p class="sm">Only current members of The Vault can open the member area. Not in The Vault yet? <button class="inline-link" data-go="steps">See your steps</button>.</p>
+        </div>
+        <p class="ob-fine">Education only. Not financial advice. Trading carries a risk of loss. <button class="inline-link" data-go="legal">Risk and disclosure</button></p>
+      </div>
+
+      <!-- signed in, but not in The Vault -->
+      <div class="mb-state" data-mb="out">
+        <div class="mb-gate">
+          <p class="mb-who">Signed in<span id="mbOutWho"></span> &middot; <button class="inline-link" data-mbsignout>Sign out</button></p>
+          <h2>You are not in The Vault yet.</h2>
+          <p>The member area opens the moment I approve you. Here is how you earn your seat.</p>
+          <button class="btn lg" data-go="steps">Go to my steps &rarr;</button>
+          <p class="sm">Already approved? Open The Vault with your private invite first, then come back and sign in again.</p>
+        </div>
+        <p class="ob-fine">Education only. Not financial advice. Trading carries a risk of loss. <button class="inline-link" data-go="legal">Risk and disclosure</button></p>
+      </div>
+
+      <!-- could not check -->
+      <div class="mb-state" data-mb="retry">
+        <div class="mb-gate">
+          <p class="eyebrow" style="margin:0">Member access</p>
+          <h2>I could not check your seat just now.</h2>
+          <p>That is a connection hiccup, not a problem with your access. Give it a few seconds and try again.</p>
+          <button class="btn lg" id="mbRetry" type="button">Try again</button>
+        </div>
+      </div>
+
+      <!-- member -->
+      <div class="mb-state" data-mb="in">
+
+        <div class="mb-main" id="mbMain">
+          <div class="mb-top">
+            <span class="vp-badge"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12.6l5 5L19.5 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Vault member</span>
+            <p class="mb-who">Signed in<span id="mbWho"></span> &middot; <button class="inline-link" data-mbsignout>Sign out</button></p>
+          </div>
+          <p class="eyebrow" style="margin:22px 0 14px">Start here &middot; Member onboarding</p>
+          <h1 class="mb-h">You&rsquo;re in<span id="mbName"></span>. Here&rsquo;s your first week.</h1>
+          <p class="mb-lede">Six things, in order. Tick each one off as you go.</p>
+
+          <div class="vp-prog" style="margin-top:22px">
+            <div class="lab"><span>Your onboarding</span><b id="mbCount">1 of 6 complete</b></div>
+            <div class="track"><i id="mbBar"></i></div>
+          </div>
+
+          <div class="mb-steps">
+
+            <div class="mb-step done" data-ms="1">
+              <div class="no"><span class="lbl">Step 1</span><span class="here">You are here</span></div>
+              <h3>Open The Vault with your private invite</h3>
+              <p>Done. That is how you got in here.</p>
+            </div>
+
+            <div class="mb-step" data-ms="2">
+              <div class="no"><span class="lbl">Step 2</span><span class="here">You are here</span></div>
+              <h3>Get your apps and log in</h3>
+              <p>Two apps. One to trade, one to study the chart.</p>
+              <div class="mb-apps">
+                <div class="mb-app">
+                  <p class="cap">Where you trade</p>
+                  <b>TradeLocker</b>
+                  <p class="sm">Log in with the email and password you made when you opened your trading account.</p>
+                  <div class="row">
+                    <a class="btn sm ghost" href="https://apps.apple.com/app/tradelocker/id6447196449" target="_blank" rel="noopener">iPhone</a>
+                    <a class="btn sm ghost" href="https://play.google.com/store/apps/details?id=com.tradelocker.mobile" target="_blank" rel="noopener">Android</a>
+                    <a class="btn sm ghost" href="https://tradelocker.com" target="_blank" rel="noopener">Browser</a>
+                  </div>
+                </div>
+                <div class="mb-app">
+                  <p class="cap">Where you study the chart</p>
+                  <b>TradingView</b>
+                  <p class="sm">This one has its own login. Make it with the same email so you only have one to remember.</p>
+                  <div class="row">
+                    <a class="btn sm ghost" href="https://apps.apple.com/app/id1205990992" target="_blank" rel="noopener">iPhone</a>
+                    <a class="btn sm ghost" href="https://play.google.com/store/apps/details?id=com.tradingview.tradingviewapp" target="_blank" rel="noopener">Android</a>
+                    <a class="btn sm ghost" href="https://www.tradingview.com" target="_blank" rel="noopener">Browser</a>
+                  </div>
+                </div>
+              </div>
+              <p class="sm">Start on a demo account. Trade it as if it were real money before you put any in.</p>
+              <label class="vp-check"><input type="checkbox" id="mbT2">Both apps are installed and I can log in</label>
+            </div>
+
+            <div class="mb-step" data-ms="3">
+              <div class="no"><span class="lbl">Step 3</span><span class="here">You are here</span></div>
+              <h3>Watch the five starter lessons</h3>
+              <p>About ten minutes in total. So when I say &ldquo;pip&rdquo;, &ldquo;lot&rdquo; or &ldquo;stop loss&rdquo; in the room, you already know what I mean.</p>
+              <div class="mb-lessons" id="mbLessons"></div>
+              <p class="sm">Already watched them from my emails? <button class="inline-link" id="mbAllWatched" type="button">Mark all five as watched</button></p>
+            </div>
+
+            <div class="mb-step" data-ms="4">
+              <div class="no"><span class="lbl">Step 4</span><span class="here">You are here</span></div>
+              <h3>Pass the starter quiz</h3>
+              <p>Ten questions, two from each lesson. Eight right to pass. Miss one and I point you to the lesson that covers it. Retry as many times as you need.</p>
+              <p class="mb-score" id="mbScore"></p>
+              <button class="btn" id="mbQuizGo" type="button">Start the quiz &rarr;</button>
+            </div>
+
+            <div class="mb-step" data-ms="5">
+              <div class="no"><span class="lbl">Step 5</span><span class="here">You are here</span></div>
+              <h3>Say hello in the community chat</h3>
+              <p>Tell us where you&rsquo;re from and what you want to learn first. Bring the question you&rsquo;re embarrassed to ask.</p>
+              <a class="btn ghost" id="mbChat" href="https://t.me/" target="_blank" rel="noopener">Open the chat &rarr;</a>
+              <p class="sm">If the button does not open it, open Telegram and tap The Vault in your chat list.</p>
+              <label class="vp-check"><input type="checkbox" id="mbT5">I said hello</label>
+            </div>
+
+            <div class="mb-step" data-ms="6">
+              <div class="no"><span class="lbl">Step 6</span><span class="here">You are here</span></div>
+              <h3>Watch your first live session with me</h3>
+              <p>I teach live every week. You watch the setup form and hear the thinking out loud.</p>
+              <div class="mb-sched" role="table" aria-label="Live session times">
+                <div class="r h" role="row"><span role="columnheader">Session</span><span role="columnheader">Pacific</span><span role="columnheader">Central</span><span role="columnheader">Eastern</span></div>
+                <div class="r" role="row"><b role="cell">Tuesday</b><span role="cell" data-z="PT">8:00 PM</span><span role="cell" data-z="CT">10:00 PM</span><span role="cell" data-z="ET">11:00 PM</span></div>
+                <div class="r" role="row"><b role="cell">Wednesday</b><span role="cell" data-z="PT">10:00 AM</span><span role="cell" data-z="CT">12:00 PM</span><span role="cell" data-z="ET">1:00 PM</span></div>
+                <div class="r" role="row"><b role="cell">Wednesday<small>Get The Bag Live</small></b><span role="cell" data-z="PT">9:00 PM</span><span role="cell" data-z="CT">11:00 PM</span><span role="cell" data-z="ET">12:00 AM<small>Thursday morning</small></span></div>
+                <div class="r" role="row"><b role="cell">Thursday<small>On 1House.TV</small></b><span role="cell" data-z="PT">8:00 PM</span><span role="cell" data-z="CT">10:00 PM</span><span role="cell" data-z="ET">11:00 PM</span></div>
+              </div>
+              <a class="btn ghost" href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">Watch on 1House.TV &rarr;</a>
+              <label class="vp-check"><input type="checkbox" id="mbT6">I watched a live session</label>
+            </div>
+          </div>
+
+          <div class="vp-card mb-finish">
+            <h3>All six ticked? Tell me.</h3>
+            <p>One tap. It tells me you are set up and ready, so I know who to check on.</p>
+            <button class="btn" id="mbDone" type="button" disabled>I&rsquo;ve finished onboarding</button>
+            <p class="vp-reply" id="mbDoneNote"></p>
+          </div>
+
+          <div class="mb-pair">
+            <div class="vp-card">
+              <h3>Putting money in, taking money out</h3>
+              <p>The click-by-click steps for your trading account, including the one step people skip.</p>
+              <button class="btn ghost" data-go="onboard">Open the set-up steps &rarr;</button>
+            </div>
+            <div class="vp-card">
+              <h3>Need a hand?</h3>
+              <p>Message me on Telegram or book fifteen minutes. Nobody gets left behind in here.</p>
+              <button class="btn ghost" data-go="contact">Request a call &rarr;</button>
+            </div>
+          </div>
+
+          <div class="vp-fine">
+            <p><b class="r">RISK WARNING.</b> Trading leveraged instruments carries a substantial risk of loss and is not suitable for everyone. You can lose all of the money you deposit. Past performance does not indicate future results. Nothing here is financial advice and Richard Hall Jr. is not a registered investment adviser.</p>
+            <p><b class="s">PAID LINKS.</b> Some links on this site are paid links. The full detail is on the <button class="inline-link" data-go="legal">risk and disclosure page</button>.</p>
+          </div>
+        </div>
+
+        <!-- the starter quiz -->
+        <div class="mb-quiz" id="mbQuiz">
+          <button class="inline-link" id="mqBack" type="button">&larr; Back to your onboarding</button>
+
+          <div id="mqAsk">
+            <p class="eyebrow" style="margin:22px 0 10px">Starter quiz &middot; <span id="mqCount">Question 1 of 10</span></p>
+            <div class="vp-prog"><div class="track"><i id="mqBar"></i></div></div>
+            <p class="mq-from" id="mqFrom">From lesson 1</p>
+            <h2 class="mq-q" id="mqQ" tabindex="-1"></h2>
+            <div class="opts" id="mqOpts" style="margin:0;max-width:none"></div>
+            <p class="sm mq-hint" id="mqHint"></p>
+            <button class="btn lg" id="mqNext" type="button" disabled>Next question &rarr;</button>
+          </div>
+
+          <div id="mqEnd" style="display:none">
+            <p class="eyebrow" style="margin:22px 0 10px">Starter quiz &middot; Your result</p>
+            <h2 class="mq-q" id="mqScore" tabindex="-1"></h2>
+            <p class="mb-lede" id="mqLine"></p>
+            <div class="mq-miss" id="mqMiss"></div>
+            <div class="mq-acts">
+              <button class="btn lg" id="mqAgain" type="button">Try again</button>
+              <button class="btn lg ghost" id="mqHome" type="button">Back to your onboarding</button>
+            </div>
+          </div>
+
+          <div class="vp-fine">
+            <p><b class="r">RISK WARNING.</b> Trading leveraged instruments carries a substantial risk of loss and is not suitable for everyone. You can lose all of the money you deposit. This quiz is education, not financial advice.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
 <main class="page" id="lesson">
   <section class="wrap" style="padding-top:64px;padding-bottom:70px">
     <div class="lsn">
@@ -1813,7 +2117,13 @@ body.vaultpath .funnelmeta{display:none}
       <h1 class="lsn-h" id="lsnTitle">Foundations</h1>
       <div class="lsn-frame"><video id="lsnVideo" controls playsinline preload="metadata"></video></div>
       <p class="lsn-next" id="lsnNext"></p>
-      <div class="vp-card lsn-cta">
+      <div class="vp-card lsn-cta mem">
+        <p class="eyebrow" style="margin:0">Member onboarding</p>
+        <h3>Back to your first week</h3>
+        <p>Watch a lesson through and it is ticked off for you. After all five comes the starter quiz.</p>
+        <button class="btn" data-go="members">Back to my member area &rarr;</button>
+      </div>
+      <div class="vp-card lsn-cta pub">
         <p class="eyebrow" style="margin:0">Your next step</p>
         <h3>Finish your path into The Vault</h3>
         <p>The lessons are the warm-up. The Vault is where I trade it live. Your steps are saved right where you left them.</p>
@@ -1841,7 +2151,7 @@ body.vaultpath .funnelmeta{display:none}
         <p>Live trading education from Richard &ldquo;Pops&rdquo; Hall Jr. Los Angeles.</p>
       </div>
       <div><h3>Site</h3><button data-go="home">Home</button><button data-go="about">About</button><button data-go="community">Community</button><button data-go="faq">FAQ</button></div>
-      <div><h3>Start</h3><button data-go="start">Application</button><button data-go="contact">Request a call</button><button data-go="legal">Risk &amp; disclosure</button></div>
+      <div><h3>Start</h3><button data-go="start">Application</button><button data-go="members">Member area</button><button data-go="contact">Request a call</button><button data-go="legal">Risk &amp; disclosure</button></div>
       <div><h3>Watch</h3><a href="https://t.me/+ukr-PkZbU1lmMmIx" target="_blank" rel="noopener">Free Telegram channel</a><a href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">1House.TV</a><a href="https://subscribe.1house.tv/MARKETBULLY" target="_blank" rel="noopener">1House plans</a></div>
     </div>
     <div class="risk-strip">
@@ -1886,17 +2196,28 @@ body.vaultpath .funnelmeta{display:none}
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(err){}
-  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal','live','lesson-1','lesson-2','lesson-3','lesson-4','lesson-5'];
+  var PAGES = ['home','about','community','faq','start','steps','onboard','contact','legal','live','members','lesson-1','lesson-2','lesson-3','lesson-4','lesson-5'];
   /* the five starter lessons. /lesson-2 and so on are the links used in the follow-up emails */
   var LESSONS={1:['Foundations','lesson-1-foundations'],2:['Market Trends','lesson-2-market-trends'],3:['Lots and Pips','lesson-3-lots-and-pips'],
                4:['Take Profit and Stop Loss','lesson-4-take-profit-and-stop-loss'],5:['Market Orders','lesson-5-market-orders']};
   var lessonNow=0;
+  /* member onboarding ticks, saved on the member's own device */
+  var MBKEY='mb_members_v1', mbMem=null;
+  function mbLoad(){
+    if(!mbMem){ try{ mbMem=JSON.parse(localStorage.getItem(MBKEY)||'{}')||{}; }catch(err){ mbMem={}; } }
+    if(!mbMem.w) mbMem.w={};
+    return mbMem;
+  }
+  function mbSave(){ try{ localStorage.setItem(MBKEY,JSON.stringify(mbMem||{})); }catch(err){} }
+  function isMember(){ try{ return localStorage.getItem('mb_member')==='1'; }catch(err){ return false; } }
+  if(isMember()) document.body.classList.add('ismember');
   function setLesson(n){
     var L=LESSONS[n], v=document.getElementById('lsnVideo'); if(!L||!v) return;
     document.getElementById('lsnCount').textContent='Lesson '+n+' of 5';
     document.getElementById('lsnTitle').textContent=L[0];
     var nx=document.getElementById('lsnNext'), allOpen=false;
     try{ var vs=JSON.parse(localStorage.getItem('mb_vault_v1')||'null'); allOpen=!!(vs&&vs.live); }catch(err){}
+    if(isMember()) allOpen=true;
     if(n>=5) nx.textContent='That is all five lessons.';
     else if(allOpen) nx.innerHTML='<button class="inline-link" data-go="lesson-'+(n+1)+'">Next: Lesson '+(n+1)+', '+LESSONS[n+1][0]+' &rarr;</button>';
     else nx.textContent='Lesson '+(n+1)+' is in your next email from me.';
@@ -2049,6 +2370,7 @@ body.vaultpath .funnelmeta{display:none}
     });
     document.body.classList.toggle('funnel', id==='start');
     document.body.classList.toggle('onboarding', id==='onboard');
+    document.body.classList.toggle('memberpage', id==='members');
     if(id==='onboard' && window.__obReset) window.__obReset();
     var tz=document.getElementById('toast');
     if(tz){ if(id==='start') tz.classList.remove('in'); else if(toastShown) tz.classList.add('in'); }
@@ -2057,6 +2379,7 @@ body.vaultpath .funnelmeta{display:none}
     bindReveals(document.getElementById(id));
     onScroll();
     if(want==='steps' && window.__mbSteps) window.__mbSteps();
+    if(id==='members' && window.__mbMembers) window.__mbMembers();
   }
   var standalone=(function(){try{return window.top===window.self;}catch(err){return false;}})();
   function writeUrl(id){
@@ -2538,7 +2861,225 @@ body.vaultpath .funnelmeta{display:none}
   (function(){
     var v=document.getElementById('lsnVideo'); if(!v) return;
     v.addEventListener('play',function(){ if(v.dataset.played) return; v.dataset.played='1'; track('lesson_play',{lesson:lessonNow,where:'lesson-page'}); });
+    function seen(){
+      if(!lessonNow) return; var d=mbLoad(); if(d.w[lessonNow]) return;
+      d.w[lessonNow]=true; mbSave(); track('lesson_watched',{lesson:lessonNow});
+    }
+    v.addEventListener('ended',seen);
+    v.addEventListener('timeupdate',function(){ if(v.duration && v.currentTime/v.duration>=.9) seen(); });
   })();
+
+  /* ---------- member area (/members) ----------
+     Sign-in is done by api/member.js. Nothing here decides who is a member:
+     the page asks the server every time it opens, and the server asks Telegram
+     whether that person is in THE VAULT right now.
+     The ticks are saved on the member's own device. */
+  (function(){
+    var root=document.getElementById('members'); if(!root) return;
+    var box=root.querySelector('.mb'), me=null, busy=false, now='loading';
+    var TIMES=['2:16','1:39','1:47','2:03','2:38'];
+    function $(id){ return document.getElementById(id); }
+    function state(name){
+      now=name;
+      root.querySelectorAll('[data-mb]').forEach(function(s){ s.classList.toggle('on', s.dataset.mb===name); });
+    }
+    function flag(on){
+      try{ if(on) localStorage.setItem('mb_member','1'); else localStorage.removeItem('mb_member'); }catch(err){}
+      document.body.classList.toggle('ismember',!!on);
+    }
+    function alertMsg(t){ var a=$('mbAlert'); a.textContent=t||''; a.classList.toggle('on',!!t); }
+
+    function ask(opt){
+      return fetch('/api/member',opt).then(function(r){
+        return r.json().then(function(j){ return {s:r.status,j:j||{}}; },function(){ return {s:r.status,j:{}}; });
+      });
+    }
+    function settle(o,usedKey){
+      if(o.s===200 && o.j.ok){ me=o.j; flag(true); alertMsg(''); render(); state('in'); track('member_open',{how:usedKey?'key':'return'}); return; }
+      if(o.s===403){
+        me=null; flag(false);
+        $('mbOutWho').textContent=o.j.username?' as @'+o.j.username:(o.j.name?' as '+o.j.name:'');
+        state('out'); return;
+      }
+      if(o.s===401){
+        me=null; flag(false);
+        alertMsg(usedKey?'That key has run out. They last 10 minutes. Tap the button for a fresh one.':'');
+        state('signin'); return;
+      }
+      if(!me) state('retry');
+    }
+    function check(key){
+      if(busy) return; busy=true;
+      if(!me) state('loading');
+      var get={credentials:'same-origin'};
+      var p = key
+        ? ask({method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({k:key})})
+            .then(function(o){
+              // an old key, but this browser may already be signed in
+              if(o.s===401) return ask(get).then(function(o2){ return o2.s===401 ? o : o2; });
+              return o;
+            })
+        : ask(get);
+      p.then(function(o){ busy=false; settle(o,!!key); }).catch(function(){ busy=false; if(!me) state('retry'); });
+    }
+    function open(){
+      var k=window.__mbKey||''; window.__mbKey='';
+      if(!k){ try{ var m=/[#&]k=([\w\-.]+)/.exec(location.hash||''); if(m){ k=m[1]; history.replaceState({page:'members'},'','/members'); } }catch(err){} }
+      if(me){ render(); state('in'); }
+      check(k);
+    }
+    window.__mbMembers=open;
+
+    $('mbRetry').addEventListener('click',function(){ check(''); });
+    root.addEventListener('click',function(e){
+      if(!e.target.closest('[data-mbsignout]')) return;
+      me=null; flag(false); alertMsg(''); state('signin'); box.classList.remove('quizzing');
+      try{ fetch('/api/member',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'signout'})}).catch(function(){}); }catch(err){}
+    });
+    $('mbSignin').addEventListener('click',function(){ track('member_signin_click',{}); });
+    // Coming back from Telegram: if the key was opened in this browser, let them straight in.
+    document.addEventListener('visibilitychange',function(){
+      if(document.visibilityState==='visible' && root.classList.contains('on') && (now==='signin'||now==='out')) check('');
+    });
+
+    /* ----- the six steps ----- */
+    function lessonsSeen(d){ var n=0; for(var i=1;i<=5;i++) if(d.w&&d.w[i]) n++; return n; }
+    function render(){
+      if(!me) return;
+      var d=mbLoad();
+      $('mbName').textContent=me.name?', '+me.name:'';
+      $('mbWho').textContent=me.username?' as @'+me.username:(me.name?' as '+me.name:'');
+      var chat=$('mbChat'); if(me.chat){ chat.href=me.chat; chat.style.display=''; } else chat.style.display='none';
+
+      var seen=lessonsSeen(d), passed=!!(d.quiz&&d.quiz.pass);
+      var done={1:true, 2:!!d.apps, 3:(seen===5||passed), 4:passed, 5:!!d.hello, 6:!!d.live};
+      var count=0, cur=0, n;
+      for(n=1;n<=6;n++){ if(done[n]) count++; else if(!cur) cur=n; }
+      var extra={3:seen+' of 5 watched',4:'10 questions · 8 to pass',6:'Live every week'};
+      root.querySelectorAll('.mb-step').forEach(function(el){
+        var k=parseInt(el.dataset.ms,10);
+        el.classList.toggle('done',!!done[k]);
+        el.classList.toggle('cur',k===cur);
+        el.querySelector('.lbl').textContent='Step '+k+(done[k]?' · Done':(extra[k]?' · '+extra[k]:''));
+      });
+      $('mbCount').textContent=count+' of 6 complete';
+      $('mbBar').style.width=(count/6*100)+'%';
+      $('mbT2').checked=!!d.apps; $('mbT5').checked=!!d.hello; $('mbT6').checked=!!d.live;
+
+      var list=$('mbLessons'), up=0, html='';
+      for(n=1;n<=5;n++){ if(!(d.w&&d.w[n]) && !up) up=n; }
+      for(n=1;n<=5;n++){
+        var w=!!(d.w&&d.w[n]);
+        html+='<button type="button" data-go="lesson-'+n+'" class="'+(w?'w':(n===up?'next':''))+'">'+
+          '<img src="/lessons/'+LESSONS[n][1]+'.jpg" alt="" width="640" height="360" loading="lazy">'+
+          '<span><span class="ltag">'+(w?'Watched':(n===up?'Up next · '+TIMES[n-1]:TIMES[n-1]))+'</span><b>'+n+'. '+LESSONS[n][0]+'</b></span></button>';
+      }
+      list.innerHTML=html;
+      $('mbAllWatched').parentNode.style.display=(seen===5)?'none':'';
+
+      var sc=$('mbScore');
+      if(d.quiz&&typeof d.quiz.best==='number'){
+        sc.textContent='Your best score: '+d.quiz.best+' of 10.'+(passed?' Passed.':' You need 8.');
+        sc.classList.add('on'); $('mbQuizGo').innerHTML=passed?'Take it again &rarr;':'Try the quiz again &rarr;';
+      } else { sc.classList.remove('on'); $('mbQuizGo').innerHTML='Start the quiz &rarr;'; }
+      $('mbQuizGo').className='btn'+(passed?' ghost':'');
+
+      var btn=$('mbDone'), note=$('mbDoneNote');
+      if(d.sent){ btn.disabled=true; btn.textContent='Sent'; note.textContent='Got it. I can see you are set up. See you in the room.'; note.classList.add('on'); }
+      else { btn.disabled=(count<6); btn.innerHTML='I&rsquo;ve finished onboarding'; note.classList.remove('on'); }
+    }
+    function tick(key,el,name){
+      el.addEventListener('change',function(){ var d=mbLoad(); d[key]=el.checked; mbSave(); render(); track('member_tick',{box:name,ticked:el.checked}); });
+    }
+    tick('apps',$('mbT2'),'apps'); tick('hello',$('mbT5'),'hello'); tick('live',$('mbT6'),'live_session');
+    $('mbAllWatched').addEventListener('click',function(){
+      var d=mbLoad(); for(var i=1;i<=5;i++) d.w[i]=true; mbSave(); render(); track('member_tick',{box:'lessons_all',ticked:true});
+    });
+    $('mbDone').addEventListener('click',function(){
+      var btn=$('mbDone'), note=$('mbDoneNote'); btn.disabled=true; btn.textContent='Sending…';
+      ask({method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'done'})})
+        .then(function(o){
+          if(o.s===200&&o.j.ok){ var d=mbLoad(); d.sent=true; mbSave(); render(); track('member_onboarding_done',{}); }
+          else { btn.disabled=false; btn.innerHTML='I&rsquo;ve finished onboarding'; note.textContent='That did not send. Try once more.'; note.classList.add('on'); if(o.s===401||o.s===403) check(''); }
+        }).catch(function(){ btn.disabled=false; btn.innerHTML='I&rsquo;ve finished onboarding'; note.textContent='That did not send. Check your connection and try once more.'; note.classList.add('on'); });
+    });
+
+    /* ----- the starter quiz: two questions from each lesson, 8 of 10 to pass ----- */
+    var QUIZ=[
+      {l:1,q:'What is day trading?',a:1,o:['Buying an asset and holding it for years','Buying and selling financial assets within the same day','Only buying when the price is going up','Copying trades without knowing why']},
+      {l:1,q:'Prices are trending down. What is a day trader looking to do?',a:2,o:['Buy','Nothing. You can only trade a rising market','Sell','Hold and hope it comes back']},
+      {l:2,q:'What does an uptrend look like on the chart?',a:0,o:['Higher tops and higher bottoms','Lower tops and lower bottoms','Higher tops and lower bottoms','Price moving sideways']},
+      {l:2,q:'How many tops do you need, at minimum, to draw a downtrend line?',a:1,o:['One','Two','Three','Five']},
+      {l:3,q:'How is a mini lot written?',a:1,o:['0.01','0.10','1.00','10.00']},
+      {l:3,q:'You trade a mini lot (0.10) and price moves 50 pips. About how big is that gain or loss?',a:1,o:['$5','$50','$500','$5,000']},
+      {l:4,q:'What does a stop loss do?',a:3,o:['Locks in your profit at a preset price','Opens a second trade for you','Stops you trading for the rest of the day','Closes the trade automatically if price goes against you, to limit the loss']},
+      {l:4,q:'Your trade is in profit and you move your stop loss to your entry price. What is that called?',a:0,o:['Break-even','Take profit','A pending order','A sell limit']},
+      {l:5,q:'What is a buy limit?',a:2,o:['Buying right now at the current price','A delayed buy entry above the current price','A delayed buy entry below the current price','A delayed sell entry above the current price']},
+      {l:5,q:'What do the wicks on a candlestick show?',a:3,o:['Where price opened and closed','How many trades were placed','Which way the next candle will go','How high and how low price went in that time']}
+    ];
+    var qi=0, picks=[];
+    function showQ(){
+      var Q=QUIZ[qi];
+      $('mqAsk').style.display=''; $('mqEnd').style.display='none';
+      $('mqCount').textContent='Question '+(qi+1)+' of '+QUIZ.length;
+      $('mqBar').style.width=(qi/QUIZ.length*100)+'%';
+      $('mqFrom').textContent='From lesson '+Q.l+' · '+LESSONS[Q.l][0];
+      $('mqQ').textContent=Q.q;
+      var html='';
+      Q.o.forEach(function(t,i){
+        html+='<button type="button" class="opt'+(picks[qi]===i?' sel':'')+'" data-pick="'+i+'" aria-pressed="'+(picks[qi]===i)+'"><span class="k">'+'ABCD'.charAt(i)+'</span><span></span></button>';
+      });
+      var box2=$('mqOpts'); box2.innerHTML=html;
+      box2.querySelectorAll('.opt').forEach(function(b,i){ b.lastChild.textContent=Q.o[i]; });
+      $('mqHint').innerHTML='Not sure? <button class="inline-link" data-go="lesson-'+Q.l+'">Rewatch Lesson '+Q.l+' ('+TIMES[Q.l-1]+')</button>';
+      var nx=$('mqNext'); nx.disabled=(typeof picks[qi]!=='number');
+      nx.innerHTML=(qi===QUIZ.length-1)?'See my result &rarr;':'Next question &rarr;';
+      window.scrollTo(0,0);
+    }
+    function finish(){
+      var score=0, missed=[];
+      QUIZ.forEach(function(Q,i){ if(picks[i]===Q.a) score++; else missed.push(Q); });
+      var pass=score>=8, d=mbLoad();
+      d.quiz={best:Math.max(score,(d.quiz&&d.quiz.best)||0), pass:pass||!!(d.quiz&&d.quiz.pass)};
+      mbSave(); track('quiz_finish',{score:score,passed:pass});
+      $('mqAsk').style.display='none'; $('mqEnd').style.display='';
+      $('mqScore').textContent=score+' of '+QUIZ.length+'. '+(pass?'You passed.':'You need 8.');
+      $('mqLine').textContent=pass
+        ? (missed.length?'That is the language of the room. Step 4 is ticked. Here is what you missed, with the right answers.':'A clean sheet. That is the language of the room, and step 4 is ticked.')
+        : 'Close. Watch these again and go once more. Retry as many times as you need.';
+      var m=$('mqMiss'); m.innerHTML='';
+      missed.forEach(function(Q){
+        var el=document.createElement('div'); el.className='m';
+        var b=document.createElement('b'); b.textContent=Q.q; el.appendChild(b);
+        if(pass){ var a=document.createElement('span'); a.className='a'; a.textContent='Right answer: '+Q.o[Q.a]; el.appendChild(a); }
+        var l=document.createElement('span');
+        l.innerHTML='Covered in <button class="inline-link" data-go="lesson-'+Q.l+'">Lesson '+Q.l+', '+LESSONS[Q.l][0]+' ('+TIMES[Q.l-1]+')</button>';
+        el.appendChild(l); m.appendChild(el);
+      });
+      $('mqAgain').style.display=pass?'none':'';
+      $('mqHome').className='btn lg'+(pass?'':' ghost');
+      window.scrollTo(0,0);
+    }
+    function quizStart(){ qi=0; picks=[]; box.classList.add('quizzing'); showQ(); track('quiz_start',{}); }
+    function quizClose(){ box.classList.remove('quizzing'); render(); window.scrollTo(0,0); }
+    $('mbQuizGo').addEventListener('click',quizStart);
+    $('mqAgain').addEventListener('click',quizStart);
+    $('mqBack').addEventListener('click',quizClose);
+    $('mqHome').addEventListener('click',quizClose);
+    $('mqOpts').addEventListener('click',function(e){
+      var b=e.target.closest('[data-pick]'); if(!b) return;
+      picks[qi]=parseInt(b.dataset.pick,10);
+      $('mqOpts').querySelectorAll('.opt').forEach(function(o){ var on=(o===b); o.classList.toggle('sel',on); o.setAttribute('aria-pressed',on); });
+      $('mqNext').disabled=false;
+    });
+    $('mqNext').addEventListener('click',function(){
+      if(typeof picks[qi]!=='number') return;
+      if(qi<QUIZ.length-1){ qi++; showQ(); } else finish();
+    });
+
+    if(root.classList.contains('on')) open();
+  })();
+
 
   /* lesson player */
   var vmodal=document.getElementById('vmodal'), vvid=document.getElementById('vmodalV'), vopener=null;
@@ -2601,11 +3142,6 @@ body.vaultpath .funnelmeta{display:none}
       n.textContent = ENDPOINT ? 'Got it. I will be in touch.' : 'Not connected to the backend yet. This form goes live once the CRM is wired up.';
     });
   }
-
-  var codebtn=document.getElementById('codebtn');
-  if(codebtn) codebtn.addEventListener('click',function(){
-    document.getElementById('codenote').textContent='Access codes activate once the onboarding flow is live.';
-  });
 
   var toast=document.getElementById('toast');
   setTimeout(function(){
