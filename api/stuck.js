@@ -60,6 +60,7 @@ export default async function handler(req, res) {
   msg += d.email ? `<b>Email:</b> ${esc(d.email)}\n` : 'Opened the steps page on a device that has not applied, so no email.\n';
   msg += `\n<b>What is holding them up:</b> ${esc(reason)}\n`;
   if (STEPS[d.step]) msg += `<b>Where they are:</b> ${STEPS[d.step]}\n`;
+  if (/^[A-Z0-9]{4,12}$/.test(String(d.ref || ''))) msg += `Ref: <code>${d.ref}</code>\n`;
   msg += `<i>${esc(when)} PT</i>`;
 
   try {

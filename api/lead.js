@@ -81,8 +81,20 @@ function splitName(full) {
   return { first: parts[0], last: parts.slice(1).join(' ') };
 }
 
+// A short reference for each application, for example 7K2Q9X. It is shown in
+// Richard's Telegram message, saved on the Viato contact, and travels with the
+// applicant to the door, so a screenshot can be matched back to an application.
+// No look-alike characters (no 0/O, 1/I/L).
+const REF_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+function makeRef() {
+  let out = '';
+  for (let i = 0; i < 6; i++) out += REF_ALPHABET[Math.floor(Math.random() * REF_ALPHABET.length)];
+  return out;
+}
+
 function noteFor(d) {
   const rows = [];
+  if (d.ref) rows.push('Application ref: ' + d.ref);
   for (const key of ['motive', 'experience', 'pain', 'time', 'onehouse', 'capital']) {
     const raw = d[key];
     if (!raw) continue;
@@ -157,6 +169,8 @@ export default async function handler(req, res) {
   // Honeypot: real people leave this empty.
   if (d.company) return res.status(200).json({ ok: true });
 
+  d.ref = makeRef();
+
   const when = new Date().toLocaleString('en-US', {
     timeZone: 'America/Los_Angeles',
     dateStyle: 'medium',
@@ -165,6 +179,7 @@ export default async function handler(req, res) {
 
   let msg = '🔔 <b>New application</b>\n\n';
   msg += `<b>${esc(d.name || 'No name given')}</b>\n`;
+  msg += `Ref: <code>${d.ref}</code>\n`;
   msg += line('Email', d.email);
   msg += line('Phone', d.phone);
   if (d.besttime || d.tz) {
@@ -225,6 +240,7 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     ok: true,
+    ref: d.ref,
     telegram: telegram.ok,
     viato: viato.ok,
     reason: [telegram.reason, viato.reason].filter(Boolean).join(' | ') || undefined,

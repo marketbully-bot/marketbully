@@ -250,6 +250,43 @@ export default async function handler(req, res) {
       return res.status(200).end();
     }
 
+    // Arriving from the website's "Send my screenshot" button. The site sends
+    // people to t.me/<door>?start=shot or ?start=shot_<application ref>, which
+    // lands here as "/start shot_7K2Q9X". They have already been walked
+    // through opening the account on the site, so skip the long welcome and
+    // ask for the screenshot straight away.
+    const startArg = (/^\/start(?:@\w+)?\s+(\S+)/i.exec(text) || [])[1] || '';
+    if (/^shot(?:_|$)/i.test(startArg)) {
+      const ref = (/^shot_([A-Z0-9]{4,12})$/.exec(startArg) || [])[1] || '';
+      const ask = {
+        chat_id: from.id,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+        text:
+          '\ud83d\udcf8 <b>Send me your screenshot.</b>\n\n' +
+          'The confirmation screen or your welcome email, either works.\n\n' +
+          '\ud83d\udeab No passwords. No card details. Nothing with a balance on it.\n\n' +
+          'Drop it right here \ud83d\udc47\n\n' +
+          'Not opened your trading account yet? Do that first \ud83d\udc49 ' + (LINK || 'https://themarketbully.com/steps') +
+          (ref ? '\n\n<i>Application ref ' + ref + '</i>' : '')
+      };
+      // Replying to this message keeps the ref attached to the screenshot.
+      if (ref) ask.reply_markup = { force_reply: true, input_field_placeholder: 'Attach your screenshot' };
+      await tg('sendMessage', ask);
+      if (ref && ADMIN) {
+        await tg('sendMessage', {
+          chat_id: ADMIN,
+          parse_mode: 'HTML',
+          text:
+            `\ud83d\udd17 <b>${who(from)}</b> just came to the door from the website.\n` +
+            (from.username ? `@${esc(from.username)}\n` : '') +
+            `Application ref: <code>${ref}</code>\n\n` +
+            'Search this chat for that ref to see their application.'
+        });
+      }
+      return res.status(200).end();
+    }
+
     if (/^\/start/i.test(text)) {
       // The welcome clip. If Telegram refuses it for any reason we carry on
       // without it, and the text below puts its own heading back.
@@ -341,13 +378,20 @@ export default async function handler(req, res) {
         message_id: m.message_id
       });
 
+      // If they replied to the door's "send me your screenshot" message, the
+      // application ref from the website is in the message they replied to.
+      const repliedTo = m.reply_to_message || {};
+      const shotRef = (/Application ref ([A-Z0-9]{4,12})/.exec(String(repliedTo.text || repliedTo.caption || '')) || [])[1] || '';
+
       await tg('sendMessage', {
         chat_id: ADMIN,
         parse_mode: 'HTML',
         text:
           `📸 <b>Confirmation from ${who(from)}</b>\n` +
           (from.username ? `@${esc(from.username)}\n` : '') +
-          `id ${esc(from.id)}\n\n` +
+          `id ${esc(from.id)}\n` +
+          (shotRef ? `Application ref: <code>${shotRef}</code> (search this chat for it to see their answers)\n` : '') +
+          `\n` +
           `Approve and I will send them a single use invite.`,
         reply_markup: {
           inline_keyboard: [[

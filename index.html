@@ -705,6 +705,7 @@ body.onboarding .ob-center{text-align:center}
 .vp-step p.sm{font-size:12.5px}
 .vp-step .here{display:none;font-size:10px;letter-spacing:.12em;color:#fff;background:var(--blue);padding:3px 9px;border-radius:999px}
 .vp-step .curonly{display:none}
+.vp-step .btn{text-align:center}
 .vp-step.cur{border-color:var(--blue);background:rgba(46,107,255,.1);box-shadow:0 0 34px rgba(46,107,255,.22)}
 .vp-step.cur .no{color:var(--blue-hi)}
 .vp-step.cur .here{display:inline-block}
@@ -1433,16 +1434,17 @@ body.vaultpath .funnelmeta{display:none}
               <div class="vp-step cur" id="vpS2">
                 <div class="no"><span id="vpN2">02</span><span class="here">You are here</span></div>
                 <h3>Open your account</h3>
-                <p>Tap the button. The door on Telegram walks you through it, one screen at a time.</p>
-                <a class="btn curonly" href="https://t.me/thevaultkey_bot" target="_blank" rel="noopener">Go to the door &rarr;</a>
+                <p>Tap the button. The sign-up form opens in a new tab. It takes about two minutes.</p>
+                <a class="btn curonly" href="https://members.livvglobal.com/client/register/6a6529f044543" target="_blank" rel="noopener nofollow sponsored">Open my trading account &rarr;</a>
                 <p class="sm">Read the <button class="inline-link" data-go="legal">risk notes</button> before you fund anything.</p>
                 <label class="vp-check"><input type="checkbox" id="vpT1">My account is open</label>
               </div>
               <div class="vp-step" id="vpS3">
                 <div class="no"><span id="vpN3">03 &middot; Next</span><span class="here">You are here</span></div>
                 <h3>Send confirmation</h3>
-                <p>Screenshot your account confirmation and drop it at the door.</p>
-                <a class="btn curonly" href="https://t.me/thevaultkey_bot" target="_blank" rel="noopener">Go to the door &rarr;</a>
+                <p>Screenshot your account confirmation and drop it at the door on Telegram.</p>
+                <a class="btn ghost" id="vpDoor" href="https://t.me/thevaultkey_bot?start=shot" target="_blank" rel="noopener">Send my screenshot &rarr;</a>
+                <p class="sm">You need the free Telegram app for this.</p>
                 <label class="vp-check"><input type="checkbox" id="vpT2">I sent my screenshot</label>
               </div>
               <div class="vp-step" id="vpS4">
@@ -1458,12 +1460,12 @@ body.vaultpath .funnelmeta{display:none}
                 <p class="eyebrow">Click by click</p>
                 <h3 class="big">How to do steps 2 and 3</h3>
                 <ol class="vp-clicks">
-                  <li><span class="n">1</span><span><b>Tap &ldquo;Go to the door&rdquo;.</b> It opens the door on Telegram.</span></li>
-                  <li><span class="n">2</span><span><b>Press Start.</b> You get my welcome and the link to open your trading account.</span></li>
-                  <li><span class="n">3</span><span><b>Tap the link, fill in the form and hit Sign Up.</b> Email, name, password, country and phone number. About two minutes.</span></li>
-                  <li><span class="n">4</span><span><b>Click the link in the email they send you.</b> Check your spam folder if it is not there.</span></li>
-                  <li><span class="n">5</span><span><b>Go back to the door and tap &ldquo;I opened my account&rdquo;.</b></span></li>
-                  <li><span class="n">6</span><span><b>Send a screenshot of your confirmation.</b> The confirmation screen or your welcome email, either works. No passwords, no card details, nothing with a balance on it.</span></li>
+                  <li><span class="n">1</span><span><b>Tap &ldquo;Open my trading account&rdquo;.</b> The sign-up form opens in a new tab.</span></li>
+                  <li><span class="n">2</span><span><b>Fill in the form and hit Sign Up.</b> Email, name, password, country and phone number. About two minutes.</span></li>
+                  <li><span class="n">3</span><span><b>Click the link in the email they send you.</b> Check your spam folder if it is not there.</span></li>
+                  <li><span class="n">4</span><span><b>Take a screenshot.</b> The confirmation screen or your welcome email, either works. No passwords, no card details, nothing with a balance on it.</span></li>
+                  <li><span class="n">5</span><span><b>Come back here and tap &ldquo;Send my screenshot&rdquo;.</b> It opens the door on Telegram. Press Start.</span></li>
+                  <li><span class="n">6</span><span><b>Drop the screenshot in the chat.</b> I review it myself and send your private invite.</span></li>
                 </ol>
                 <p class="vp-note">About five minutes. You do not need to fund the account to send your confirmation.</p>
               </div>
@@ -1693,7 +1695,7 @@ body.vaultpath .funnelmeta{display:none}
           <div class="ob-item"><span class="n">3</span><div><b>Click the link in the email they send you</b><span class="t">Check your spam folder if it is not there. Once you click it your account is live.</span></div></div>
         </div>
 
-        <a class="btn lg wide" id="obBroker" href="https://t.me/thevaultkey_bot" target="_blank" rel="noopener nofollow sponsored" style="width:100%">Open my trading account &rarr;</a>
+        <a class="btn lg wide" id="obBroker" href="https://members.livvglobal.com/client/register/6a6529f044543" target="_blank" rel="noopener nofollow sponsored" style="width:100%">Open my trading account &rarr;</a>
 
         <div class="ob-tabs" role="tablist">
           <button role="tab" aria-selected="true" data-tab="demo">Practice first</button>
@@ -1740,12 +1742,12 @@ body.vaultpath .funnelmeta{display:none}
 
         <div class="ob-list">
           <div class="ob-item hot"><span class="n">1</span><div><b>Join The Market Bully channel</b><span class="t">Free, nothing to pay, no account needed. Updates, results and exclusive calls.</span></div></div>
-          <div class="ob-item"><span class="n">2</span><div><b>Open the door to THE VAULT and press Start</b><span class="t">It is a Telegram chat with me. Press Start and it tells you what to do.</span></div></div>
+          <div class="ob-item"><span class="n">2</span><div><b>Tap &ldquo;Send my screenshot&rdquo; and press Start</b><span class="t">It opens the door, a Telegram chat with me. You need the free Telegram app.</span></div></div>
           <div class="ob-item"><span class="n">3</span><div><b>Send a screenshot of your account page</b><span class="t">Just a picture of your LIVVFX dashboard. That is how I know you signed up. No passwords, no card details, nothing with a balance on it.</span></div></div>
           <div class="ob-item"><span class="n">4</span><div><b>Wait for me</b><span class="t">I read every single one myself. Once you are approved you get a private invite that works once and only for you.</span></div></div>
         </div>
 
-        <a class="btn lg wide" href="https://t.me/thevaultkey_bot" target="_blank" rel="noopener" style="width:100%">Go to the door &rarr;</a>
+        <a class="btn lg wide" href="https://t.me/thevaultkey_bot?start=shot" target="_blank" rel="noopener" style="width:100%">Send my screenshot &rarr;</a>
         <div style="height:10px"></div>
         <a class="btn lg ghost wide" href="https://t.me/+ukr-PkZbU1lmMmIx" target="_blank" rel="noopener" style="width:100%">Join the free channel &rarr;</a>
 
@@ -2299,10 +2301,11 @@ body.vaultpath .funnelmeta{display:none}
       var pills=document.getElementById('tagPills');
       if(pills) pills.innerHTML=tagsFrom(answers).map(function(t){return '<span class="tagpill">'+t+'</span>';}).join('');
 
+      var leadRef='';
       function finish(){
         submitted=true; clearSaved();
         var first=String(fd.get('name')||'').trim().split(/\s+/)[0];
-        vsave({n:first, e:String(fd.get('email')||'').trim(), t1:false, t2:false, at:Date.now()});
+        vsave({n:first, e:String(fd.get('email')||'').trim(), r:leadRef, t1:false, t2:false, at:Date.now()});
         track('generate_lead',{onehouse:answers.onehouse||'',capital:answers.capital||'',experience:answers.experience||''});
         openVault();
         try{ if(standalone) history.replaceState({page:'steps'},'','/steps'); }catch(err){}
@@ -2321,6 +2324,7 @@ body.vaultpath .funnelmeta{display:none}
         }).then(function(r){ return r.json().catch(function(){return {};}); })
           .then(function(out){
             if(out && out.delivered===false) console.warn('Lead saved but not delivered:',out.reason);
+            if(out && /^[A-Z0-9]{4,12}$/.test(String(out.ref||''))) leadRef=out.ref;
             settle();
           })
           .catch(function(e){ console.error('Submit failed:',e); settle(); });
@@ -2352,6 +2356,7 @@ body.vaultpath .funnelmeta{display:none}
     if(!s2||!s3||!s4) return;
     s2.classList.toggle('done',t1); s2.classList.toggle('cur',!t1);
     s3.classList.toggle('done',t2); s3.classList.toggle('cur',t1&&!t2);
+    var door=document.getElementById('vpDoor'); if(door) door.classList.toggle('ghost',!(t1&&!t2));
     s4.classList.toggle('cur',t1&&t2);
     document.getElementById('vpN2').innerHTML = t1 ? '02 &middot; Done' : '02';
     document.getElementById('vpN3').innerHTML = t2 ? '03 &middot; Done' : (t1 ? '03' : '03 &middot; Next');
@@ -2387,6 +2392,8 @@ body.vaultpath .funnelmeta{display:none}
       if(badge) badge.style.display='none';
       if(intro) intro.textContent='Your application is step one. Here are the other three.';
     }
+    var door=document.getElementById('vpDoor');
+    if(door) door.href='https://t.me/thevaultkey_bot?start=shot'+(st&&st.r?'_'+st.r:'');
     paintVault();
     pending=null; clearTimeout(timer);
     hideAll();
@@ -2421,7 +2428,7 @@ body.vaultpath .funnelmeta{display:none}
     var st=vload()||{};
     try{
       fetch('/api/stuck',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({reason:b.dataset.stuck,name:st.n||'',email:st.e||'',step:(st.t2?4:(st.t1?3:2))})
+        body:JSON.stringify({reason:b.dataset.stuck,name:st.n||'',email:st.e||'',ref:st.r||'',step:(st.t2?4:(st.t1?3:2))})
       }).catch(function(){});
     }catch(err){}
   });
@@ -2452,7 +2459,8 @@ body.vaultpath .funnelmeta{display:none}
   document.addEventListener('click',function(e){
     var a=e.target.closest('a[href^="http"]'); if(!a||a.id==='houseGo') return;
     var h=a.getAttribute('href')||'', name='';
-    if(h.indexOf('t.me/thevaultkey')!==-1) name='door_click';
+    if(h.indexOf('members.livvglobal.com')!==-1) name='broker_click';
+    else if(h.indexOf('t.me/thevaultkey')!==-1) name='door_click';
     else if(h.indexOf('t.me/')!==-1) name='channel_join_click';
     else if(h.indexOf('subscribe.1house.tv')!==-1) name='onehouse_plans_click';
     else if(h.indexOf('1house.tv')!==-1) name='onehouse_watch_click';
