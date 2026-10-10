@@ -1,9 +1,11 @@
 // Call and booking requests from the Contact page.
 //
-// Each request does two things, and neither can block the other:
-//   1. It posts in the private alerts group on Telegram, so Richard's executive
-//      assistant can filter it and schedule the call.
-//   2. It saves the person in Viato with a tag, so there is a record.
+// The Contact page emails each request to info@themarketbully.com first (through
+// FormSubmit, straight from the visitor's browser), so Richard's executive
+// assistant can filter it and schedule the call. This handler then:
+//   1. Saves the person in Viato with a tag, so there is a record.
+//   2. ONLY if that email did not go through, posts the request in the private
+//      alerts group on Telegram, so it is never lost.
 //
 // Uses secrets already saved in Vercel:
 //   TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, VIATO_API_KEY
@@ -52,6 +54,7 @@ async function toViato(d, type) {
           type.about,
           d.besttime ? 'Best time: ' + d.besttime : '',
           d.tz ? 'Timezone: ' + d.tz : '',
+          'Emailed to info@themarketbully.com: ' + (d.emailed ? 'yes' : 'no, sent to the alerts group instead'),
           d.note ? 'They wrote: ' + String(d.note).slice(0, 1200) : ''
         ].filter(Boolean).join('\n')
       })
@@ -100,8 +103,13 @@ export default async function handler(req, res) {
   if (d.besttime || d.tz) msg += `<b>Best time:</b> ${esc(d.besttime || '—', 40)}${d.tz ? ' · ' + esc(d.tz, 60) : ''}\n`;
   if (d.note) msg += `\n<b>They wrote:</b>\n${esc(d.note, 1200)}\n`;
   msg += `\n<i>${esc(when)} PT · from the Contact page</i>`;
+  msg += `\n\n⚠️ <i>The email to info@themarketbully.com did not go through, so this came here instead.</i>`;
+
+  // The email is the normal route. Telegram is only the safety net.
+  const emailed = d.emailed === '1' || d.emailed === 1 || d.emailed === true;
 
   const telegram = (async () => {
+    if (emailed) return { ok: false, reason: 'not-needed' };
     if (!TOKEN || !CHAT) {
       console.error('Telegram not configured. Call request received:', JSON.stringify({ name, email, type: type.tag }));
       return { ok: false, reason: 'not-configured' };
@@ -125,9 +133,9 @@ export default async function handler(req, res) {
     }
   })();
 
-  const [tg, viato] = await Promise.all([telegram, toViato({ name, email, phone: d.phone, besttime: d.besttime, tz: d.tz, note: d.note }, type)]);
+  const [tg, viato] = await Promise.all([telegram, toViato({ name, email, phone: d.phone, besttime: d.besttime, tz: d.tz, note: d.note, emailed }, type)]);
 
   // The person is only told "got it" if the request actually reached somebody.
-  if (!tg.ok && !viato.ok) return res.status(502).json({ ok: false, error: 'Could not deliver the request' });
-  return res.status(200).json({ ok: true, telegram: tg.ok, viato: viato.ok });
+  if (!emailed && !tg.ok && !viato.ok) return res.status(502).json({ ok: false, error: 'Could not deliver the request' });
+  return res.status(200).json({ ok: true, emailed, telegram: tg.ok, viato: viato.ok });
 }

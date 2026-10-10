@@ -2192,6 +2192,7 @@ body.vaultpath .funnelmeta{display:none}
 
       <h2 class="rv">Your data</h2>
       <p class="rv">Information submitted through the application is used to review that application, to contact you about the chat, and to keep a record of applicants. It is stored in the systems used to run this operation and is not sold. You can ask for your data to be deleted at any time by replying to any email or messaging me on Telegram.</p>
+      <p class="rv">Call, speaking and media requests sent through the Contact page are delivered to my business inbox by FormSubmit, a form-to-email service, and a copy is kept in the systems used to run this operation. They are used only to answer that request.</p>
       <p class="rv">This site uses Google Analytics to count visits and to see which pages and steps people use, so I can fix the parts that confuse people. It sets cookies to tell one visit from the next. It is not used for advertising, and your name, email and phone number are never sent to it. If you are in Europe or the United Kingdom you are asked first, and you can say no.</p>
       <p class="rv">If you sign in to the member area, the site keeps a sign-in cookie on your device for 30 days and asks Telegram whether your Telegram account is a member of The Vault. It sees your Telegram first name and username, nothing else: not your phone number and not your chats. Your onboarding ticks and quiz score are saved on your own device.</p>
 
@@ -3760,8 +3761,8 @@ body.vaultpath .funnelmeta{display:none}
     document.getElementById('ckNo').addEventListener('click',function(){ answer('no'); });
   })();
 
-  /* Call and booking requests. They go to api/call.js, which alerts the private
-     alerts group so the executive assistant can schedule and filter. */
+  /* Call and booking requests. They are emailed to info@themarketbully.com so the
+     executive assistant can schedule and filter, and api/call.js keeps a record. */
   var callForm=document.getElementById('callForm');
   if(callForm){
     var callType=document.getElementById('callType'), callLabel=document.getElementById('callNoteLabel'), callText=document.getElementById('callText');
@@ -3781,8 +3782,30 @@ body.vaultpath .funnelmeta{display:none}
       var payload={}; fd.forEach(function(v,k){ payload[k]=String(v).slice(0,1200); });
       try{ payload.tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; }catch(err){}
       n.style.color=''; n.textContent='Sending\u2026'; btn.disabled=true;
-      fetch('/api/call',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-        .then(function(r){ return r.json().then(function(j){ return {ok:r.ok&&j&&j.ok}; },function(){ return {ok:false}; }); })
+      /* Step 1: the request is emailed to info@themarketbully.com (through FormSubmit, a
+         form-to-email service). Step 2: api/call.js keeps a record in Viato, and only if the
+         email did not go through does it fall back to the private alerts group. */
+      var KIND={call:'Call request',speaking:'Speaking request',media:'Media or partnership request'};
+      function emailIt(){
+        if(payload.company) return Promise.resolve(false);
+        var kind=KIND[payload.type]||KIND.call;
+        var mail={_subject:kind+': '+payload.name,_template:'table',_captcha:'false',
+          'Request':kind,'Name':payload.name,'email':payload.email,'Phone':payload.phone||'Not given',
+          'Best time to reach them':payload.besttime||'',
+          'Their timezone':payload.tz||'','Message':payload.note||'(nothing written)','Sent from':'themarketbully.com, Contact page'};
+        var ctl=('AbortController' in window)?new AbortController():null, timer=setTimeout(function(){ if(ctl) ctl.abort(); },9000);
+        return fetch('https://formsubmit.co/ajax/info@themarketbully.com',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(mail),signal:ctl?ctl.signal:undefined})
+          .then(function(r){ return r.json(); })
+          .then(function(j){ return !!j&&(j.success===true||j.success==='true'); })
+          .catch(function(){ return false; })
+          .then(function(ok){ clearTimeout(timer); return ok; });
+      }
+      emailIt().then(function(emailed){
+        payload.emailed=emailed?'1':'';
+        return fetch('/api/call',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+          .then(function(r){ return r.json().then(function(j){ return {ok:r.ok&&j&&j.ok}; },function(){ return {ok:false}; }); },function(){ return {ok:false}; })
+          .then(function(o){ return {ok:emailed||o.ok}; });
+      })
         .then(function(o){
           if(o.ok){
             n.style.color='var(--ok)'; n.textContent='Got it. Your request is with my executive assistant, and you will hear back by email.';
