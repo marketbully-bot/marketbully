@@ -15,6 +15,8 @@
 // Keep this line the same in lead.js, stuck.js, member.js and telegram.js.
 const ALERTS_ROOM = '-5310077180';
 
+import { hasStore, r, rp, normEmail, isEmail, newDoorFor, getPerson, onList, letIn, upsellMessage } from './_door.js';
+
 const API = (m) => `https://api.telegram.org/bot${String(process.env.TELEGRAM_BOT_TOKEN || '').trim()}/${m}`;
 
 async function tg(method, payload) {
@@ -89,6 +91,23 @@ export default async function handler(req, res) {
   const FREE = String(process.env.FREE_CHANNEL_LINK || 'https://t.me/+ukr-PkZbU1lmMmIx').trim();
   const VIDEO = String(process.env.WELCOME_VIDEO || '').trim();
 
+  // New door (test mode until DOOR_MODE=live): ask for the sign-up email.
+  async function askEmail(id, short) {
+    await tg('sendMessage', {
+      chat_id: id,
+      parse_mode: 'HTML',
+      disable_web_page_preview: true,
+      text:
+        (short ? '' :
+          '\ud83d\udd11 <b>Welcome to the door.</b> THE VAULT is my private room, and every seat is earned.\n\n' +
+          '1\ufe0f\u20e3 <b>OPEN YOUR TRADING ACCOUNT</b> through my link\n\ud83d\udc49 ' + (LINK || 'https://themarketbully.com/steps') + '\n\n' +
+          '2\ufe0f\u20e3 <b>TYPE THE EMAIL</b> you signed up with, right here.\n\n' +
+          '\u26a0\ufe0f Trading carries real risk. Read this before you fund anything: https://themarketbully.com/legal\n\n') +
+        '\u2709\ufe0f <b>Type the email you used to open your trading account</b> \ud83d\udc47\n\n<i>No screenshot needed.</i>',
+      reply_markup: { force_reply: true, input_field_placeholder: 'you@email.com' }
+    });
+  }
+
   // ---- one time webhook registration, no token ever in the URL ----
   if (req.method === 'GET') {
     if (!SECRET || req.query.setup !== SECRET) {
@@ -123,6 +142,14 @@ export default async function handler(req, res) {
       await tg('answerCallbackQuery', { callback_query_id: cq.id });
 
       // applicant says they have opened the account
+      if (data === 'opened' && newDoorFor(from.id) && hasStore()) {
+        await askEmail(from.id, true);
+        return res.status(200).end();
+      }
+      if (data === 'ask') {
+        await tg('sendMessage', { chat_id: from.id, text: '\ud83d\udcac Type your question right here. It comes straight to me.' });
+        return res.status(200).end();
+      }
       if (data === 'opened') {
         await tg('sendMessage', {
           chat_id: from.id,
@@ -207,6 +234,14 @@ export default async function handler(req, res) {
             '\n\n⚡ It works <b>once</b>, it has your name on it, and it dies in 24 hours. ' +
             'Forwarding it does nothing, so use it now.\n\nWelcome to the room. 🤝'
         });
+        if (hasStore() && newDoorFor(target)) {
+          try {
+            const p = await getPerson(target);
+            const cmds = [['HSET', 'd:p:' + target, 'state', 'in', 'inAt', Math.floor(Date.now() / 1000)], ['SREM', 'd:waiting', target], ['SADD', 'd:in', target]];
+            if (p.email) cmds.push(['SET', 'd:claim:' + p.email, target]);
+            await rp(cmds);
+          } catch (e) { /* approval already sent; memory is best effort */ }
+        }
         await tg('sendMessage', Object.assign({ parse_mode: 'HTML', text: '✅ Approved' + by + '. Single use invite sent.' }, back));
         return res.status(200).end();
       }
@@ -333,6 +368,69 @@ export default async function handler(req, res) {
         });
       }
       return res.status(200).end();
+    }
+
+    // ===== new door (test mode until DOOR_MODE=live) =====
+    if (newDoorFor(from.id) && hasStore()) {
+      if (String(from.id) === ADMIN && /^\/doorstatus/i.test(text)) {
+        const meta = await r('HGETALL', 'p:meta');
+        const w = await r('SCARD', 'd:waiting');
+        const i = await r('SCARD', 'd:in');
+        await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML',
+          text: '\ud83d\udee0 <b>Door status</b>\n\nPartner list: ' + esc(JSON.stringify(meta)) + '\nWaiting: ' + w + '\nLet in by the new door: ' + i });
+        return res.status(200).end();
+      }
+      if (String(from.id) === ADMIN && /^\/upselltest/i.test(text)) {
+        await tg('sendMessage', upsellMessage(from.id));
+        return res.status(200).end();
+      }
+      if (/^\/start/i.test(text)) {
+        const ref = (/^shot_([A-Z0-9]{4,12})$/.exec(startArg) || [])[1] || '';
+        if (ref) await r('HSET', 'd:p:' + from.id, 'ref', ref);
+        await askEmail(from.id, /^shot/i.test(startArg));
+        return res.status(200).end();
+      }
+      if (isEmail(text)) {
+        const email = normEmail(text);
+        const name = [from.first_name, from.last_name].filter(Boolean).join(' ') || from.username || '';
+        const claimed = await r('GET', 'd:claim:' + email);
+        if (claimed && String(claimed) !== String(from.id)) {
+          await tg('sendMessage', { chat_id: from.id, text: 'That email is already linked to another Telegram account. If that is you, reply here and I will sort it out.' });
+          await alert('sendMessage', { parse_mode: 'HTML', text: `\u26a0\ufe0f <b>${who(from)}</b> typed an email that is already linked to someone else in THE VAULT:\n${esc(email)}\n\nNobody was let in. Check it if you know them.` });
+          return res.status(200).end();
+        }
+        const already = await getPerson(from.id);
+        if (already.state === 'in') {
+          await tg('sendMessage', { chat_id: from.id, text: '\ud83d\udd13 You are already in THE VAULT. Lost your invite? Reply here and I will send a fresh one.' });
+          return res.status(200).end();
+        }
+        await r('HSET', 'd:p:' + from.id, 'email', email, 'name', name, 'at', Math.floor(Date.now() / 1000));
+        if (await onList(email)) {
+          const res2 = await letIn(from.id, name, email, 'now');
+          await alert('sendMessage', { parse_mode: 'HTML',
+            text: res2.ok
+              ? `\u2705 <b>${who(from)}</b> was let into THE VAULT automatically.\n${esc(email)} is on the partner list.`
+              : `\u26a0\ufe0f Could not invite <b>${who(from)}</b>: ${esc(res2.why)}` });
+          return res.status(200).end();
+        }
+        await rp([['HSET', 'd:p:' + from.id, 'state', 'waiting', 'nudged', '0'], ['SADD', 'd:waiting', from.id]]);
+        await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML', disable_web_page_preview: true,
+          text: '\u23f3 I don\u2019t see <b>' + esc(email) + '</b> on my side yet. Brand-new accounts can take up to a day to show up.\n\n' +
+                'I\u2019ll check again and message you right here. Signed up with a different email? Just type it.\n\n' +
+                'Haven\u2019t opened your account yet? Start here \ud83d\udc49 ' + (LINK || 'https://themarketbully.com/steps') });
+        const p = await getPerson(from.id);
+        await alert('sendMessage', { parse_mode: 'HTML',
+          text: `\ud83d\udd0e <b>${who(from)}</b> is at the door with an email that is not on the partner list yet:\n${esc(email)}\n` +
+                (p.ref ? `Application ref: <code>${esc(p.ref)}</code>\n` : '') +
+                '\nThe door will re-check every day and let them in by itself. If you already know they are good, tap Approve.',
+          reply_markup: { inline_keyboard: [[{ text: '✅ Approve', callback_data: 'ok:' + from.id }, { text: '✕ Decline', callback_data: 'no:' + from.id }]] } });
+        return res.status(200).end();
+      }
+      if (text && !/^\//.test(text)) {
+        await tg('sendMessage', { chat_id: from.id, text: '\ud83d\udcac Got it. That is with me now and I will come back to you here.\n\nIf you are trying to get into THE VAULT, just type the email you opened your trading account with.' });
+        await alert('sendMessage', { parse_mode: 'HTML', text: `\ud83d\udcac <b>Message at the door from ${who(from)}</b>` + (from.username ? ` @${esc(from.username)}` : '') + `\n\n${esc(text)}\n\nReply to them in Telegram.` });
+        return res.status(200).end();
+      }
     }
 
     if (/^shot(?:_|$)/i.test(startArg)) {
