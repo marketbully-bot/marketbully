@@ -380,6 +380,14 @@ export default async function handler(req, res) {
           text: '\ud83d\udee0 <b>Door status</b>\n\nPartner list: ' + esc(JSON.stringify(meta)) + '\nWaiting: ' + w + '\nLet in by the new door: ' + i });
         return res.status(200).end();
       }
+      if (/^\/doorreset/i.test(text)) {
+        const p0 = await getPerson(from.id);
+        const cmds = [['DEL', 'd:p:' + from.id], ['SREM', 'd:in', from.id], ['SREM', 'd:waiting', from.id]];
+        if (p0.email) cmds.push(['DEL', 'd:claim:' + p0.email]);
+        await rp(cmds);
+        await tg('sendMessage', { chat_id: from.id, text: '\ud83e\uddf9 Test reset. The door has forgotten you, so you can test again from the start. Your real seat in THE VAULT is not touched.' });
+        return res.status(200).end();
+      }
       if (String(from.id) === ADMIN && /^\/upselltest/i.test(text)) {
         await tg('sendMessage', upsellMessage(from.id));
         return res.status(200).end();
