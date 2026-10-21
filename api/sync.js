@@ -6,10 +6,12 @@
 import { hasStore, rp, r, normEmail, isEmail, dailyRound, TG } from './_door.js';
 
 const ALERTS_ROOM = '-5310077180';
-const ORIGIN = 'https://members.livvglobal.com';
+const ORIGINS = ['https://members.livvglobal.com', 'https://office.1houseglobal.com'];
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', ORIGIN);
+  const o = String(req.headers.origin || '');
+  res.setHeader('Access-Control-Allow-Origin', ORIGINS.indexOf(o) !== -1 ? o : ORIGINS[0]);
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Headers', 'content-type, x-sync-key');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Cache-Control', 'no-store');
@@ -21,7 +23,38 @@ export default async function handler(req, res) {
   if (!hasStore()) return res.status(500).json({ ok: false, error: 'no storage' });
 
   const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
+  const out = { ok: true };
+
+  // Richard's personal 1House sign-ups: [{ email, paid }]
+  if (Array.isArray(body.onehouse)) {
+    const hall = new Set(); const hpaid = new Set();
+    for (const c of body.onehouse) {
+      const e = normEmail(c && c.email);
+      if (!isEmail(e)) continue;
+      hall.add(e); if (c.paid) hpaid.add(e);
+    }
+    const hbefore = Number((await r('SCARD', 'h:all')) || 0);
+    if (hall.size === 0 || (hbefore > 20 && hall.size < hbefore * 0.5)) {
+      out.onehouse = { saved: false, error: 'list looks wrong, not saved', got: hall.size, before: hbefore };
+    } else {
+      const hc = [['DEL', 'h:all:new', 'h:paid:new']];
+      const ha = [...hall]; const hp = [...hpaid];
+      for (let i = 0; i < ha.length; i += 200) hc.push(['SADD', 'h:all:new', ...ha.slice(i, i + 200)]);
+      for (let i = 0; i < hp.length; i += 200) hc.push(['SADD', 'h:paid:new', ...hp.slice(i, i + 200)]);
+      hc.push(['RENAME', 'h:all:new', 'h:all']);
+      if (hp.length) hc.push(['RENAME', 'h:paid:new', 'h:paid']); else hc.push(['DEL', 'h:paid']);
+      hc.push(['HSET', 'h:meta', 'updated', new Date().toISOString(), 'count', ha.length, 'paid', hp.length]);
+      await rp(hc);
+      out.onehouse = { saved: ha.length, paid: hp.length };
+    }
+  }
+
   const rows = Array.isArray(body.clients) ? body.clients : [];
+  if (!rows.length) {
+    const ALERTS0 = String(process.env.ALERTS_CHAT_ID || ALERTS_ROOM || process.env.TELEGRAM_CHAT_ID || '').trim();
+    try { out.round = await dailyRound((p) => TG('sendMessage', Object.assign({ chat_id: ALERTS0 }, p))); } catch (e) { out.round = { error: String(e) }; }
+    return res.status(200).json(out);
+  }
   const all = new Set();
   const traded = new Set();
   for (const c of rows) {
@@ -50,5 +83,5 @@ export default async function handler(req, res) {
   let round = null;
   try { round = await dailyRound((p) => TG('sendMessage', Object.assign({ chat_id: ALERTS }, p))); } catch (e) { round = { error: String(e) }; }
 
-  return res.status(200).json({ ok: true, saved: a.length, traded: t.length, round });
+  return res.status(200).json(Object.assign(out, { saved: a.length, traded: t.length, round }));
 }
