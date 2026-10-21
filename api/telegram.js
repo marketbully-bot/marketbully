@@ -15,7 +15,7 @@
 // Keep this line the same in lead.js, stuck.js, member.js and telegram.js.
 const ALERTS_ROOM = '-5310077180';
 
-import { hasStore, r, rp, normEmail, isEmail, newDoorFor, getPerson, onList, letIn, upsellMessage } from './_door.js';
+import { hasStore, r, rp, normEmail, isEmail, newDoorFor, getPerson, onList, onHouse, letIn, upsellMessage } from './_door.js';
 
 const API = (m) => `https://api.telegram.org/bot${String(process.env.TELEGRAM_BOT_TOKEN || '').trim()}/${m}`;
 
@@ -413,18 +413,36 @@ export default async function handler(req, res) {
           return res.status(200).end();
         }
         await r('HSET', 'd:p:' + from.id, 'email', email, 'name', name, 'at', Math.floor(Date.now() / 1000));
-        if (await onList(email)) {
-          const res2 = await letIn(from.id, name, email, 'now');
+        const broker = await onList(email);
+        const house = broker ? '' : await onHouse(email);
+        if (broker || house === 'paid') {
+          const res2 = await letIn(from.id, name, email, 'now', broker ? 'broker' : '1house');
           await alert('sendMessage', { parse_mode: 'HTML',
             text: res2.ok
-              ? `\u2705 <b>${who(from)}</b> was let into THE VAULT automatically.\n${esc(email)} is on the partner list.`
+              ? `\u2705 <b>${who(from)}</b> was let into THE VAULT automatically.\n${esc(email)} ` + (broker ? 'is on the partner list.' : 'is a paid 1House member under you.')
               : `\u26a0\ufe0f Could not invite <b>${who(from)}</b>: ${esc(res2.why)}` });
+          return res.status(200).end();
+        }
+        if (house === 'free') {
+          await rp([['HSET', 'd:p:' + from.id, 'state', 'free1house'], ['SREM', 'd:waiting', from.id]]);
+          await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML', disable_web_page_preview: true,
+            text: '\ud83d\udc4b I see you on 1House with me, on the <b>free</b> account. Two ways to earn your seat in THE VAULT:\n\n' +
+                  '1\ufe0f\u20e3 <b>Go paid on 1House.</b> Digital Stream comes with your seat, plus every live session I teach and the MB Strategy in modules.\n\n' +
+                  '2\ufe0f\u20e3 <b>Open your trading account</b> through my link, then type that email here.\n\n' +
+                  'Already paid? It can take a day to show on my side. I check every morning.',
+            reply_markup: { inline_keyboard: [
+              [{ text: '\ud83d\udcfa Get Digital Stream', url: 'https://subscribe.1house.tv/MARKETBULLY' }],
+              [{ text: 'Open my trading account', url: LINK || 'https://themarketbully.com/steps' }]
+            ] } });
+          await rp([['SADD', 'd:waiting', from.id], ['HSET', 'd:p:' + from.id, 'state', 'waiting', 'nudged', '1']]);
+          await alert('sendMessage', { parse_mode: 'HTML', text: `\u2139\ufe0f <b>${who(from)}</b> came to the door. They are a <b>free</b> 1House member under you:\n${esc(email)}\n\nThey were sent the Digital Stream and trading account options. Nothing to do.` });
           return res.status(200).end();
         }
         await rp([['HSET', 'd:p:' + from.id, 'state', 'waiting', 'nudged', '0'], ['SADD', 'd:waiting', from.id]]);
         await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML', disable_web_page_preview: true,
           text: '\u23f3 I don\u2019t see <b>' + esc(email) + '</b> on my side yet. Brand-new accounts can take up to a day to show up.\n\n' +
                 'I\u2019ll check again and message you right here. Signed up with a different email? Just type it.\n\n' +
+                '\ud83d\udcfa <b>Paid member on 1House?</b> Send me a screenshot of your 1House account showing your plan, and I\u2019ll look at it myself.\n\n' +
                 'Haven\u2019t opened your account yet? Start here \ud83d\udc49 ' + (LINK || 'https://themarketbully.com/steps') });
         const p = await getPerson(from.id);
         await alert('sendMessage', { parse_mode: 'HTML',
