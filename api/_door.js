@@ -74,6 +74,15 @@ export async function onList(email) {
   return (await r('SISMEMBER', 'p:all', normEmail(email))) === 1;
 }
 
+// Anyone in Richard's 1House community (all levels), by username. Returns 'paid', 'free' or ''.
+export const normUser = (u) => String(u || '').trim().replace(/^@+/, '').toLowerCase();
+export async function onHouseUser(u) {
+  const n = normUser(u);
+  if (!n) return '';
+  const [paid, any] = await rp([['SISMEMBER', 'u:paid', n], ['SISMEMBER', 'u:all', n]]);
+  return paid === 1 ? 'paid' : any === 1 ? 'free' : '';
+}
+
 // Richard's personal 1House sign-ups. Returns 'paid', 'free' or ''.
 export async function onHouse(email) {
   const e = normEmail(email);
@@ -138,9 +147,9 @@ export async function dailyRound(alert) {
     if (!newDoorFor(id)) continue;
     const p = await getPerson(id);
     const age = now() - Number(p.at || now());
-    const house = p.email ? await onHouse(p.email) : '';
-    if (p.email && (await onList(p.email) || house === 'paid')) {
-      const res = await letIn(id, p.name, p.email, 'later', house === 'paid' && !(await onList(p.email)) ? '1house' : 'broker');
+    const house = p.email ? await onHouse(p.email) : (p.house ? await onHouseUser(p.house) : '');
+    if ((p.email && await onList(p.email)) || house === 'paid') {
+      const res = await letIn(id, p.name, p.email, 'later', house === 'paid' && !(p.email && await onList(p.email)) ? '1house' : 'broker');
       if (res.ok) {
         out.cleared++;
         if (alert) await alert({ parse_mode: 'HTML', text: `✅ <b>${esc(p.name || 'Someone')}</b> was let into THE VAULT automatically. Their email showed up on today’s partner list.\n${esc(p.email)}` });
@@ -170,14 +179,15 @@ export async function dailyRound(alert) {
     if (!newDoorFor(id)) continue;
     const p = await getPerson(id);
     // In through a paid 1House plan, and the plan is no longer paid: tell them once, tell Richard. Nobody is removed.
-    if (houseListed && p.via === '1house' && p.email && p.lapsed !== '1') {
-      if (!(await onList(p.email)) && (await onHouse(p.email)) !== 'paid') {
+    if (houseListed && p.via === '1house' && (p.email || p.house) && p.lapsed !== '1') {
+      const stillPaid = (p.house && (await onHouseUser(p.house)) === 'paid') || (p.email && (await onHouse(p.email)) === 'paid') || (p.email && await onList(p.email));
+      if (!stillPaid) {
         await TG('sendMessage', { chat_id: id, parse_mode: 'HTML', disable_web_page_preview: true,
           text: 'Heads up \ud83d\udc4b Your paid 1House plan looks like it ended, and that plan is what holds your seat in THE VAULT.\n\n' +
                 'To keep your seat, renew Digital Stream \ud83d\udc49 https://subscribe.1house.tv/MARKETBULLY\n\nor open your trading account through your steps page \ud83d\udc49 https://themarketbully.com/steps',
           reply_markup: { inline_keyboard: [[{ text: '\ud83d\udcfa Renew Digital Stream', url: 'https://subscribe.1house.tv/MARKETBULLY' }]] } });
         await r('HSET', 'd:p:' + id, 'lapsed', '1');
-        if (alert) await alert({ parse_mode: 'HTML', text: `\u26a0\ufe0f <b>${esc(p.name || 'A member')}</b> got into THE VAULT through a paid 1House plan, and it no longer shows as paid.\n${esc(p.email)}\n\nThey were sent a renewal note. They are still in the room. Remove them in Telegram only if you want to.` });
+        if (alert) await alert({ parse_mode: 'HTML', text: `\u26a0\ufe0f <b>${esc(p.name || 'A member')}</b> got into THE VAULT through a paid 1House plan, and it no longer shows as paid.\n${esc(p.email || '@' + p.house)}\n\nThey were sent a renewal note. They are still in the room. Remove them in Telegram only if you want to.` });
       }
     }
     if (p.via === '1house') continue;

@@ -49,6 +49,30 @@ export default async function handler(req, res) {
     }
   }
 
+  // Richard's whole 1House community, every level, by username: [{ u, paid }]
+  if (Array.isArray(body.community)) {
+    const ua = new Set(); const up = new Set();
+    for (const c of body.community) {
+      const n = String((c && c.u) || '').trim().replace(/^@+/, '').toLowerCase();
+      if (!/^[a-z0-9._-]{2,40}$/.test(n)) continue;
+      ua.add(n); if (c.paid) up.add(n);
+    }
+    const ubefore = Number((await r('SCARD', 'u:all')) || 0);
+    if (ua.size === 0 || (ubefore > 50 && ua.size < ubefore * 0.5)) {
+      out.community = { saved: false, error: 'list looks wrong, not saved', got: ua.size, before: ubefore };
+    } else {
+      const uc = [['DEL', 'u:all:new', 'u:paid:new']];
+      const aa = [...ua]; const pp = [...up];
+      for (let i = 0; i < aa.length; i += 300) uc.push(['SADD', 'u:all:new', ...aa.slice(i, i + 300)]);
+      for (let i = 0; i < pp.length; i += 300) uc.push(['SADD', 'u:paid:new', ...pp.slice(i, i + 300)]);
+      uc.push(['RENAME', 'u:all:new', 'u:all']);
+      if (pp.length) uc.push(['RENAME', 'u:paid:new', 'u:paid']); else uc.push(['DEL', 'u:paid']);
+      uc.push(['HSET', 'u:meta', 'updated', new Date().toISOString(), 'count', aa.length, 'paid', pp.length]);
+      await rp(uc);
+      out.community = { saved: aa.length, paid: pp.length };
+    }
+  }
+
   const rows = Array.isArray(body.clients) ? body.clients : [];
   if (!rows.length) {
     const ALERTS0 = String(process.env.ALERTS_CHAT_ID || ALERTS_ROOM || process.env.TELEGRAM_CHAT_ID || '').trim();
