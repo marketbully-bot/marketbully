@@ -91,7 +91,33 @@ export async function onHouse(email) {
 }
 
 // Sends the single use invite and records the person as in.
+// People Richard does not want in THE VAULT. Matched by Telegram name, email,
+// 1House username or Telegram id. More can be added to the d:block set
+// (values: an email, "u:<1house username>", or "id:<telegram id>").
+const BLOCK_NAMES = ['jalen jones'];
+const normName = (s) => String(s || '').toLowerCase().replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
+export async function isBlocked(id, name, email, house) {
+  const n = normName(name);
+  if (n && BLOCK_NAMES.some((b) => n === b || n.startsWith(b + ' '))) return true;
+  if (!hasStore()) return false;
+  try {
+    const keys = ['id:' + id];
+    if (email) keys.push(normEmail(email));
+    if (house) keys.push('u:' + String(house).toLowerCase());
+    const res = await rp(keys.map((k) => ['SISMEMBER', 'd:block', k]));
+    return res.some((x) => Number(x) === 1);
+  } catch (e) { return false; }
+}
+
 export async function letIn(id, name, email, how, via) {
+  {
+    const p0 = hasStore() ? await getPerson(id) : {};
+    if (await isBlocked(id, name || p0.name, email || p0.email, p0.house)) {
+      await TG('sendMessage', { chat_id: id, text: 'I can\u2019t send a Vault invite for this account. If you think that is a mistake, reply here.' });
+      if (hasStore()) await rp([['HSET', 'd:p:' + id, 'state', 'blocked'], ['SREM', 'd:waiting', id]]);
+      return { ok: false, why: 'this person is on your do-not-admit list, so no invite was sent' };
+    }
+  }
   const ROOM = String(process.env.SIGNALS_CHAT_ID || '').trim();
   if (!ROOM) return { ok: false, why: 'SIGNALS_CHAT_ID is not set' };
   // Already in the room (an existing member confirming their seat): no invite needed.
@@ -265,6 +291,10 @@ export async function dailyRound(alert) {
   for (const id of inside) {
     if (!newDoorFor(id)) continue;
     const p = await getPerson(id);
+    if (p.blockAlerted !== '1' && (await isBlocked(id, p.name, p.email, p.house))) {
+      if (alert) await alert({ parse_mode: 'HTML', text: `\u26d4 <b>${esc(p.name || 'Someone')}</b> is on your do-not-admit list but is inside THE VAULT. Remove them in Telegram: open THE VAULT, tap the name at the top, tap Members, find them, then Remove.` });
+      await r('HSET', 'd:p:' + id, 'blockAlerted', '1');
+    }
     if (listsReady && p.manual !== '1' && (p.email || p.house) && !(await isVip(id))) {
       const ok = await qualifies(p);
       if (ok) {

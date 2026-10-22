@@ -15,7 +15,7 @@
 // Keep this line the same in lead.js, stuck.js, member.js and telegram.js.
 const ALERTS_ROOM = '-5310077180';
 
-import { hasStore, r, rp, normEmail, isEmail, newDoorFor, getPerson, onList, onHouse, onHouseUser, normUser, letIn, upsellMessage, viato } from './_door.js';
+import { hasStore, r, rp, normEmail, isEmail, newDoorFor, getPerson, onList, onHouse, onHouseUser, normUser, letIn, upsellMessage, viato, isBlocked } from './_door.js';
 
 const API = (m) => `https://api.telegram.org/bot${String(process.env.TELEGRAM_BOT_TOKEN || '').trim()}/${m}`;
 
@@ -209,6 +209,13 @@ export default async function handler(req, res) {
           return res.status(200).end();
         }
 
+        {
+          const pb = hasStore() ? await getPerson(target) : {};
+          if (await isBlocked(target, pb.name, pb.email, pb.house)) {
+            await tg('sendMessage', Object.assign({ text: '\u26d4 Not sent. ' + (pb.name || 'This person') + ' is on your do-not-admit list for THE VAULT.' }, back));
+            return res.status(200).end();
+          }
+        }
         // single use link, expires in 24h, one member only
         const inv = await tg('createChatInviteLink', {
           chat_id: ROOM,
