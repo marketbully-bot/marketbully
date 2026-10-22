@@ -190,14 +190,26 @@ export async function viato(email, name, tags) {
   const key = String(process.env.VIATO_API_KEY || '').trim();
   if (!key || !email) return false;
   const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  // Viato makes a new copy of a contact every time we send the same email, so
+  // remember what we already sent and only send tags this person has not had.
+  const e = normEmail(email);
+  if (hasStore()) {
+    try {
+      const had = await rp(tags.map((t) => ['SISMEMBER', 'v:tags:' + e, t]));
+      tags = tags.filter((t, i) => Number(had[i]) !== 1);
+      if (!tags.length) return true;
+    } catch (err) {}
+  }
   try {
     const res = await fetch('https://viato.ai/api/v1/contacts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + key },
       body: JSON.stringify({ first_name: parts[0] || 'Friend', last_name: parts.slice(1).join(' '), email: normEmail(email), tags, notes: 'Added by THE VAULT door: ' + tags.join(', ') })
     });
-    return res.status >= 200 && res.status < 300;
-  } catch (e) { return false; }
+    const ok = res.status >= 200 && res.status < 300;
+    if (ok && hasStore()) { try { await r('SADD', 'v:tags:' + e, ...tags); } catch (err) {} }
+    return ok;
+  } catch (err) { return false; }
 }
 
 // The daily round: re-check waiting people, nudge, give up after a week,
