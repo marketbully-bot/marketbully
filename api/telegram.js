@@ -423,6 +423,10 @@ export default async function handler(req, res) {
       if (/^\/start/i.test(text)) {
         const ref = (/^shot_([A-Z0-9]{4,12})$/.exec(startArg) || [])[1] || '';
         if (ref) await r('HSET', 'd:p:' + from.id, 'ref', ref);
+        // Your welcome clip for new people (not for members just confirming their seat).
+        if (VIDEO && !/^verify/i.test(startArg)) {
+          try { await tg('sendVideo', { chat_id: from.id, video: VIDEO, supports_streaming: true, caption: 'Watch this first \ud83d\udc47' }); } catch (e) {}
+        }
         await askEmail(from.id, /^(shot|verify)/i.test(startArg));
         return res.status(200).end();
       }
