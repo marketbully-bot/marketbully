@@ -95,10 +95,12 @@ export async function onHouse(email) {
 // 1House username or Telegram id. More can be added to the d:block set
 // (values: an email, "u:<1house username>", or "id:<telegram id>").
 const BLOCK_NAMES = ['jalen jones'];
+const BLOCK_USERS = ['jdagoat'];
 const normName = (s) => String(s || '').toLowerCase().replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
 export async function isBlocked(id, name, email, house) {
   const n = normName(name);
   if (n && BLOCK_NAMES.some((b) => n === b || n.startsWith(b + ' '))) return true;
+  if (house && BLOCK_USERS.includes(String(house).toLowerCase().replace(/^@+/, ''))) return true;
   if (!hasStore()) return false;
   try {
     const keys = ['id:' + id];
