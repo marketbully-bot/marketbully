@@ -304,9 +304,26 @@ export default async function handler(req, res) {
     const m = u.message;
     if (!m) return res.status(200).end();
 
-    // In a group: only answer /id, and only for Richard. Everything else is ignored.
+    // In a group: only answer /id, and only for Richard. Everything else is ignored,
+    // except one thing: in MB Alerts, REPLYING to one of the door's messages sends
+    // that reply to the person at the door (so Richard or Yen can answer them).
     if (m.chat && m.chat.type !== 'private') {
       const t = (m.text || '').trim();
+      const rt = m.reply_to_message;
+      if (String(m.chat.id) === ALERTS && rt && rt.from && rt.from.is_bot && t && !/^\//.test(t)) {
+        let to = '';
+        if (hasStore()) { try { to = String((await r('GET', 'd:relay:' + rt.message_id)) || ''); } catch (e) {} }
+        if (!to) {
+          const kb = rt.reply_markup && rt.reply_markup.inline_keyboard ? JSON.stringify(rt.reply_markup.inline_keyboard) : '';
+          to = ((/"(?:ok|no):(\d{4,})"/.exec(kb) || [])[1]) || ((/\bid (\d{5,})\b/.exec(String(rt.text || '')) || [])[1]) || '';
+        }
+        if (to) {
+          const sent = await tg('sendMessage', { chat_id: to, text: '\ud83d\udcac ' + t });
+          await tg('sendMessage', { chat_id: m.chat.id, reply_to_message_id: m.message_id, allow_sending_without_reply: true,
+            text: sent && sent.ok ? '\u2705 Sent to them at the door.' : '\u26a0\ufe0f Could not send. They may have blocked the door.' });
+        }
+        return res.status(200).end();
+      }
       if (/^\/id/i.test(t) && String((m.from || {}).id) === ADMIN) {
         await tg('sendMessage', {
           chat_id: ADMIN,
@@ -548,7 +565,8 @@ export default async function handler(req, res) {
       }
       if (text && !/^\//.test(text)) {
         await tg('sendMessage', { chat_id: from.id, text: '\ud83d\udcac Got it. That is with me now and I will come back to you here.\n\nIf you are trying to get into THE VAULT, just type the email you opened your trading account with.' });
-        await alert('sendMessage', { parse_mode: 'HTML', text: `\ud83d\udcac <b>Message at the door from ${who(from)}</b>` + (from.username ? ` @${esc(from.username)}` : '') + `\n\n${esc(text)}\n\nReply to them in Telegram.` });
+        const am = await alert('sendMessage', { parse_mode: 'HTML', text: `\ud83d\udcac <b>Message at the door from ${who(from)}</b>` + (from.username ? ` @${esc(from.username)}` : '') + `\n\n${esc(text)}\n\n<i>To answer: swipe left on this message (or long-press \u2192 Reply) and type. Your reply goes straight to them.</i>` });
+        if (am && am.ok && am.result && hasStore()) { try { await r('SET', 'd:relay:' + am.result.message_id, String(from.id), 'EX', String(60 * 86400)); } catch (e) {} }
         return res.status(200).end();
       }
     }
