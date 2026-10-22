@@ -102,6 +102,7 @@ export default async function handler(req, res) {
   const all = new Set();
   const traded = new Set();
   const funded = new Set();
+  const l1 = new Set(); let hasLevels = false;
   const cname = {};
   for (const c of rows) {
     const e = normEmail(c && c.email);
@@ -110,6 +111,7 @@ export default async function handler(req, res) {
     if (Number(c.volume) > 0) traded.add(e);
     if (Number(c.balance) > 0) funded.add(e);
     if (c.name) cname[e] = String(c.name).slice(0, 80);
+    if (c.level !== undefined && c.level !== null && c.level !== '') { hasLevels = true; if (String(c.level).trim() === '1') l1.add(e); }
   }
   // Safety: never replace a real list with an empty or tiny one by mistake.
   const before = Number((await r('SCARD', 'p:all')) || 0);
@@ -127,6 +129,7 @@ export default async function handler(req, res) {
   const moves = [];
   for (const e of all) {
     if (/@themarketbully\.com$/.test(e)) continue;
+    if (!l1.has(e)) continue; // level 1 only; level 2 and below belong to other leaders' emails
     let tag = '';
     if (hadFunded && funded.has(e) && !prevFunded.has(e)) tag = 'rung-3-funded';
     else if (before > 0 && traded.has(e) && !prevTraded.has(e)) tag = 'rung-4-trading';
@@ -143,6 +146,12 @@ export default async function handler(req, res) {
   if (t.length) cmds.push(['RENAME', 'p:traded:new', 'p:traded']); else cmds.push(['DEL', 'p:traded']);
   if (f.length) cmds.push(['RENAME', 'p:funded:new', 'p:funded']); else cmds.push(['DEL', 'p:funded']);
   cmds.push(['SET', 'p:funded:seen', '1']);
+  if (hasLevels) {
+    const l = [...l1];
+    cmds.push(['DEL', 'p:l1:new']);
+    for (let i = 0; i < l.length; i += 200) cmds.push(['SADD', 'p:l1:new', ...l.slice(i, i + 200)]);
+    if (l.length) cmds.push(['RENAME', 'p:l1:new', 'p:l1']); else cmds.push(['DEL', 'p:l1']);
+  }
   cmds.push(['HSET', 'p:meta', 'updated', new Date().toISOString(), 'count', a.length, 'traded', t.length, 'funded', f.length]);
   await rp(cmds);
 

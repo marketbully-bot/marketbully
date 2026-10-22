@@ -193,6 +193,15 @@ export async function viato(email, name, tags) {
   // Viato makes a new copy of a contact every time we send the same email, so
   // remember what we already sent and only send tags this person has not had.
   const e = normEmail(email);
+  // Emails only go to Richard's own level 1: his personal 1House sign-ups (h:all)
+  // and his direct level-1 trading-account clients (p:l1). Level 2 and below are
+  // other leaders' people; they can still use the door, but never go into Viato.
+  if (hasStore()) {
+    try {
+      const lv = await rp([['SISMEMBER', 'h:all', e], ['SISMEMBER', 'p:l1', e]]);
+      if (Number(lv[0]) !== 1 && Number(lv[1]) !== 1) return false;
+    } catch (err) { return false; }
+  }
   if (hasStore()) {
     try {
       const had = await rp(tags.map((t) => ['SISMEMBER', 'v:tags:' + e, t]));
