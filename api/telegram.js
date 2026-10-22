@@ -15,7 +15,7 @@
 // Keep this line the same in lead.js, stuck.js, member.js and telegram.js.
 const ALERTS_ROOM = '-5310077180';
 
-import { hasStore, r, rp, normEmail, isEmail, newDoorFor, getPerson, onList, onHouse, onHouseUser, normUser, letIn, upsellMessage } from './_door.js';
+import { hasStore, r, rp, normEmail, isEmail, newDoorFor, getPerson, onList, onHouse, onHouseUser, normUser, letIn, upsellMessage, viato } from './_door.js';
 
 const API = (m) => `https://api.telegram.org/bot${String(process.env.TELEGRAM_BOT_TOKEN || '').trim()}/${m}`;
 
@@ -238,7 +238,7 @@ export default async function handler(req, res) {
         if (hasStore() && newDoorFor(target)) {
           try {
             const p = await getPerson(target);
-            const cmds = [['HSET', 'd:p:' + target, 'state', 'in', 'inAt', Math.floor(Date.now() / 1000)], ['SREM', 'd:waiting', target], ['SADD', 'd:in', target]];
+            const cmds = [['HSET', 'd:p:' + target, 'state', 'in', 'inAt', Math.floor(Date.now() / 1000), 'manual', '1'], ['SREM', 'd:waiting', target], ['SREM', 'd:paused', target], ['SADD', 'd:in', target]];
             if (p.email) cmds.push(['SET', 'd:claim:' + p.email, target]);
             await rp(cmds);
           } catch (e) { /* approval already sent; memory is best effort */ }
@@ -381,6 +381,14 @@ export default async function handler(req, res) {
           text: '\ud83d\udee0 <b>Door status</b>\n\nPartner list: ' + esc(JSON.stringify(meta)) + '\nWaiting: ' + w + '\nLet in by the new door: ' + i });
         return res.status(200).end();
       }
+      if (String(from.id) === ADMIN && /^\/postverify/i.test(text)) {
+        const pm = await tg('sendMessage', { chat_id: ROOM, parse_mode: 'HTML',
+          text: '\ud83d\udd11 <b>CONFIRM YOUR SEAT IN THE VAULT</b>\n\nThirty seconds. Tap the button, press Start, and type the email you opened your trading account with, or your 1House username like <b>@yourname</b>.\n\nEvery seat in here is earned. Please confirm yours within <b>14 days</b>. \ud83e\udd1d',
+          reply_markup: { inline_keyboard: [[{ text: '\u2705 Confirm my seat', url: 'https://t.me/thevaultkey_bot?start=verify' }]] } });
+        if (pm && pm.ok) await tg('pinChatMessage', { chat_id: ROOM, message_id: pm.result.message_id, disable_notification: false });
+        await tg('sendMessage', { chat_id: from.id, text: pm && pm.ok ? '\ud83d\udccc Posted and pinned in THE VAULT.' : 'Could not post: ' + esc(pm && pm.description) });
+        return res.status(200).end();
+      }
       if (/^\/doorreset/i.test(text)) {
         const p0 = await getPerson(from.id);
         const cmds = [['DEL', 'd:p:' + from.id], ['SREM', 'd:in', from.id], ['SREM', 'd:waiting', from.id]];
@@ -397,7 +405,7 @@ export default async function handler(req, res) {
       if (/^\/start/i.test(text)) {
         const ref = (/^shot_([A-Z0-9]{4,12})$/.exec(startArg) || [])[1] || '';
         if (ref) await r('HSET', 'd:p:' + from.id, 'ref', ref);
-        await askEmail(from.id, /^shot/i.test(startArg));
+        await askEmail(from.id, /^(shot|verify)/i.test(startArg));
         return res.status(200).end();
       }
       if (/^@[A-Za-z0-9._-]{2,40}$/.test(text)) {
@@ -418,9 +426,12 @@ export default async function handler(req, res) {
         await r('HSET', 'd:p:' + from.id, 'house', uname, 'name', name, 'at', Math.floor(Date.now() / 1000));
         if (hu === 'paid') {
           const res3 = await letIn(from.id, name, '', 'now', '1house');
-          if (res3.ok) await r('SET', 'd:uclaim:' + uname, from.id);
+          if (res3.ok) {
+            await r('SET', 'd:uclaim:' + uname, from.id);
+            await tg('sendMessage', { chat_id: from.id, text: '\ud83d\udcec One last thing: what email should I send your Vault updates to? Just type it here.', reply_markup: { force_reply: true, input_field_placeholder: 'you@email.com' } });
+          }
           await alert('sendMessage', { parse_mode: 'HTML',
-            text: res3.ok ? `\u2705 <b>${who(from)}</b> was let into THE VAULT automatically.\n1House @${esc(uname)} shows a paid subscription in your community.`
+            text: res3.ok ? `\u2705 <b>${who(from)}</b> ` + (res3.confirmed ? 'confirmed their seat in THE VAULT.' : 'was let into THE VAULT automatically.') + `\n1House @${esc(uname)} shows a paid subscription in your community.`
                           : `\u26a0\ufe0f Could not invite <b>${who(from)}</b>: ${esc(res3.why)}` });
           return res.status(200).end();
         }
@@ -429,7 +440,8 @@ export default async function handler(req, res) {
           await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML', disable_web_page_preview: true,
             text: '\ud83d\udc4b I see <b>@' + esc(uname) + '</b> in my 1House community, on the <b>free</b> account.\n\n' +
                   'Go paid on 1House and your seat in THE VAULT comes with it, plus every live session I teach and the MB Strategy in modules. ' +
-                  'Or open your trading account and type that email here.\n\nAlready paid? It can take a day to show. I check every morning and will let you in by myself.',
+                  'Or open your trading account and type that email here.\n\nAlready paid? It can take a day to show. I check every morning and will let you in by myself.\n\n' +
+                  '\ud83d\udcec Type your email here and I\u2019ll send you my free lessons and the next steps.',
             reply_markup: { inline_keyboard: [
               [{ text: '\ud83d\udcfa Get Digital Stream', url: 'https://subscribe.1house.tv/MARKETBULLY' }],
               [{ text: 'Open my trading account', url: LINK || 'https://themarketbully.com/steps' }]
@@ -451,6 +463,12 @@ export default async function handler(req, res) {
         }
         const already = await getPerson(from.id);
         if (already.state === 'in') {
+          if (!already.email) {
+            await rp([['HSET', 'd:p:' + from.id, 'email', email], ['SET', 'd:claim:' + email, from.id]]);
+            await viato(email, name, already.via === '1house' ? ['vault-member', '1house-paid'] : ['vault-member']);
+            await tg('sendMessage', { chat_id: from.id, text: '\ud83d\udcec Got it, thank you. Your Vault updates go to ' + email + '.' });
+            return res.status(200).end();
+          }
           await tg('sendMessage', { chat_id: from.id, text: '\ud83d\udd13 You are already in THE VAULT. Lost your invite? Reply here and I will send a fresh one.' });
           return res.status(200).end();
         }
@@ -459,13 +477,15 @@ export default async function handler(req, res) {
         const house = broker ? '' : await onHouse(email);
         if (broker || house === 'paid') {
           const res2 = await letIn(from.id, name, email, 'now', broker ? 'broker' : '1house');
+          if (res2.ok) await viato(email, name, broker ? ['vault-member'] : ['vault-member', '1house-paid']);
           await alert('sendMessage', { parse_mode: 'HTML',
             text: res2.ok
-              ? `\u2705 <b>${who(from)}</b> was let into THE VAULT automatically.\n${esc(email)} ` + (broker ? 'is on the partner list.' : 'is a paid 1House member under you.')
+              ? `\u2705 <b>${who(from)}</b> ` + (res2.confirmed ? 'confirmed their seat in THE VAULT.' : 'was let into THE VAULT automatically.') + `\n${esc(email)} ` + (broker ? 'is on the partner list.' : 'is a paid 1House member under you.')
               : `\u26a0\ufe0f Could not invite <b>${who(from)}</b>: ${esc(res2.why)}` });
           return res.status(200).end();
         }
-        if (house === 'free') {
+        if (house === 'free' || (already.house && (await onHouseUser(already.house)) === 'free')) {
+          await viato(email, name, ['1house-free']);
           await rp([['HSET', 'd:p:' + from.id, 'state', 'free1house'], ['SREM', 'd:waiting', from.id]]);
           await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML', disable_web_page_preview: true,
             text: '\ud83d\udc4b I see you on 1House with me, on the <b>free</b> account. Two ways to earn your seat in THE VAULT:\n\n' +
