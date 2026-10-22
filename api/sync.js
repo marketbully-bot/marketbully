@@ -3,7 +3,7 @@
 // Needs SYNC_SECRET in Vercel; the caller sends it as the x-sync-key header.
 // Only emails and whether they have traded are kept. No names, phones or balances.
 
-import { hasStore, rp, r, normEmail, isEmail, dailyRound, TG } from './_door.js';
+import { hasStore, rp, r, normEmail, isEmail, dailyRound, TG, viato } from './_door.js';
 
 const ALERTS_ROOM = '-5310077180';
 const ORIGINS = ['https://members.livvglobal.com', 'https://office.1houseglobal.com'];
@@ -34,6 +34,15 @@ export default async function handler(req, res) {
       hall.add(e); if (c.paid) hpaid.add(e);
     }
     const hbefore = Number((await r('SCARD', 'h:all')) || 0);
+    // New personal sign-ups since the last refresh go into Viato with a welcome tag.
+    // The very first refresh only records who is there; nobody old gets a "welcome".
+    const names = {};
+    for (const c of body.onehouse) { const e = normEmail(c && c.email); if (e) names[e] = { name: c.name || '', paid: !!c.paid }; }
+    const newOnes = [];
+    if (hbefore > 0) {
+      const prev = new Set(((await r('SMEMBERS', 'h:all')) || []).map(String));
+      for (const e of hall) if (!prev.has(e) && !/@themarketbully\.com$/.test(e)) newOnes.push(e);
+    }
     if (hall.size === 0 || (hbefore > 20 && hall.size < hbefore * 0.5)) {
       out.onehouse = { saved: false, error: 'list looks wrong, not saved', got: hall.size, before: hbefore };
     } else {
@@ -45,7 +54,42 @@ export default async function handler(req, res) {
       if (hp.length) hc.push(['RENAME', 'h:paid:new', 'h:paid']); else hc.push(['DEL', 'h:paid']);
       hc.push(['HSET', 'h:meta', 'updated', new Date().toISOString(), 'count', ha.length, 'paid', hp.length]);
       await rp(hc);
-      out.onehouse = { saved: ha.length, paid: hp.length };
+      out.onehouse = { saved: ha.length, paid: hp.length, new: newOnes.length };
+      const ALERTSW = String(process.env.ALERTS_CHAT_ID || ALERTS_ROOM || process.env.TELEGRAM_CHAT_ID || '').trim();
+      for (const e of newOnes.slice(0, 50)) {
+        const n = names[e] || {};
+        await viato(e, n.name, ['1house-new', n.paid ? '1house-paid' : '1house-free']);
+      }
+      if (newOnes.length) {
+        await TG('sendMessage', { chat_id: ALERTSW, parse_mode: 'HTML',
+          text: `\ud83c\udf89 <b>${newOnes.length} new 1House sign-up${newOnes.length > 1 ? 's' : ''} under you</b> since yesterday:\n` +
+                newOnes.slice(0, 20).map((e) => '\u2022 ' + String((names[e] || {}).name || e).replace(/[<>&]/g, '') + ((names[e] || {}).paid ? ' (paid)' : ' (free)')).join('\n') +
+                '\n\nThey were added to Viato and get your welcome email.' });
+      }
+    }
+  }
+
+  // Richard's whole 1House community, every level, by username: [{ u, paid }]
+  if (Array.isArray(body.community)) {
+    const ua = new Set(); const up = new Set();
+    for (const c of body.community) {
+      const n = String((c && c.u) || '').trim().replace(/^@+/, '').toLowerCase();
+      if (!/^[a-z0-9._-]{2,40}$/.test(n)) continue;
+      ua.add(n); if (c.paid) up.add(n);
+    }
+    const ubefore = Number((await r('SCARD', 'u:all')) || 0);
+    if (ua.size === 0 || (ubefore > 50 && ua.size < ubefore * 0.5)) {
+      out.community = { saved: false, error: 'list looks wrong, not saved', got: ua.size, before: ubefore };
+    } else {
+      const uc = [['DEL', 'u:all:new', 'u:paid:new']];
+      const aa = [...ua]; const pp = [...up];
+      for (let i = 0; i < aa.length; i += 300) uc.push(['SADD', 'u:all:new', ...aa.slice(i, i + 300)]);
+      for (let i = 0; i < pp.length; i += 300) uc.push(['SADD', 'u:paid:new', ...pp.slice(i, i + 300)]);
+      uc.push(['RENAME', 'u:all:new', 'u:all']);
+      if (pp.length) uc.push(['RENAME', 'u:paid:new', 'u:paid']); else uc.push(['DEL', 'u:paid']);
+      uc.push(['HSET', 'u:meta', 'updated', new Date().toISOString(), 'count', aa.length, 'paid', pp.length]);
+      await rp(uc);
+      out.community = { saved: aa.length, paid: pp.length };
     }
   }
 

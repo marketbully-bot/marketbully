@@ -1,3 +1,4 @@
+import { hasStore, r, normEmail } from './_door.js';
 // Receives an application from the site and sends it to Telegram.
 // Secrets live in Vercel Environment Variables, never in this file.
 //   TELEGRAM_BOT_TOKEN  - from @BotFather
@@ -114,9 +115,18 @@ function noteFor(d) {
   return rows.join('\n');
 }
 
+const rSet = (k, v) => r('SADD', k, v);
+
 async function toViato(d) {
   const key = String(process.env.VIATO_API_KEY || '').trim();
   if (!key) return { ok: false, reason: 'no-key' };
+
+  // Viato makes a new copy of the contact every time the same email applies,
+  // and each copy restarts the emails. Only send each email to Viato once.
+  const e = normEmail(d.email || '');
+  if (e && hasStore()) {
+    try { if (Number(await r('SISMEMBER', 'v:tags:' + e, 'rung-1-new-lead')) === 1) return { ok: true, reason: 'already-in-viato' }; } catch (err) {}
+  }
 
   const who = splitName(d.name);
   const body = JSON.stringify({
@@ -141,7 +151,10 @@ async function toViato(d) {
       body
     });
     const text = await r.text();
-    if (r.status >= 200 && r.status < 300) return { ok: true };
+    if (r.status >= 200 && r.status < 300) {
+      if (e && hasStore()) { try { await rSet('v:tags:' + e, 'rung-1-new-lead'); } catch (err) {} }
+      return { ok: true };
+    }
     console.error('Viato rejected the contact:', r.status, text.slice(0, 300));
     return { ok: false, reason: 'http-' + r.status, detail: text.slice(0, 200) };
   } catch (err) {
