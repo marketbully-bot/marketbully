@@ -224,11 +224,12 @@ export async function viato(email, name, tags, opts) {
   // Who goes into Viato: everyone in Richard's 1House community, at every level
   // (opts.oneHouse, or a personal 1House sign-up in h:all), and only his direct
   // level-1 trading-account clients (p:l1). Broker level 2 and below are other
-  // leaders' people; they can still use the door, but never go into Viato.
+  // leaders' people; they can still use the door, and only go into Viato if
+  // they say yes to the door's email opt-in (v:optin).
   if (hasStore() && !(opts && opts.oneHouse)) {
     try {
-      const lv = await rp([['SISMEMBER', 'h:all', e], ['SISMEMBER', 'p:l1', e]]);
-      if (Number(lv[0]) !== 1 && Number(lv[1]) !== 1) return false;
+      const lv = await rp([['SISMEMBER', 'h:all', e], ['SISMEMBER', 'p:l1', e], ['SISMEMBER', 'v:optin', e]]);
+      if (Number(lv[0]) !== 1 && Number(lv[1]) !== 1 && Number(lv[2]) !== 1) return false;
     } catch (err) { return false; }
   }
   if (hasStore()) {

@@ -147,6 +147,17 @@ export default async function handler(req, res) {
         await askEmail(from.id, true);
         return res.status(200).end();
       }
+      if ((data === 'optin:y' || data === 'optin:n') && hasStore()) {
+        const pp = await getPerson(from.id);
+        if (data === 'optin:y' && pp.email) {
+          await r('SADD', 'v:optin', normEmail(pp.email));
+          await viato(pp.email, pp.name || [from.first_name, from.last_name].filter(Boolean).join(' '), ['vault-member', 'broker-optin'], { oneHouse: true });
+          await tg('sendMessage', { chat_id: from.id, text: '\u2705 You\u2019re on the list. Watch your inbox, and check spam the first time.' });
+        } else {
+          await tg('sendMessage', { chat_id: from.id, text: '\ud83d\udc4d No problem. You\u2019re all set in THE VAULT either way.' });
+        }
+        return res.status(200).end();
+      }
       if (data === 'ask') {
         await tg('sendMessage', { chat_id: from.id, text: '\ud83d\udcac Type your question right here. It comes straight to me.' });
         return res.status(200).end();
@@ -484,7 +495,17 @@ export default async function handler(req, res) {
         const house = broker ? '' : await onHouse(email);
         if (broker || house === 'paid') {
           const res2 = await letIn(from.id, name, email, 'now', broker ? 'broker' : '1house');
-          if (res2.ok) await viato(email, name, broker ? ['vault-member'] : ['vault-member', '1house-paid'], { oneHouse: !!already.house || house === 'paid' });
+          if (res2.ok) {
+            const oneH = !!already.house || house === 'paid';
+            const mine = oneH || (await rp([['SISMEMBER', 'p:l1', email], ['SISMEMBER', 'h:all', email], ['SISMEMBER', 'v:optin', email]])).some((x) => Number(x) === 1);
+            if (mine) await viato(email, name, broker ? ['vault-member'] : ['vault-member', '1house-paid'], { oneHouse: oneH });
+            else {
+              // Broker level 2 and below: other leaders' people. Ask before emailing.
+              await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML',
+                text: '📬 <b>Want my emails too?</b>\n\nVault updates, my weekly recap and free lessons, straight to ' + esc(email) + '. Totally optional, and you can stop any time.',
+                reply_markup: { inline_keyboard: [[{ text: '✅ Yes, send me emails', callback_data: 'optin:y' }, { text: 'No thanks', callback_data: 'optin:n' }]] } });
+            }
+          }
           await alert('sendMessage', { parse_mode: 'HTML',
             text: res2.ok
               ? `\u2705 <b>${who(from)}</b> ` + (res2.confirmed ? 'confirmed their seat in THE VAULT.' : 'was let into THE VAULT automatically.') + `\n${esc(email)} ` + (broker ? 'is on the partner list.' : 'is a paid 1House member under you.')
