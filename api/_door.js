@@ -186,17 +186,18 @@ export function seatMessage(id, kind) {
 }
 
 // Adds or tags a contact in Viato. Best effort; never blocks the door.
-export async function viato(email, name, tags) {
+export async function viato(email, name, tags, opts) {
   const key = String(process.env.VIATO_API_KEY || '').trim();
   if (!key || !email) return false;
   const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
   // Viato makes a new copy of a contact every time we send the same email, so
   // remember what we already sent and only send tags this person has not had.
   const e = normEmail(email);
-  // Emails only go to Richard's own level 1: his personal 1House sign-ups (h:all)
-  // and his direct level-1 trading-account clients (p:l1). Level 2 and below are
-  // other leaders' people; they can still use the door, but never go into Viato.
-  if (hasStore()) {
+  // Who goes into Viato: everyone in Richard's 1House community, at every level
+  // (opts.oneHouse, or a personal 1House sign-up in h:all), and only his direct
+  // level-1 trading-account clients (p:l1). Broker level 2 and below are other
+  // leaders' people; they can still use the door, but never go into Viato.
+  if (hasStore() && !(opts && opts.oneHouse)) {
     try {
       const lv = await rp([['SISMEMBER', 'h:all', e], ['SISMEMBER', 'p:l1', e]]);
       if (Number(lv[0]) !== 1 && Number(lv[1]) !== 1) return false;
@@ -271,7 +272,7 @@ export async function dailyRound(alert) {
       } else if (!p.warnAt) {
         await TG('sendMessage', seatMessage(id, 'warn'));
         await r('HSET', 'd:p:' + id, 'warnAt', now());
-        await viato(p.email, p.name, ['vault-seat-warning']);
+        await viato(p.email, p.name, ['vault-seat-warning'], { oneHouse: !!p.house || p.via === '1house' });
         if (alert) await alert({ parse_mode: 'HTML', text: `\u26a0\ufe0f <b>${esc(p.name || 'A member')}</b> no longer qualifies for THE VAULT (${esc(p.email || '@' + p.house)}).\n\nThey were told. If nothing changes in 7 days, the door pauses their seat by itself.` });
         out.warned++;
         continue;
@@ -281,7 +282,7 @@ export async function dailyRound(alert) {
         await TG('unbanChatMember', { chat_id: ROOM, user_id: Number(id), only_if_banned: true });
         await TG('sendMessage', seatMessage(id, 'paused'));
         await rp([['SREM', 'd:in', id], ['SADD', 'd:paused', id], ['HSET', 'd:p:' + id, 'state', 'paused', 'pausedAt', now()], ['HDEL', 'd:p:' + id, 'warnAt', 'reminded']]);
-        await viato(p.email, p.name, ['vault-paused']);
+        await viato(p.email, p.name, ['vault-paused'], { oneHouse: !!p.house || p.via === '1house' });
         if (alert) await alert({ parse_mode: 'HTML', text: (ban && ban.ok ? '\u23f8 ' : '\u26a0\ufe0f Tried to pause ') + `<b>${esc(p.name || 'A member')}</b>'s seat in THE VAULT after 7 days (${esc(p.email || '@' + p.house)}).` + (ban && ban.ok ? '\nThey can come back any time they renew or open their trading account. The door lets them back in by itself.' : '\nTelegram said: ' + esc(ban && ban.description)) });
         out.paused++;
         continue;
@@ -310,7 +311,7 @@ export async function dailyRound(alert) {
         const res = await letIn(id, p.name, p.email, 'later', p.via);
         if (res.ok) {
           await rp([['SREM', 'd:paused', id]]);
-          await viato(p.email, p.name, ['vault-member']);
+          await viato(p.email, p.name, ['vault-member'], { oneHouse: !!p.house || p.via === '1house' });
           if (alert) await alert({ parse_mode: 'HTML', text: `\u2705 <b>${esc(p.name || 'A member')}</b> qualifies again and was let back into THE VAULT.` });
           out.back++;
         }

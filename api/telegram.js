@@ -465,7 +465,7 @@ export default async function handler(req, res) {
         if (already.state === 'in') {
           if (!already.email) {
             await rp([['HSET', 'd:p:' + from.id, 'email', email], ['SET', 'd:claim:' + email, from.id]]);
-            await viato(email, name, already.via === '1house' ? ['vault-member', '1house-paid'] : ['vault-member']);
+            await viato(email, name, already.via === '1house' ? ['vault-member', '1house-paid'] : ['vault-member'], { oneHouse: !!already.house || already.via === '1house' });
             await tg('sendMessage', { chat_id: from.id, text: '\ud83d\udcec Got it, thank you. Your Vault updates go to ' + email + '.' });
             return res.status(200).end();
           }
@@ -477,7 +477,7 @@ export default async function handler(req, res) {
         const house = broker ? '' : await onHouse(email);
         if (broker || house === 'paid') {
           const res2 = await letIn(from.id, name, email, 'now', broker ? 'broker' : '1house');
-          if (res2.ok) await viato(email, name, broker ? ['vault-member'] : ['vault-member', '1house-paid']);
+          if (res2.ok) await viato(email, name, broker ? ['vault-member'] : ['vault-member', '1house-paid'], { oneHouse: !!already.house || house === 'paid' });
           await alert('sendMessage', { parse_mode: 'HTML',
             text: res2.ok
               ? `\u2705 <b>${who(from)}</b> ` + (res2.confirmed ? 'confirmed their seat in THE VAULT.' : 'was let into THE VAULT automatically.') + `\n${esc(email)} ` + (broker ? 'is on the partner list.' : 'is a paid 1House member under you.')
@@ -485,7 +485,7 @@ export default async function handler(req, res) {
           return res.status(200).end();
         }
         if (house === 'free' || (already.house && (await onHouseUser(already.house)) === 'free')) {
-          await viato(email, name, ['1house-free']);
+          await viato(email, name, ['1house-free'], { oneHouse: true });
           await rp([['HSET', 'd:p:' + from.id, 'state', 'free1house'], ['SREM', 'd:waiting', from.id]]);
           await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML', disable_web_page_preview: true,
             text: '\ud83d\udc4b I see you on 1House with me, on the <b>free</b> account. Two ways to earn your seat in THE VAULT:\n\n' +
