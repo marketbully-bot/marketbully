@@ -56,10 +56,43 @@ export default async function handler(req, res) {
       await rp(hc);
       out.onehouse = { saved: ha.length, paid: hp.length, new: newOnes.length };
       const ALERTSW = String(process.env.ALERTS_CHAT_ID || ALERTS_ROOM || process.env.TELEGRAM_CHAT_ID || '').trim();
+      // Is this person already on Richard's broker list? If not, they get the
+      // "open your trading account" series instead of the plain upgrade series.
+      const onBroker = async (e) => Number(await r('SISMEMBER', 'p:all', e)) === 1;
       for (const e of newOnes.slice(0, 50)) {
         const n = names[e] || {};
-        await viato(e, n.name, ['1house-new', n.paid ? '1house-paid' : '1house-free']);
+        const b = await onBroker(e);
+        await viato(e, n.name, ['1house-new', n.paid ? (b ? '1house-paid' : '1house-nobroker-paid') : (b ? '1house-free' : '1house-nobroker-free')]);
       }
+
+      // One-time catch-up for Richard's EXISTING personal sign-ups (approved 22 Oct 2026):
+      // no trading account -> 1house-nobroker-free / -paid; free on his broker level 1 -> 1house-free.
+      // Broker level 2 and below are left alone. Built once, then sent ~50 a day.
+      try {
+        const brokerReady = Number((await r('SCARD', 'p:all')) || 0) > 0 && Number((await r('EXISTS', 'p:l1')) || 0) === 1;
+        if (brokerReady && Number((await r('EXISTS', 'h:bf:built')) || 0) !== 1) {
+          const q = [];
+          for (const e of hall) {
+            if (/@themarketbully\.com$/.test(e) || newOnes.includes(e)) continue;
+            const [inAll, inL1] = (await rp([['SISMEMBER', 'p:all', e], ['SISMEMBER', 'p:l1', e]])).map((x) => Number(x) === 1);
+            const paid = hpaid.has(e);
+            if (!inAll) q.push(e + '|' + (paid ? '1house-nobroker-paid' : '1house-nobroker-free'));
+            else if (inL1 && !paid) q.push(e + '|1house-free');
+          }
+          const bc = [['SET', 'h:bf:built', new Date().toISOString()]];
+          for (let i = 0; i < q.length; i += 200) bc.push(['SADD', 'h:bfq', ...q.slice(i, i + 200)]);
+          await rp(bc);
+          out.backfillQueued = q.length;
+        }
+        const room = Math.max(0, 50 - Math.min(newOnes.length, 50));
+        if (room > 0 && Number((await r('EXISTS', 'h:bfq')) || 0) === 1) {
+          const batch = ((await r('SPOP', 'h:bfq', room)) || []).map(String);
+          let sentBf = 0;
+          for (const x of batch) { const [e, tag] = x.split('|'); if (await viato(e, (names[e] || {}).name || '', [tag])) sentBf++; }
+          out.backfillSent = sentBf;
+          out.backfillLeft = Number((await r('SCARD', 'h:bfq')) || 0);
+        }
+      } catch (err) { out.backfillError = String(err).slice(0, 120); }
       if (newOnes.length) {
         await TG('sendMessage', { chat_id: ALERTSW, parse_mode: 'HTML',
           text: `\ud83c\udf89 <b>${newOnes.length} new 1House sign-up${newOnes.length > 1 ? 's' : ''} under you</b> since yesterday:\n` +

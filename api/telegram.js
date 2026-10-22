@@ -517,7 +517,7 @@ export default async function handler(req, res) {
           return res.status(200).end();
         }
         if (house === 'free' || (already.house && (await onHouseUser(already.house)) === 'free')) {
-          await viato(email, name, ['1house-free'], { oneHouse: true });
+          await viato(email, name, ['1house-nobroker-free'], { oneHouse: true });
           await rp([['HSET', 'd:p:' + from.id, 'state', 'free1house'], ['SREM', 'd:waiting', from.id]]);
           await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML', disable_web_page_preview: true,
             text: '\ud83d\udc4b I see you on 1House with me, on the <b>free</b> account. Two ways to earn your seat in THE VAULT:\n\n' +
