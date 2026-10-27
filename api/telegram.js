@@ -104,7 +104,7 @@ export default async function handler(req, res) {
           '2\ufe0f\u20e3 <b>TYPE THE EMAIL</b> you signed up with, right here.\n\n' +
           '\u26a0\ufe0f Trading carries real risk. Read this before you fund anything: https://themarketbully.com/legal\n\n') +
         '\u2709\ufe0f <b>Type the email you used to open your trading account</b> \ud83d\udc47\n\n' +
-        '\ud83d\udcfa <b>Paid member on 1House?</b> Type your 1House username with an @ in front, like <b>@yourname</b>.\n\n<i>No screenshot needed.</i>',
+        '\ud83d\udcfa <b>Paid 1House member on the Market Bully team?</b> Type your 1House username with an @ in front, like <b>@yourname</b>.\n\n<i>No screenshot needed.</i>',
       reply_markup: { force_reply: true, input_field_placeholder: 'you@email.com' }
     });
   }
@@ -487,8 +487,18 @@ export default async function handler(req, res) {
             ] } });
           return res.status(200).end();
         }
-        await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML',
-          text: 'I don\u2019t see <b>@' + esc(uname) + '</b> in my 1House community. Check the spelling, it is the username on your 1House profile. Or type the email you opened your trading account with.' });
+        await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML', disable_web_page_preview: true,
+          text: '\ud83d\udd0e I don\u2019t see <b>@' + esc(uname) + '</b> on the Market Bully team.\n\n' +
+                'Typo? Check the spelling on your 1House profile and type it again.\n\n' +
+                '\ud83d\udd11 <b>On 1House with another leader?</b> Your username won\u2019t open this door, but you can still get in. ' +
+                'Open your trading account through my link, then type that email right here. About five minutes.\n\n' +
+                '\ud83d\udcfa <b>Not on 1House yet?</b> Join through me and your seat in THE VAULT comes with any paid plan.',
+          reply_markup: { inline_keyboard: [
+            [{ text: '\ud83d\udd11 Open my trading account', url: LINK || 'https://themarketbully.com/steps' }],
+            [{ text: '\ud83d\udcfa Join my team on 1House', url: 'https://subscribe.1house.tv/MARKETBULLY' }]
+          ] } });
+        await alert('sendMessage', { parse_mode: 'HTML',
+          text: `\u2139\ufe0f <b>${who(from)}</b> came to the door with a 1House username that is not on your team: @${esc(uname)}\n\nThey were sent the trading account and join-my-team options. Nothing to do.` });
         return res.status(200).end();
       }
       if (isEmail(text)) {
@@ -553,7 +563,7 @@ export default async function handler(req, res) {
         await tg('sendMessage', { chat_id: from.id, parse_mode: 'HTML', disable_web_page_preview: true,
           text: '\u23f3 I don\u2019t see <b>' + esc(email) + '</b> on my side yet. Brand-new accounts can take up to a day to show up.\n\n' +
                 'I\u2019ll check again and message you right here. Signed up with a different email? Just type it.\n\n' +
-                '\ud83d\udcfa <b>Paid member on 1House?</b> Type your 1House username with an @ in front, like <b>@yourname</b>.\n\n' +
+                '\ud83d\udcfa <b>Paid 1House member on the Market Bully team?</b> Type your 1House username with an @ in front, like <b>@yourname</b>.\n\n' +
                 'Haven\u2019t opened your account yet? Start here \ud83d\udc49 ' + (LINK || 'https://themarketbully.com/steps') });
         const p = await getPerson(from.id);
         await alert('sendMessage', { parse_mode: 'HTML',
