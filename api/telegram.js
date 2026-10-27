@@ -337,7 +337,7 @@ export default async function handler(req, res) {
     }
 
     const from = m.from || {};
-    const text = (m.text || '').trim();
+    let text = (m.text || '').trim();
 
     // Paste a file id back and I will test it on the spot.
     if (String(from.id) === ADMIN && /^(BAAC|CgAC|DQAC|BQAC)[A-Za-z0-9_-]{20,}$/.test(text)) {
@@ -366,6 +366,14 @@ export default async function handler(req, res) {
     // through opening the account on the site, so skip the long welcome and
     // ask for the screenshot straight away.
     const startArg = (/^\/start(?:@\w+)?\s+(\S+)/i.exec(text) || [])[1] || '';
+    // Arriving from the website's Vault Fast Lane: t.me/<door>?start=u_<base64url of the 1House username>.
+    // Treat it exactly as if they had typed @username at the door.
+    const fast = (/^u_([A-Za-z0-9_-]{2,60})$/.exec(startArg) || [])[1];
+    if (fast) {
+      let u = '';
+      try { u = Buffer.from(fast, 'base64url').toString('utf8'); } catch (e) {}
+      if (/^[A-Za-z0-9._-]{2,40}$/.test(u)) text = '@' + u;
+    }
     // Arriving from the site's "Sign in with Telegram" button on /members.
     // Members of THE VAULT get a private button that opens their member area.
     if (/^members$/i.test(startArg)) {
