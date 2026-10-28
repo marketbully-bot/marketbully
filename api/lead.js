@@ -46,6 +46,11 @@ const LABELS = {
     'new': 'No, new to 1House'
   },
   capital: {
+    'learn-free': 'Learning free first',
+    'plan': 'Ready for a monthly 1House plan',
+    'account': 'Ready to open a trading account',
+    'both': 'Ready for a plan and an account',
+    // older applications
     '100-200': '$100 to $200 ready',
     '200-plus': 'More than $200 ready',
     'soon': 'Not yet, coming soon',
@@ -59,7 +64,7 @@ const HEADINGS = {
   pain: 'What is going wrong',
   time: 'Time per day',
   onehouse: 'Subscribed to 1House.TV',
-  capital: 'Capital'
+  capital: 'Ready for'
 };
 
 function esc(v) {

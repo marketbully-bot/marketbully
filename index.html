@@ -1100,6 +1100,13 @@ body.vaultpath .funnelmeta{display:none}
 .fl-chat .door{background:rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.5;color:var(--silver)}
 .fl-chat .key{border:1px solid var(--blue);border-radius:12px;padding:10px;text-align:center;color:#fff;font-weight:700;font-size:14px}
 @media (max-width:860px){.fl{grid-template-columns:minmax(0,1fr);padding:22px;gap:22px}.fl-input{flex-basis:100%}.fl-chat{display:none}.fl-row .btn{flex:1 1 100%}}
+
+/* ---------- Hero: three doors ---------- */
+.hero-what{margin-top:14px}
+.hero-doors{flex-wrap:wrap;gap:12px}
+.hero-note{margin:14px 0 0;font-size:14px;color:var(--silver-dim)}
+.hero-note a{color:var(--blue-hi)}
+@media (max-width:640px){.hero-doors .btn{flex:1 1 100%;justify-content:center}}
 </style>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="mesh" aria-hidden="true"></div>
@@ -1142,11 +1149,13 @@ body.vaultpath .funnelmeta{display:none}
       <div>
         <div class="hero-badge"><span class="dot"></span> #1 Most Streamed on 1House.TV &middot; 100,000 views</div>
         <h1><span class="ln"><span>Trading</span></span><span class="ln"><span>made easy.</span></span></h1>
-        <p class="lede rv">Simplified, not sugar&nbsp;coated. I&rsquo;m Richard Hall Jr., known as The Market Bully. Entrepreneur, professional day trader, educator, strategist, speaker and family man, and I take the part that looks complicated and make it make sense.</p>
-        <div class="row rv" style="margin-top:32px">
-          <button class="btn lg" data-go="start">Start your application</button>
-          <a class="btn ghost lg" href="https://www.1house.tv/educators/richard-hall" target="_blank" rel="noopener">Watch a live session</a>
+                <p class="lede rv">Simplified, not sugar&nbsp;coated. I&rsquo;m Richard &ldquo;Pops&rdquo; Hall Jr., The Market Bully, and I teach everyday people to read a chart, manage risk and trade with a plan. Live every week on 1House.TV, step by step, with a community that has your back.</p>
+        <div class="row rv hero-doors" style="margin-top:28px">
+          <button class="btn lg" type="button" data-lesson="1">Start learning free</button>
+          <button class="btn ghost lg" type="button" data-go="start">Get into THE VAULT</button>
+          <a class="btn ghost lg" href="https://subscribe.1house.tv/MARKETBULLY" target="_blank" rel="noopener">Join me on 1House.TV</a>
         </div>
+        <p class="hero-note rv">Free starts with Lesson 1: two minutes, no sign-up. Already a paid member on my team? <a href="#fastlane">Skip the line &darr;</a></p>
         <div class="statbar rv">
           <div><b>The Vault</b><span>Private room, by approval</span></div>
           <div><b>10,000+</b><span>Students taught</span></div>
@@ -1290,8 +1299,8 @@ body.vaultpath .funnelmeta{display:none}
   <section class="band">
     <div class="band-in">
       <div class="gridcards c4" id="counters">
-        <div class="glass card counter rv"><span class="topedge"></span><b data-count="10000" data-suffix="+">0</b><span>Students taught</span></div>
-        <div class="glass card counter rv"><span class="topedge"></span><b data-count="250" data-suffix="+">0</b><span>Families coached</span></div>
+        <div class="glass card counter rv"><span class="topedge"></span><b data-count="10000" data-suffix="+">10,000+</b><span>Students taught</span></div>
+        <div class="glass card counter rv"><span class="topedge"></span><b data-count="250" data-suffix="+">250+</b><span>Families coached</span></div>
         <div class="glass card counter rv"><span class="topedge"></span><b class="word">Thousands</b><span>Watched the strategy traded live</span></div>
         <div class="glass card counter rv"><span class="topedge"></span><b class="word">Olympus</b><span>Scanner, built in house</span></div>
       </div>
@@ -1349,7 +1358,7 @@ body.vaultpath .funnelmeta{display:none}
         <div class="glass card rv" style="padding:32px 30px"><span class="topedge"></span>
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style="margin-bottom:16px"><path d="M4.4 12.2l4 4 11-11" stroke="#6E9DFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.4 19.6h9" stroke="#E6EBF3" stroke-width="1.6" stroke-linecap="round"/></svg>
           <h3 style="font-size:19px">Follow ups, so you do not drift</h3>
-          <p>Most people quit because nobody noticed they stopped showing up. You get checked on. If you go quiet for a couple of weeks, you will hear from me about it.</p>
+          <p>Most people quit because nobody noticed they stopped showing up. You get checked on. Go quiet for a couple of weeks and we check in on you.</p>
         </div>
         <div class="glass card rv" style="padding:32px 30px"><span class="topedge"></span>
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style="margin-bottom:16px"><rect x="3" y="5" width="18" height="13" rx="2.4" stroke="#6E9DFF" stroke-width="1.6"/><path d="M10.2 9.6v4.2l3.9-2.1z" fill="#E6EBF3"/></svg>
@@ -1404,7 +1413,7 @@ body.vaultpath .funnelmeta{display:none}
       <div class="sec-head rv">
         <p class="eyebrow"><i>04</i> The process</p>
         <h2>How you get in</h2>
-        <p>Six questions, then a decision. I read every application myself before an invite goes out.</p>
+        <p>Six questions, then your steps. My team and I review every application, usually the same day.</p>
       </div>
       <div class="gridcards c4">
         <div class="glass card step rv"><span class="topedge"></span><span class="n">01</span><h3>Start your application</h3><p>Six short questions about where you are and what you are working with. Two minutes, no card, nothing to pay.</p></div>
@@ -1462,13 +1471,13 @@ body.vaultpath .funnelmeta{display:none}
             <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>The community chat</b>, bring your questions</li>
             <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>THE VAULT</b>, my private room, once you are approved</li>
             <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Live sessions with me on 1House.TV</li>
-            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Your application read by me personally</li>
+            <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.4l3.2 3.2L13 5" stroke="#6E9DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Your application reviewed by my team and me</li>
           </ul>
           <button class="btn ghost" data-go="start">Start your application &rarr;</button>
           <p class="fine">Requires a trading account opened through the link in your steps, or a paid 1House plan on the Market Bully team.</p>
         </div>
         <div class="glass plan feature rv">
-          <div class="kicker partner">Level 2 &middot; Most popular</div>
+          <div class="kicker partner">Level 2 &middot; All access</div>
           <h3>Digital Stream</h3>
           <div class="price">$99<small><sup>.99</sup> /month</small></div>
           <p class="sub">All access. Cancel any time.</p>
@@ -1867,13 +1876,13 @@ body.vaultpath .funnelmeta{display:none}
 
           <div class="qstep" data-step="5">
             <p class="qcount">Question 6 of 6</p>
-            <h2 class="qtitle">Do you have an extra $100 to $200 to invest in yourself?</h2>
-            <p class="qhint">Last one. No judgement either way, and it does not decide whether I reply to you.</p>
+            <h2 class="qtitle">What are you ready for right now?</h2>
+            <p class="qhint">Last one. No judgement either way. A 1House plan pays for your education. It does not go into a trading account.</p>
             <div class="opts" data-q="capital">
-              <button class="opt" data-v="100-200"><span class="k">A</span><span>Yes, $100 to $200<small>Enough to start small and learn on real size</small></span></button>
-              <button class="opt" data-v="200-plus"><span class="k">B</span><span>Yes, more than $200<small>Room to actually work</small></span></button>
-              <button class="opt" data-v="soon"><span class="k">C</span><span>Not yet, but it is coming<small>Education can start before the account does</small></span></button>
-              <button class="opt" data-v="none"><span class="k">D</span><span>No, nothing right now<small>Straight answer, and the sessions are still yours</small></span></button>
+              <button class="opt" data-v="learn-free"><span class="k">A</span><span>Learning free first<small>The lessons and live sessions, no cost</small></span></button>
+              <button class="opt" data-v="plan"><span class="k">B</span><span>A monthly 1House plan<small>From $99.99 a month: classes, replays and my room</small></span></button>
+              <button class="opt" data-v="account"><span class="k">C</span><span>Opening a trading account<small>Money set aside to trade with, separate from classes</small></span></button>
+              <button class="opt" data-v="both"><span class="k">D</span><span>Both a plan and an account<small>Ready to go all in</small></span></button>
             </div>
             <div class="qnav"><button class="qback" type="button" data-back>Back</button></div>
           </div>
@@ -1881,7 +1890,7 @@ body.vaultpath .funnelmeta{display:none}
           <div class="qstep" data-step="6">
             <p class="qcount">Last step</p>
             <h2 class="qtitle">Where do I reach you?</h2>
-            <p class="qhint">This comes straight to me. I answer applications myself, usually the same day.</p>
+            <p class="qhint">This comes straight to my team and me. We answer applications, usually the same day.</p>
             <form id="leadForm" novalidate>
               <div class="qgrid2">
                 <label class="field"><span>Name</span><input name="name" type="text" autocomplete="name" required></label>
@@ -1902,7 +1911,7 @@ body.vaultpath .funnelmeta{display:none}
             <div class="vp-head">
               <div class="vp-badge" id="vpBadge"><svg viewBox="0 0 14 14" fill="none" stroke="#5FD39B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5 L5.5 10.5 L11.5 3.5"/></svg>Application received</div>
               <h2 class="qtitle">You are in the queue.</h2>
-              <p class="qhint"><span id="vpIntro">I read every one of these personally. While I do, here is your path into The Vault.</span> <span id="vpLine">You are one step in, three to go.</span></p>
+              <p class="qhint"><span id="vpIntro">My team and I review every one of these. While we do, here is your path into The Vault.</span> <span id="vpLine">You are one step in, three to go.</span></p>
               <div class="vp-prog">
                 <div class="lab"><span>Your progress</span><b id="vpCount">1 of 4 complete</b></div>
                 <div class="track"><i id="vpBar"></i></div>
@@ -2052,7 +2061,7 @@ body.vaultpath .funnelmeta{display:none}
       <details><summary>What should I know before I fund an account?</summary><div class="body"><p>Read &ldquo;Before you open a trading account&rdquo; on the <button class="inline-link" data-go="legal">risk and disclosure page</button> first. It sets out the regulatory position in plain language, including what protections you do not have. Search the company&rsquo;s name yourself as well; it is shown on the sign-up page. Then decide, and only deposit what you could lose entirely without it changing your life.</p></div></details>
       <details><summary>Is this financial advice?</summary><div class="body"><p>No. I am not a registered investment adviser and nothing here is a recommendation to buy or sell any instrument. It is education and commentary on my own trading. Your account, your decisions, your risk.</p></div></details>
       <details><summary>What is 1House.TV, and what do I get there?</summary><div class="body"><p>1House.TV is the platform where I teach live, and I am its #1 most streamed educator. You can watch sessions without a plan. The paid plans are run by 1House Global, not by me. They add the full replay library and every other educator on the platform, and the full package includes my Olympus Scanner. You do not need a 1House plan to be in The Vault, but a paid plan on my team is one of the two ways in.</p></div></details>
-      <details><summary>How long does approval take?</summary><div class="body"><p>I review applications myself, usually the same day. If you are declined you will be told, and it is not personal. The room works because it stays small enough that I know who is in it.</p></div></details>
+      <details><summary>How long does approval take?</summary><div class="body"><p>My team and I review applications, usually the same day. If you are declined you will be told, and it is not personal. The room works because it stays small enough that I know who is in it.</p></div></details>
       <details><summary>Who does not get approved?</summary><div class="body"><p>People who come to argue or to recruit for their own group. Everyone else gets in with one of the two keys: a trading account through my link, or a paid 1House plan on my team. Not ready for either yet? Start with the five lessons and the live sessions, and come back when you are.</p></div></details>
       <details><summary>Can I share my invite with a friend?</summary><div class="body"><p>It will not work. Every invite is made for one person and expires the moment it is used. If you want somebody in, send them to the application and they go through the same door you did.</p></div></details>
       <details><summary>I am already in The Vault. Where do I start?</summary><div class="body"><p>In the <button class="inline-link" data-go="members">member area</button>. Sign in with Telegram and you will see your first week: your apps, the five starter lessons, the quiz, the community chat and the live session times.</p></div></details>
@@ -2991,10 +3000,10 @@ body.vaultpath .funnelmeta{display:none}
       'new':["No problem at all.","It is where I teach live. I will point you to it once I have read your answers."]
     },
     capital:{
-      '100-200':["That is a real start.","Small size, real lessons. That is exactly how it should begin."],
-      '200-plus':["Good.","That gives you room to work without forcing anything."],
-      'soon':["Fine by me.","Start the education now. The account can catch up."],
-      'none':["Straight answer, and I respect it.","The sessions on 1House.TV are still yours. Go and use them."]
+      'learn-free':["Smart way to start.","Watch the lessons, sit in a live session, and decide after."],
+      'plan':["Love that.","Join through my link and your seat in The Vault comes with it."],
+      'account':["Good.","Open it through my link and that is your key into The Vault."],
+      'both':["That is all in.","Plan for the education, account for the trading. Let us go."]
     }
   };
 
@@ -3225,7 +3234,7 @@ body.vaultpath .funnelmeta{display:none}
 
   function tagsFrom(a){
     var map={
-      capital:{'100-200':'Capital 100-200','200-plus':'Capital 200+','soon':'Capital soon','none':'No capital'},
+      capital:{'learn-free':'Ready: learn free','plan':'Ready: 1House plan','account':'Ready: trading account','both':'Ready: plan + account'},
       motive:{'side-income':'Side income','replace-income':'Replace income','tired-guessing':'Tired of guessing','saw-someone':'Referred by someone'},
       experience:{'never':'Never traded','dabbled':'Dabbled, losing','1-3y':'1-3 years','experienced':'Experienced'},
       onehouse:{'member':'1House subscriber','watched':'Watches 1House, not subscribed','new':'New to 1House'},
@@ -3396,8 +3405,8 @@ body.vaultpath .funnelmeta{display:none}
   var STUCK={
     funding:"No rush. You do not need to fund the account to confirm at the door. Open it, type your email at the door, and fund it when you are ready.",
     broker:"Fair. Read the risk and disclosure page before you decide. The Market Bully channel is open to you either way.",
-    confused:"Got it. I will reach out and walk you through it. You can also message me at the door.",
-    country:"Got it. I will get back to you personally about that."
+    confused:"Got it. We will reach out and walk you through it. You can also message me at the door.",
+    country:"Got it. We will get back to you about that."
   };
   var stuckBox=document.getElementById('vpStuck');
   if(stuckBox) stuckBox.addEventListener('click',function(e){
