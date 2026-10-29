@@ -94,6 +94,95 @@ export async function saveOneHouse(onehouse) {
   return out;
 }
 
+// The partner ("My Clients") list: [{ email, name, balance, volume, level }].
+// Saves it, works out who moved up a rung since yesterday, and starts the
+// matching Viato email series (capped at 50/day). Does NOT run the door round
+// — the caller does that after. Lifted verbatim from api/sync.js so the POST
+// endpoint and the server-side LivvFX cron share one code path.
+// Returns { saved, traded, moves } on success, { rows: 0 } if empty, or
+// { error: 'list looks wrong, not saved', got, before } if the guard trips.
+export async function savePartners(rows) {
+  if (!Array.isArray(rows) || !rows.length) return { rows: 0 };
+  const ALERTS_ROOM = '-5310077180';
+  const all = new Set();
+  const traded = new Set();
+  const funded = new Set();
+  const l1 = new Set(); let hasLevels = false;
+  const cname = {};
+  for (const c of rows) {
+    const e = normEmail(c && c.email);
+    if (!isEmail(e)) continue;
+    all.add(e);
+    if (Number(c.volume) > 0) traded.add(e);
+    if (Number(c.balance) > 0) funded.add(e);
+    if (c.name) cname[e] = String(c.name).slice(0, 80);
+    if (c.level !== undefined && c.level !== null && c.level !== '') { hasLevels = true; if (String(c.level).trim() === '1') l1.add(e); }
+  }
+  // Safety: never replace a real list with an empty or tiny one by mistake.
+  const before = Number((await r('SCARD', 'p:all')) || 0);
+  if (all.size === 0 || (before > 20 && all.size < before * 0.5)) {
+    return { error: 'list looks wrong, not saved', got: all.size, before };
+  }
+
+  // Who moved up a step since the last refresh? Compared before the lists are replaced.
+  // Only changes count, so people already on the list never get these emails.
+  // The very first time a list is seen it is only recorded.
+  const hadFunded = Number((await r('EXISTS', 'p:funded:seen')) || 0) === 1;
+  const prevAll = new Set(before > 0 ? ((await r('SMEMBERS', 'p:all')) || []).map(String) : []);
+  const prevTraded = new Set(((await r('SMEMBERS', 'p:traded')) || []).map(String));
+  const prevFunded = new Set(((await r('SMEMBERS', 'p:funded')) || []).map(String));
+  const moves = [];
+  for (const e of all) {
+    if (/@themarketbully\.com$/.test(e)) continue;
+    if (!l1.has(e)) continue; // level 1 only; level 2 and below belong to other leaders' emails
+    let tag = '';
+    if (hadFunded && funded.has(e) && !prevFunded.has(e)) tag = 'rung-3-funded';
+    else if (before > 0 && traded.has(e) && !prevTraded.has(e)) tag = 'rung-4-trading';
+    else if (before > 0 && !prevAll.has(e) && !funded.has(e)) tag = 'rung-2-registered';
+    if (tag) moves.push([e, tag]);
+  }
+
+  const cmds = [['DEL', 'p:all:new', 'p:traded:new', 'p:funded:new']];
+  const a = [...all]; const t = [...traded]; const f = [...funded];
+  for (let i = 0; i < a.length; i += 200) cmds.push(['SADD', 'p:all:new', ...a.slice(i, i + 200)]);
+  for (let i = 0; i < t.length; i += 200) cmds.push(['SADD', 'p:traded:new', ...t.slice(i, i + 200)]);
+  for (let i = 0; i < f.length; i += 200) cmds.push(['SADD', 'p:funded:new', ...f.slice(i, i + 200)]);
+  cmds.push(['RENAME', 'p:all:new', 'p:all']);
+  if (t.length) cmds.push(['RENAME', 'p:traded:new', 'p:traded']); else cmds.push(['DEL', 'p:traded']);
+  if (f.length) cmds.push(['RENAME', 'p:funded:new', 'p:funded']); else cmds.push(['DEL', 'p:funded']);
+  cmds.push(['SET', 'p:funded:seen', '1']);
+  if (hasLevels) {
+    const l = [...l1];
+    cmds.push(['DEL', 'p:l1:new']);
+    for (let i = 0; i < l.length; i += 200) cmds.push(['SADD', 'p:l1:new', ...l.slice(i, i + 200)]);
+    if (l.length) cmds.push(['RENAME', 'p:l1:new', 'p:l1']); else cmds.push(['DEL', 'p:l1']);
+  }
+  cmds.push(['HSET', 'p:meta', 'updated', new Date().toISOString(), 'count', a.length, 'traded', t.length, 'funded', f.length]);
+  await rp(cmds);
+
+  // Start the matching email series in Viato (at most 50 a day, as a safety cap).
+  const ALERTSM = String(process.env.ALERTS_CHAT_ID || ALERTS_ROOM || process.env.TELEGRAM_CHAT_ID || '').trim();
+  const sentMoves = { 'rung-2-registered': 0, 'rung-3-funded': 0, 'rung-4-trading': 0 };
+  const queued = (((await r('SMEMBERS', 'p:moves:q')) || []).map(String)).map((x) => x.split('|'));
+  const todo = queued.concat(moves);
+  const now50 = todo.slice(0, 50); const later = todo.slice(50);
+  for (const [e, tag] of now50) {
+    if (await viato(e, cname[e] || '', [tag])) sentMoves[tag]++;
+  }
+  const qc = [['DEL', 'p:moves:q']];
+  if (later.length) qc.push(['SADD', 'p:moves:q', ...later.map(([e, tag]) => e + '|' + tag)]);
+  await rp(qc);
+  if (now50.length) {
+    await TG('sendMessage', { chat_id: ALERTSM, parse_mode: 'HTML',
+      text: '📈 <b>Trading account updates since yesterday</b>\n' +
+            `• ${sentMoves['rung-2-registered']} opened an account (got "Do not fund it yet")\n` +
+            `• ${sentMoves['rung-3-funded']} funded (got "Money is in. Come get your invite")\n` +
+            `• ${sentMoves['rung-4-trading']} started trading (got "Where I actually teach")` +
+            (later.length ? `\n\n${later.length} more will go out tomorrow.` : '') });
+  }
+  return { saved: a.length, traded: t.length, moves: Object.assign({ waiting: later.length }, sentMoves) };
+}
+
 // Richard's whole 1House community, every level, by username: [{ u, paid }]
 // Returns { community: { saved, paid } } or { community: { saved:false, error } }.
 export async function saveCommunity(community) {
