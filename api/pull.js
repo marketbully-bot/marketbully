@@ -13,6 +13,9 @@
 import { hasStore, TG } from './_door.js';
 import { pull1House, pullLivvfx } from './_pull.js';
 
+// Give the function the most time the plan allows; the pulls are network-bound.
+export const config = { maxDuration: 300 };
+
 const ALERTS_ROOM = '-5310077180';
 
 export default async function handler(req, res) {
@@ -29,10 +32,9 @@ export default async function handler(req, res) {
     } catch (e) {}
   };
 
-  const onehouse = await pull1House();
+  // Run both sources at once so the whole job finishes well inside the limit.
+  const [onehouse, livvfx] = await Promise.all([pull1House(), pullLivvfx()]);
   if (!onehouse.ok) await warn('1House', onehouse.error, 'If this keeps happening, update ONEHOUSE_EMAIL / ONEHOUSE_PASSWORD in Vercel.');
-
-  const livvfx = await pullLivvfx();
   if (!livvfx.ok) await warn('trading-account (LivvFX)', livvfx.error, 'If this keeps happening, update LIVVFX_EMAIL / LIVVFX_PASSWORD in Vercel.');
 
   return res.status(200).json({ ok: onehouse.ok && livvfx.ok, onehouse, livvfx });

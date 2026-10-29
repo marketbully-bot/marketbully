@@ -38,35 +38,58 @@ async function ohLogin() {
   return String(token);
 }
 async function ohGet(token, path) {
-  const res = await fetch(OH_API() + path, { headers: { Accept: 'application/json', Authorization: 'Bearer ' + token } });
-  if (!res.ok) throw new Error('GET ' + path + ' -> ' + res.status);
-  return res.json();
+  // One retry: the parallel burst can trip a transient hiccup/rate-limit.
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const res = await fetch(OH_API() + path, { headers: { Accept: 'application/json', Authorization: 'Bearer ' + token } });
+      if (!res.ok) throw new Error('GET ' + path + ' -> ' + res.status);
+      return await res.json();
+    } catch (e) {
+      if (attempt >= 1) throw e;
+      await new Promise((z) => setTimeout(z, 500));
+    }
+  }
+}
+
+// Run an async worker over items with bounded concurrency, preserving order.
+// This is what keeps the pull inside the function time limit: the community can
+// be thousands of rows across many pages, far too slow fetched one at a time.
+async function pool(items, worker, concurrency = 12) {
+  const out = new Array(items.length);
+  let i = 0;
+  await Promise.all(Array.from({ length: Math.min(concurrency, items.length) || 0 }, async () => {
+    while (i < items.length) { const idx = i++; out[idx] = await worker(items[idx], idx); }
+  }));
+  return out;
 }
 
 export async function pull1House() {
   try {
     const token = await ohLogin();
     const com = [];
-    for (const lv of OH_LEVELS()) {
-      let p = 1, last = 1;
-      do {
-        const j = await ohGet(token, '/user/genealogy-list?page=' + p + '&level=' + lv);
-        (findArray(j) || []).forEach((x) => com.push({
-          u: String((x.user && x.user.username) || '').toLowerCase(),
-          paid: x.paid_subscription === 'Yes',
-          lv: String(x.level)
-        }));
-        last = lastPage(j); p++;
-      } while (p <= last && p < 120);
-    }
-    let refs = [];
-    for (let p = 1; p < 40; p++) {
-      const b = await ohGet(token, '/user/referrals?paginate=1&per_page=200&page=' + p);
-      const data = (b && b.referrals && b.referrals.data) || [];
-      refs = refs.concat(data);
-      const lp = (b && b.referrals && b.referrals.last_page) || 1;
-      if (p >= lp) break;
-    }
+    const pushGen = (j) => (findArray(j) || []).forEach((x) => com.push({
+      u: String((x.user && x.user.username) || '').toLowerCase(),
+      paid: x.paid_subscription === 'Yes',
+      lv: String(x.level)
+    }));
+    const levels = OH_LEVELS();
+    const gPath = (lv, p) => '/user/genealogy-list?per_page=200&page=' + p + '&level=' + lv;
+    // Probe page 1 of each level (in parallel) to learn how many pages each has,
+    // then fetch every remaining page at once.
+    const firsts = await pool(levels, (lv) => ohGet(token, gPath(lv, 1)), levels.length);
+    const genTasks = [];
+    firsts.forEach((j, li) => { pushGen(j); const last = Math.min(lastPage(j), 200); for (let p = 2; p <= last; p++) genTasks.push([levels[li], p]); });
+    (await pool(genTasks, ([lv, p]) => ohGet(token, gPath(lv, p)))).forEach(pushGen);
+
+    // Referrals: probe page 1, then fetch the rest in parallel.
+    const refs = [];
+    const rPath = (p) => '/user/referrals?paginate=1&per_page=200&page=' + p;
+    const pushRef = (b) => { const d = (b && b.referrals && b.referrals.data) || []; for (const x of d) refs.push(x); };
+    const r1 = await ohGet(token, rPath(1));
+    pushRef(r1);
+    const rLast = Math.min((r1 && r1.referrals && r1.referrals.last_page) || 1, 60);
+    if (rLast > 1) (await pool(Array.from({ length: rLast - 1 }, (_, k) => k + 2), (p) => ohGet(token, rPath(p)))).forEach(pushRef);
+
     const l1 = new Map(com.filter((x) => x.lv === '1').map((x) => [x.u, x.paid]));
     const onehouse = refs.filter((x) => x && x.email).map((x) => ({
       email: x.email,

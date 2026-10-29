@@ -5,6 +5,8 @@
 import { hasStore } from './_door.js';
 import { pull1House } from './_pull.js';
 
+export const config = { maxDuration: 300 };
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   const CRON = String(process.env.CRON_SECRET || '').trim();
