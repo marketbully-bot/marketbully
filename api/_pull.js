@@ -9,7 +9,8 @@
 // Each returns a small result object and NEVER throws for a bad login: it
 // returns { ok:false, error } so one source failing can't take down the other.
 
-import { saveOneHouse, saveCommunity, savePartners } from './_sync.js';
+import { saveOneHouse, savePartners } from './_sync.js';
+import { r, rp } from './_door.js';
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
@@ -63,43 +64,99 @@ async function pool(items, worker, concurrency = 12) {
   return out;
 }
 
+const gPath = (lv, p) => '/user/genealogy-list?page=' + p + '&level=' + lv;
+const okUser = (x) => { const u = String((x.user && x.user.username) || '').trim().replace(/^@+/, '').toLowerCase(); return /^[a-z0-9._-]{2,40}$/.test(u) ? u : ''; };
+
+// The full community (every downline level, ~2,600 people over ~108 pages) is
+// too slow on the 1House side to pull inside one function run. So pull it a
+// time-boxed chunk at a time, accumulating in Redis build sets across runs, and
+// only swap it into the live u:all / u:paid once a whole pass has completed —
+// the door keeps using the last complete list until then.
+async function pullCommunityChunk(token, deadline) {
+  const levels = OH_LEVELS();
+  const addRows = async (jlist) => {
+    const all = []; const paid = [];
+    jlist.forEach((j) => (findArray(j) || []).forEach((x) => { const u = okUser(x); if (!u) return; all.push(u); if (x.paid_subscription === 'Yes') paid.push(u); }));
+    const cmds = [];
+    for (let i = 0; i < all.length; i += 300) cmds.push(['SADD', 'oh:ba', ...all.slice(i, i + 300)]);
+    for (let i = 0; i < paid.length; i += 300) cmds.push(['SADD', 'oh:bp', ...paid.slice(i, i + 300)]);
+    if (cmds.length) await rp(cmds);
+  };
+  // Start a fresh pass if none is in progress.
+  if (Number(await r('EXISTS', 'oh:pass')) !== 1) {
+    await rp([['DEL', 'oh:ba', 'oh:bp', 'oh:cq']]);
+    const firsts = await pool(levels, (lv) => ohGet(token, gPath(lv, 1)), levels.length);
+    await addRows(firsts);
+    const tasks = [];
+    firsts.forEach((j, li) => { const last = Math.min(lastPage(j), 400); for (let p = 2; p <= last; p++) tasks.push(levels[li] + '|' + p); });
+    const cmds = [['SET', 'oh:pass', '1']];
+    for (let i = 0; i < tasks.length; i += 300) cmds.push(['RPUSH', 'oh:cq', ...tasks.slice(i, i + 300)]);
+    await rp(cmds);
+  }
+  // Work the queue (8 pages at a time) until the time budget runs out or it empties.
+  let fetched = 0;
+  while (Date.now() < deadline) {
+    const popped = await r('LPOP', 'oh:cq', 8);
+    const arr = Array.isArray(popped) ? popped : (popped ? [popped] : []);
+    if (!arr.length) break;
+    await addRows(await pool(arr, (t) => { const [lv, p] = String(t).split('|'); return ohGet(token, gPath(lv, p)); }, 8));
+    fetched += arr.length;
+  }
+  const remaining = Number(await r('LLEN', 'oh:cq')) || 0;
+  let swapped = false;
+  if (remaining === 0 && Number(await r('EXISTS', 'oh:pass')) === 1) {
+    // Whole pass done: swap the freshly built sets into the live ones, guarding
+    // against replacing a good list with a broken (tiny) one.
+    const before = Number(await r('SCARD', 'u:all')) || 0;
+    const built = Number(await r('SCARD', 'oh:ba')) || 0;
+    if (built > 0 && !(before > 50 && built < before * 0.5)) {
+      const cmds = [['RENAME', 'oh:ba', 'u:all']];
+      if ((Number(await r('SCARD', 'oh:bp')) || 0) > 0) cmds.push(['RENAME', 'oh:bp', 'u:paid']); else cmds.push(['DEL', 'u:paid', 'oh:bp']);
+      cmds.push(['HSET', 'u:meta', 'updated', new Date().toISOString(), 'count', built]);
+      cmds.push(['DEL', 'oh:pass']);
+      await rp(cmds);
+      swapped = true;
+    } else {
+      await rp([['DEL', 'oh:ba', 'oh:bp', 'oh:pass']]); // looked wrong; reset and retry next run
+    }
+  }
+  return { fetched, remaining, swapped, built: Number(await r('SCARD', 'oh:ba')) || (swapped ? Number(await r('SCARD', 'u:all')) || 0 : 0) };
+}
+
 export async function pull1House() {
+  const t0 = Date.now();
   try {
     const token = await ohLogin();
-    const com = [];
-    const pushGen = (j) => (findArray(j) || []).forEach((x) => com.push({
-      u: String((x.user && x.user.username) || '').toLowerCase(),
-      paid: x.paid_subscription === 'Yes',
-      lv: String(x.level)
-    }));
-    const levels = OH_LEVELS();
-    const gPath = (lv, p) => '/user/genealogy-list?per_page=200&page=' + p + '&level=' + lv;
-    // Probe page 1 of each level (in parallel) to learn how many pages each has,
-    // then fetch every remaining page at once.
-    const firsts = await pool(levels, (lv) => ohGet(token, gPath(lv, 1)), levels.length);
-    const genTasks = [];
-    firsts.forEach((j, li) => { pushGen(j); const last = Math.min(lastPage(j), 200); for (let p = 2; p <= last; p++) genTasks.push([levels[li], p]); });
-    (await pool(genTasks, ([lv, p]) => ohGet(token, gPath(lv, p)))).forEach(pushGen);
+    const out = { ok: true };
 
-    // Referrals: probe page 1, then fetch the rest in parallel.
+    // FAST (every run): level-1 genealogy (for the paid map) + referrals (personal
+    // sign-ups). Both are small, so new sign-ups are welcomed the same day.
+    const l1rows = [];
+    const pushL1 = (j) => (findArray(j) || []).forEach((x) => { const u = okUser(x); if (u) l1rows.push({ u, paid: x.paid_subscription === 'Yes' }); });
+    const l1first = await ohGet(token, gPath('1', 1));
+    pushL1(l1first);
+    const l1last = Math.min(lastPage(l1first), 50);
+    if (l1last > 1) (await pool(Array.from({ length: l1last - 1 }, (_, k) => k + 2), (p) => ohGet(token, gPath('1', p)), 6)).forEach(pushL1);
+
     const refs = [];
     const rPath = (p) => '/user/referrals?paginate=1&per_page=200&page=' + p;
     const pushRef = (b) => { const d = (b && b.referrals && b.referrals.data) || []; for (const x of d) refs.push(x); };
     const r1 = await ohGet(token, rPath(1));
     pushRef(r1);
     const rLast = Math.min((r1 && r1.referrals && r1.referrals.last_page) || 1, 60);
-    if (rLast > 1) (await pool(Array.from({ length: rLast - 1 }, (_, k) => k + 2), (p) => ohGet(token, rPath(p)))).forEach(pushRef);
+    if (rLast > 1) (await pool(Array.from({ length: rLast - 1 }, (_, k) => k + 2), (p) => ohGet(token, rPath(p)), 6)).forEach(pushRef);
 
-    const l1 = new Map(com.filter((x) => x.lv === '1').map((x) => [x.u, x.paid]));
+    const l1 = new Map(l1rows.map((x) => [x.u, x.paid]));
     const onehouse = refs.filter((x) => x && x.email).map((x) => ({
       email: x.email,
       name: [x.first_name, x.last_name].filter(Boolean).join(' '),
       paid: l1.get(String(x.username || '').toLowerCase()) === true
     }));
-    const community = com.map((x) => ({ u: x.u, paid: x.paid }));
-    const out = { ok: true, pulled: { community: community.length, referrals: onehouse.length } };
-    out.community = (await saveCommunity(community) || {}).community;
+    out.referrals = onehouse.length;
     out.onehouse = (await saveOneHouse(onehouse) || {}).onehouse;
+
+    // SLOW (chunked across runs): the full community, within a time budget.
+    out.community = await pullCommunityChunk(token, t0 + 200000);
     return out;
   } catch (e) {
     return { ok: false, error: String((e && e.message) || e).slice(0, 200) };
