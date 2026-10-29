@@ -22,7 +22,7 @@
   ],
   "crons": [
     {
-      "path": "/api/pull-1house",
+      "path": "/api/pull",
       "schedule": "30 16 * * *"
     },
     {
