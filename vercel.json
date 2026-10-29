@@ -23,7 +23,7 @@
   "crons": [
     {
       "path": "/api/pull",
-      "schedule": "32 4 * * *"
+      "schedule": "30 16 * * *"
     },
     {
       "path": "/api/door-cron",
